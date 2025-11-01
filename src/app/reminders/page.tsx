@@ -25,12 +25,14 @@ export default function RemindersPage() {
   const [reminderText, setReminderText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
+  const [voice, setVoice] = useState('Algenib');
 
   const handleGenerateReminder = async () => {
     if (!reminderText) return;
     setIsLoading(true);
     setAudioSrc(null);
     try {
+      // TODO: Pass the selected voice to the textToSpeech function
       const result = await textToSpeech({ text: reminderText });
       setAudioSrc(result.audio);
     } catch (error) {
@@ -48,7 +50,7 @@ export default function RemindersPage() {
           Verbal Reminders
         </h1>
         <p className="text-muted-foreground mt-2">
-          Create and listen to verbal reminders in your preferred language.
+          Create and listen to verbal reminders in your preferred language and voice.
         </p>
       </header>
 
@@ -56,23 +58,23 @@ export default function RemindersPage() {
         <CardHeader>
           <CardTitle className="text-2xl">Create a Reminder</CardTitle>
           <CardDescription>
-            Type your reminder text below and select a language to generate the
+            Type your reminder text below and select a language and voice to generate the
             audio.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid gap-2">
             <Label htmlFor="language">Language & Voice</Label>
-            <Select defaultValue="en-us-algenib">
+            <Select onValueChange={setVoice} defaultValue={voice}>
               <SelectTrigger id="language" className="w-[280px]">
                 <SelectValue placeholder="Select language & voice" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en-us-algenib">English (US), Algenib (Female)</SelectItem>
-                <SelectItem value="en-gb-achernar">English (UK), Achernar (Male)</SelectItem>
-                <SelectItem value="es-es-proxima-c">Spanish, Proxima C (Female)</SelectItem>
-                <SelectItem value="fr-fr-spica">French, Spica (Female)</SelectItem>
-                <SelectItem value="de-de-shaula">German, Shaula (Female)</SelectItem>
+                <SelectItem value="Algenib">English (US), Algenib (Female)</SelectItem>
+                <SelectItem value="Achernar">English (UK), Achernar (Male)</SelectItem>
+                <SelectItem value="Proxima-C">Spanish, Proxima C (Female)</SelectItem>
+                <SelectItem value="Spica">French, Spica (Female)</SelectItem>
+                <SelectItem value="Shaula">German, Shaula (Female)</SelectItem>
               </SelectContent>
             </Select>
           </div>
