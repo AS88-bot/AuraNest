@@ -58,9 +58,9 @@ export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpee
           responseModalities: ['AUDIO'],
           speechConfig: {
             voiceConfig: {
+              languageCode: input.languageCode || 'en-US',
               prebuiltVoiceConfig: { 
                 voiceName: input.voice || 'Algenib',
-                languageCode: input.languageCode || 'en-US',
               },
             },
           },
