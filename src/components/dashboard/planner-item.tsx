@@ -19,7 +19,7 @@ const categoryColors = {
     activity: 'border-l-green-400',
 };
 
-const icons = {
+const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
     Pill: Pill,
     Utensils: Utensils,
     Calendar: Calendar,
@@ -38,8 +38,7 @@ export default function PlannerItem({ item }: PlannerItemProps) {
         <Card className={cn("overflow-hidden transition-all hover:shadow-md", categoryColors[item.category], 'border-l-8')}>
             <CardContent className="p-4 flex items-start gap-4">
                 <div className="flex flex-col items-center gap-1 text-muted-foreground w-24">
-                    <span className="font-bold text-lg">{item.time.split(' ')[0]}</span>
-                    <span className="text-sm">{item.time.split(' ')[1]}</span>
+                    <span className="font-bold text-lg">{item.time}</span>
                 </div>
                 <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-3">

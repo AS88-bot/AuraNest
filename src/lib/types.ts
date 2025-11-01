@@ -13,6 +13,7 @@ export interface PlannerItem {
   icon: IconName;
   image?: string; 
   isCompleted: boolean;
+  onUpdate?: (updatedItem: PlannerItem) => void;
 }
 
 export interface Contact {
