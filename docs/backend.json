@@ -1,0 +1,536 @@
+{
+  "entities": {
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
+      "type": "object",
+      "description": "Represents a user of the AuraNest application.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the User entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The user's full name."
+        },
+        "dateOfBirth": {
+          "type": "string",
+          "description": "The user's date of birth.",
+          "format": "date-time"
+        },
+        "profilePicture": {
+          "type": "string",
+          "description": "URL to the user's profile picture.",
+          "format": "uri"
+        },
+        "caregiverIds": {
+          "type": "array",
+          "description": "References to Caregivers. (Relationship: User 1:N Caregiver)",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name"
+      ]
+    },
+    "Caregiver": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Caregiver",
+      "type": "object",
+      "description": "Represents a caregiver associated with a user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Caregiver entity."
+        },
+        "name": {
+          "type": "string",
+          "description": "The caregiver's full name."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The caregiver's phone number."
+        },
+        "email": {
+          "type": "string",
+          "description": "The caregiver's email address.",
+          "format": "email"
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Caregiver)"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "phoneNumber",
+        "userId"
+      ]
+    },
+    "DailyTask": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "DailyTask",
+      "type": "object",
+      "description": "Represents a daily task or activity for the user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the DailyTask entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N DailyTask)"
+        },
+        "title": {
+          "type": "string",
+          "description": "Title of the task."
+        },
+        "description": {
+          "type": "string",
+          "description": "Detailed description of the task."
+        },
+        "scheduledTime": {
+          "type": "string",
+          "description": "Scheduled time for the task.",
+          "format": "date-time"
+        },
+        "isCompleted": {
+          "type": "boolean",
+          "description": "Indicates if the task is completed."
+        },
+        "icon": {
+          "type": "string",
+          "description": "The icon that represents the task."
+        },
+        "color": {
+          "type": "string",
+          "description": "The color associated with the task."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "title",
+        "scheduledTime"
+      ]
+    },
+    "Medication": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Medication",
+      "type": "object",
+      "description": "Represents a medication for the user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Medication entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Medication)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Name of the medication."
+        },
+        "dosage": {
+          "type": "string",
+          "description": "Dosage of the medication."
+        },
+        "time": {
+          "type": "string",
+          "description": "Time to take the medication.",
+          "format": "date-time"
+        },
+        "image": {
+          "type": "string",
+          "description": "Image URL of the medication pill or bottle.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "dosage",
+        "time"
+      ]
+    },
+    "MemoryJournalEntry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MemoryJournalEntry",
+      "type": "object",
+      "description": "Represents a memory journal entry.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the MemoryJournalEntry entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N MemoryJournalEntry)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the journal entry.",
+          "format": "date-time"
+        },
+        "text": {
+          "type": "string",
+          "description": "Text content of the journal entry."
+        },
+        "photoUrl": {
+          "type": "string",
+          "description": "URL of the associated photo.",
+          "format": "uri"
+        },
+        "voiceNoteUrl": {
+          "type": "string",
+          "description": "URL of the voice note recording.",
+          "format": "uri"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "date"
+      ]
+    },
+    "Location": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Location",
+      "type": "object",
+      "description": "Represents the location of the user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the Location entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:1 Location)"
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude of the user."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude of the user."
+        },
+        "timestamp": {
+          "type": "string",
+          "description": "The time the location was recorded.",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "latitude",
+        "longitude",
+        "timestamp"
+      ]
+    },
+    "SafeZone": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "SafeZone",
+      "type": "object",
+      "description": "Represents a safe zone for the user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the SafeZone entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N SafeZone)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the safe zone."
+        },
+        "latitude": {
+          "type": "number",
+          "description": "The latitude of the safe zone."
+        },
+        "longitude": {
+          "type": "number",
+          "description": "The longitude of the safe zone."
+        },
+        "radius": {
+          "type": "number",
+          "description": "The radius of the safe zone in meters."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "latitude",
+        "longitude",
+        "radius"
+      ]
+    },
+    "EmergencyContact": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "EmergencyContact",
+      "type": "object",
+      "description": "Represents an emergency contact for the user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the EmergencyContact entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N EmergencyContact)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the emergency contact."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "The phone number of the emergency contact."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "phoneNumber"
+      ]
+    },
+    "MoodEntry": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "MoodEntry",
+      "type": "object",
+      "description": "Represents a mood entry recorded by the user.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the MoodEntry entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N MoodEntry)"
+        },
+        "date": {
+          "type": "string",
+          "description": "Date of the mood entry.",
+          "format": "date-time"
+        },
+        "mood": {
+          "type": "string",
+          "description": "The mood expressed (e.g., happy, sad, angry)."
+        },
+        "emoji": {
+          "type": "string",
+          "description": "The emoji representing the mood."
+        },
+        "notes": {
+          "type": "string",
+          "description": "Additional notes about the mood."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "date",
+        "mood"
+      ]
+    }
+  },
+  "auth": {
+    "providers": [
+      "password",
+      "anonymous"
+    ]
+  },
+  "firestore": {
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profile information. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/caregivers/{caregiverId}",
+        "definition": {
+          "entityName": "Caregiver",
+          "schema": {
+            "$ref": "#/backend/entities/Caregiver"
+          },
+          "description": "Stores caregiver information for a specific user. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "caregiverId",
+              "description": "The unique identifier of the caregiver."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/dailyTasks/{dailyTaskId}",
+        "definition": {
+          "entityName": "DailyTask",
+          "schema": {
+            "$ref": "#/backend/entities/DailyTask"
+          },
+          "description": "Stores daily tasks for a specific user. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "dailyTaskId",
+              "description": "The unique identifier of the daily task."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/medications/{medicationId}",
+        "definition": {
+          "entityName": "Medication",
+          "schema": {
+            "$ref": "#/backend/entities/Medication"
+          },
+          "description": "Stores medication information for a specific user. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "medicationId",
+              "description": "The unique identifier of the medication."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/memoryJournalEntries/{memoryJournalEntryId}",
+        "definition": {
+          "entityName": "MemoryJournalEntry",
+          "schema": {
+            "$ref": "#/backend/entities/MemoryJournalEntry"
+          },
+          "description": "Stores memory journal entries for a specific user. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "memoryJournalEntryId",
+              "description": "The unique identifier of the memory journal entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/safeZones/{safeZoneId}",
+        "definition": {
+          "entityName": "SafeZone",
+          "schema": {
+            "$ref": "#/backend/entities/SafeZone"
+          },
+          "description": "Stores safe zone information for a specific user. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "safeZoneId",
+              "description": "The unique identifier of the safe zone."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/emergencyContacts/{emergencyContactId}",
+        "definition": {
+          "entityName": "EmergencyContact",
+          "schema": {
+            "$ref": "#/backend/entities/EmergencyContact"
+          },
+          "description": "Stores emergency contact information for a specific user. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "emergencyContactId",
+              "description": "The unique identifier of the emergency contact."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/moodEntries/{moodEntryId}",
+        "definition": {
+          "entityName": "MoodEntry",
+          "schema": {
+            "$ref": "#/backend/entities/MoodEntry"
+          },
+          "description": "Stores mood entries for a specific user. Path-based ownership enforced.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "moodEntryId",
+              "description": "The unique identifier of the mood entry."
+            }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/emergencyLocation/{emergencyLocationId}",
+        "definition": {
+          "entityName": "Location",
+          "schema": {
+            "$ref": "#/backend/entities/Location"
+          },
+          "description": "Stores the user's location data for emergency access by caregivers, when the user is unable to provide it themselves. Includes denormalized 'caregiverIds' array for authorization independence.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "emergencyLocationId",
+              "description": "The unique identifier for the emergency location entry."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore data structure is designed to support the AuraNest application's features while adhering to the principles of Authorization Independence, Structural Segregation, Access Modeling, and Data Clarity. The core concept is to ensure data related to users and their caregivers is readily accessible and secure. To implement the user's request, the location is stored separately and can be accessible to emergency contacts if the user is unable to send it themselves.\n\n1.  **Authorization Independence**: This is achieved primarily through path-based ownership and denormalization. User-specific data is stored under `/users/{userId}`, ensuring clear ownership. Caregiver access is managed through a dedicated subcollection `/users/{userId}/caregivers/{caregiverId}`. The crucial element for emergency location access involves creating `/users/{userId}/emergencyLocation/{emergencyLocationId}`. The caregiver ids are denormalized into the `emergencyLocation` document. This approach avoids the need for `get()` calls in security rules, maintaining atomicity of operations.\n\n2.  **Structural Segregation**:  Each collection is designed to hold a single type of entity, ensuring a homogeneous security posture. For instance, user profiles, tasks, medications, journal entries, and safe zones each reside in their respective collections or subcollections under the user's document, enabling focused security rules.\n\n3.  **Access Modeling**: Path-based ownership (`/users/{userId}/...`) is used extensively for private user data. Collaborative data is implicitly supported via emergency contact access to location when the user is unable to send location data themselves, though this access is governed by user-specific settings.\n\n4.  **QAPs (Rules Are Not Filters)**: The structure facilitates secure `list` operations by structuring data in a way that enforces access control at the path level. For example, listing tasks for a user is done via `/users/{userId}/dailyTasks`, which allows a rule to easily check `request.auth.uid == userId`.\n\n5.  **Invariants**: The structure supports invariants such as ownership through the consistent use of `userId` and timestamps where relevant.\n\n**Emergency Location Access:**\nTo facilitate location access for emergency contacts when the user cannot send it themselves, a specific structure and process is implemented:\n\n*   `/users/{userId}/emergencyLocation/{emergencyLocationId}`: This subcollection stores the user's location data specifically for emergency purposes. The location data includes the last known latitude, longitude, timestamp, and an array of `caregiverIds` who are authorized to access this location information.\n\nThis approach ensures that only designated emergency contacts can access the user's location, and only when the user is unable to provide it themselves. This structure adheres to the principle of Authorization Independence by including the list of allowed caregiver id's directly within the `emergencyLocation` document, avoiding the need to fetch caregiver information from other collections. This allows for direct, secure, and efficient rule definitions."
+  }
+}
