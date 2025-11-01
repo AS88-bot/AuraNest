@@ -12,20 +12,22 @@ import {
 } from '@/components/ui/dialog';
 import { Mic, MicOff } from 'lucide-react';
 
-// Check for SpeechRecognition API
-const SpeechRecognition =
-  (typeof window !== 'undefined' && (window.SpeechRecognition || window.webkitSpeechRecognition));
-
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
+  const [SpeechRecognition, setSpeechRecognition] = useState<any>(null);
 
   useEffect(() => {
     setIsMounted(true);
+    const recognitionApi = window.SpeechRecognition || window.webkitSpeechRecognition;
+    setSpeechRecognition(() => recognitionApi);
+  }, []);
+
+  useEffect(() => {
     if (!SpeechRecognition) {
-      console.warn('Speech Recognition API not supported in this browser.');
+      if(isMounted) console.warn('Speech Recognition API not supported in this browser.');
       return;
     }
 
@@ -34,31 +36,33 @@ export function VoiceAssistant() {
     rec.lang = 'en-US';
     rec.interimResults = false;
 
-    rec.onresult = (event) => {
+    rec.onresult = (event: any) => {
       const currentTranscript = event.results[0][0].transcript;
       setTranscript(currentTranscript);
       handleCommand(currentTranscript);
       setIsListening(false);
     };
 
-    rec.onerror = (event) => {
+    rec.onerror = (event: any) => {
       console.error('Speech recognition error', event.error);
       setIsListening(false);
     };
 
     rec.onend = () => {
         if (isListening) {
-            // Keep listening if it was not stopped manually
-            rec.start();
+            // This check is to prevent it from stopping and starting if the user clicks the button to stop.
         }
+        setIsListening(false);
     };
     
     setRecognition(rec);
 
     return () => {
-      rec.stop();
+        if (rec) {
+            rec.stop();
+        }
     };
-  }, []);
+  }, [isListening, SpeechRecognition, isMounted]);
 
   const handleCommand = (command: string) => {
     // In the future, this will process commands.
