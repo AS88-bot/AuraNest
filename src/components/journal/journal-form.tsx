@@ -9,6 +9,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Loader2, Wand2, Mic, Image as ImageIcon } from 'lucide-react';
+import { useLocale } from '@/hooks/use-locale';
 
 const formSchema = z.object({
   journalEntry: z.string().min(10, {
@@ -19,6 +20,7 @@ const formSchema = z.object({
 export default function JournalForm() {
   const [summary, setSummary] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useLocale();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -47,7 +49,7 @@ export default function JournalForm() {
     <div className="grid lg:grid-cols-2 gap-8">
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">What's on your mind?</CardTitle>
+          <CardTitle className="text-2xl">{t('journal.formTitle')}</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
@@ -60,7 +62,7 @@ export default function JournalForm() {
                     <FormLabel className="sr-only">Journal Entry</FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Tell me about your day..."
+                        placeholder={t('journal.formPlaceholder')}
                         className="min-h-[250px] text-lg"
                         {...field}
                       />
@@ -71,19 +73,19 @@ export default function JournalForm() {
               />
               <div className="flex flex-col sm:flex-row gap-4">
                  <div className="flex gap-4">
-                    <Button type="button" size="lg" variant="outline"><ImageIcon className="mr-2" /> Add Photo</Button>
-                    <Button type="button" size="lg" variant="outline"><Mic className="mr-2" /> Record Note</Button>
+                    <Button type="button" size="lg" variant="outline"><ImageIcon className="mr-2" /> {t('journal.addPhoto')}</Button>
+                    <Button type="button" size="lg" variant="outline"><Mic className="mr-2" /> {t('journal.recordNote')}</Button>
                  </div>
                  <Button type="submit" size="lg" disabled={isLoading} className="flex-1">
                   {isLoading ? (
                     <>
                       <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                      Generating...
+                      {t('journal.generating')}
                     </>
                   ) : (
                     <>
                       <Wand2 className="mr-2 h-6 w-6" />
-                      Generate Summary
+                      {t('journal.generateSummary')}
                     </>
                   )}
                 </Button>
@@ -95,7 +97,7 @@ export default function JournalForm() {
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Today in My Life</CardTitle>
+          <CardTitle className="text-2xl">{t('journal.summaryTitle')}</CardTitle>
         </CardHeader>
         <CardContent className="text-lg text-foreground space-y-4 min-h-[250px]">
           {isLoading && (
@@ -108,7 +110,7 @@ export default function JournalForm() {
           )}
            {!summary && !isLoading && (
             <div className="flex items-center justify-center h-full">
-                <p className="text-muted-foreground">Your summary will appear here.</p>
+                <p className="text-muted-foreground">{t('journal.summaryPlaceholder')}</p>
             </div>
           )}
         </CardContent>

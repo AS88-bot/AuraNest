@@ -18,6 +18,7 @@ import { VoiceAssistant } from '../voice-assistant';
 import { EditProfileDialog } from '../profile/edit-profile-dialog';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirebase, initiateAnonymousSignIn } from '@/firebase';
+import { useLocale } from '@/hooks/use-locale';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const defaultUserImage = PlaceHolderImages.find(p => p.id === 'user-avatar');
@@ -27,6 +28,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const [isClient, setIsClient] = useState(false);
     const { user, isUserLoading } = useUser();
     const { auth } = useFirebase();
+    const { t } = useLocale();
 
     useEffect(() => {
       setIsClient(true);
@@ -80,7 +82,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{user.displayName || userName}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            {user.email || 'Anonymous User'}
+                            {user.email || t('userMenu.anonymousUser')}
                         </p>
                         </div>
                     </DropdownMenuLabel>
@@ -91,13 +93,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                       avatar={user.photoURL || userAvatar}
                       onSave={(newName, newEmail, newAvatar) => {
                         setUserName(newName);
-                        setUserEmail(newEmail);
+setUserEmail(newEmail);
                         setUserAvatar(newAvatar);
                       }}
                     />
                     <DropdownMenuItem onClick={() => auth.signOut()}>
                         <LogOut className="mr-2 h-4 w-4" />
-                        <span>Log out</span>
+                        <span>{t('userMenu.logout')}</span>
                     </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

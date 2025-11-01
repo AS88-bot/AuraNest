@@ -1,0 +1,121 @@
+{
+    "nav": {
+        "dashboard": "Dashboard",
+        "contacts": "Contacts",
+        "journal": "Journal",
+        "location": "Location",
+        "reminders": "Reminders",
+        "caregiver": "Caregiver",
+        "settings": "Settings"
+    },
+    "userMenu": {
+        "editProfile": "Edit Profile",
+        "logout": "Log out",
+        "anonymousUser": "Anonymous User"
+    },
+    "sosButton": {
+        "ariaLabel": "Emergency SOS",
+        "alertTitle": "Send Emergency Alert?",
+        "alertDescription": "This will immediately send an alert with your current location to your emergency contacts. Are you sure you want to proceed?",
+        "cancel": "Cancel",
+        "send": "Send Alert",
+        "sentTitle": "Emergency Alert Sent",
+        "sentDescription": "Your location has been sent to your emergency contacts.",
+        "errorTitle": "Could Not Send Alert",
+        "errorDescription": "Please make sure you are logged in and have location services enabled."
+    },
+    "voiceAssistant": {
+        "ariaLabel": "Voice Command",
+        "listeningTitle": "Listening...",
+        "listeningDescription": "What can I help you with?",
+        "placeholder": "e.g., \"Call Sarah\" or \"Help me\"",
+        "cancel": "Cancel"
+    },
+    "dashboard": {
+        "title": "Today's Plan",
+        "description": "Here is your schedule for today. Tap the circle to mark items as complete.",
+        "editPlan": "Edit Plan",
+        "editTitle": "Edit Daily Plan",
+        "editDescription": "Make changes to your daily schedule here. Click save when you're done.",
+        "save": "Save Changes"
+    },
+    "contacts": {
+        "title": "Contacts",
+        "description": "Your important people. Tap a button to call or video chat.",
+        "editContacts": "Edit Contacts",
+        "editTitle": "Edit Contacts",
+        "editDescription": "Make changes to your contacts here. Changes are saved automatically.",
+        "done": "Done",
+        "call": "Call",
+        "videoCall": "Video call"
+    },
+    "journal": {
+        "title": "Memory Journal",
+        "description": "Record your thoughts, photos, or voice notes from the day. Then, see a summary of your day.",
+        "formTitle": "What's on your mind?",
+        "formPlaceholder": "Tell me about your day...",
+        "addPhoto": "Add Photo",
+        "recordNote": "Record Note",
+        "generateSummary": "Generate Summary",
+        "generating": "Generating...",
+        "summaryTitle": "Today in My Life",
+        "summaryPlaceholder": "Your summary will appear here."
+    },
+    "location": {
+        "title": "Location & Navigation",
+        "description": "See your location, check safe zones, and get directions home.",
+        "yourLocation": "Your Location",
+        "safeZone": "You are in a Safe Zone",
+        "navigation": "Navigation",
+        "navDescription": "Quick actions to help you get around.",
+        "takeHome": "Take Me Home",
+        "guidedRoute": "Guided Route",
+        "routeDescription": "Step-by-step directions to home.",
+        "editRoute": "Edit Route"
+    },
+    "reminders": {
+        "title": "Verbal Reminders",
+        "description": "Create and listen to verbal reminders in your preferred language and voice.",
+        "createTitle": "Create a Reminder",
+        "createDescription": "Type your reminder text below and select a language and voice to generate the audio.",
+        "languageLabel": "Language & Voice",
+        "selectPlaceholder": "Select language & voice",
+        "textLabel": "Reminder Text",
+        "textPlaceholder": "e.g., 'Remember to take medication at 8 PM.'",
+        "generate": "Generate Reminder",
+        "generating": "Generating Audio...",
+        "generatedAudio": "Generated Audio"
+    },
+    "caregiver": {
+        "title": "Caregiver Dashboard",
+        "description": "View the location and status of the person you are caring for.",
+        "userLocation": "Aura User's Location",
+        "sosAlert": "SOS Alert Triggered",
+        "locationDetails": "Location Details",
+        "locationDescription": "Last known location information.",
+        "lastUpdated": "Last updated:",
+        "latitude": "Latitude:",
+        "longitude": "Longitude:",
+        "noData": "No location data available.",
+        "loginPrompt": "Please Log In",
+        "loginDescription": "You need to be logged in to view the caregiver dashboard."
+    },
+    "settings": {
+        "title": "Settings",
+        "description": "Manage your application settings.",
+        "language": {
+            "title": "Language",
+            "description": "Choose your preferred language for the application and verbal reminders.",
+            "label": "Language",
+            "selectPlaceholder": "Select language"
+        }
+    },
+    "editProfile": {
+        "title": "Edit Profile",
+        "description": "Make changes to your profile here. Click save when you're done.",
+        "name": "Name",
+        "email": "Email",
+        "avatar": "Avatar",
+        "save": "Save changes"
+    }
+}

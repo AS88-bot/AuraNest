@@ -1,3 +1,5 @@
+'use client';
+
 import {
   Card,
   CardContent,
@@ -13,41 +15,43 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { useLocale } from '@/hooks/use-locale';
 
 export default function SettingsPage() {
+  const { t, setLocale, locale } = useLocale();
+
   return (
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Settings
+          {t('settings.title')}
         </h1>
         <p className="text-muted-foreground mt-2">
-          Manage your application settings.
+          {t('settings.description')}
         </p>
       </header>
       <div className="grid gap-6">
         <Card>
           <CardHeader>
-            <CardTitle>Language</CardTitle>
+            <CardTitle>{t('settings.language.title')}</CardTitle>
             <CardDescription>
-              Choose your preferred language for the application and verbal
-              reminders.
+              {t('settings.language.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="grid gap-2">
-              <Label htmlFor="language">Language</Label>
-              <Select defaultValue="en">
+              <Label htmlFor="language">{t('settings.language.label')}</Label>
+              <Select value={locale} onValueChange={(value) => setLocale(value as 'en' | 'es')}>
                 <SelectTrigger id="language" className="w-[280px]">
-                  <SelectValue placeholder="Select language" />
+                  <SelectValue placeholder={t('settings.language.selectPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="es">Spanish</SelectItem>
-                  <SelectItem value="fr">French</SelectItem>
-                  <SelectItem value="de">German</SelectItem>
-                  <SelectItem value="hi">Hindi</SelectItem>
-                  <SelectItem value="it">Italian</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                  <SelectItem value="fr" disabled>Français</SelectItem>
+                  <SelectItem value="de" disabled>Deutsch</SelectItem>
+                  <SelectItem value="hi" disabled>हिन्दी</SelectItem>
+                  <SelectItem value="it" disabled>Italiano</SelectItem>
                 </SelectContent>
               </Select>
             </div>

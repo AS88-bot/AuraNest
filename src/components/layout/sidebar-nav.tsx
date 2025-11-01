@@ -16,19 +16,21 @@ import {
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import React from 'react';
-
-const menuItems = [
-  { href: '/', label: 'Dashboard', icon: LayoutDashboard },
-  { href: '/contacts', label: 'Contacts', icon: Users },
-  { href: '/journal', label: 'Journal', icon: BookHeart },
-  { href: '/location', label: 'Location', icon: Map },
-  { href: '/reminders', label: 'Reminders', icon: Bell },
-  { href: '/caregiver', label: 'Caregiver', icon: HeartHandshake },
-  { href: '/settings', label: 'Settings', icon: Settings },
-];
+import { useLocale } from '@/hooks/use-locale';
 
 export function SidebarNav() {
   const pathname = usePathname();
+  const { t } = useLocale();
+
+  const menuItems = [
+    { href: '/', label: t('nav.dashboard'), icon: LayoutDashboard },
+    { href: '/contacts', label: t('nav.contacts'), icon: Users },
+    { href: '/journal', label: t('nav.journal'), icon: BookHeart },
+    { href: '/location', label: t('nav.location'), icon: Map },
+    { href: '/reminders', label: t('nav.reminders'), icon: Bell },
+    { href: '/caregiver', label: t('nav.caregiver'), icon: HeartHandshake },
+    { href: '/settings', label: t('nav.settings'), icon: Settings },
+  ];
 
   return (
     <SidebarMenu>

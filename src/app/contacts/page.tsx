@@ -5,9 +5,11 @@ import ContactCard from '@/components/contacts/contact-card';
 import { contacts as initialContacts } from '@/lib/data';
 import type { Contact } from '@/lib/types';
 import { EditContactsSheet } from '@/components/contacts/edit-contacts-sheet';
+import { useLocale } from '@/hooks/use-locale';
 
 export default function ContactsPage() {
   const [contacts, setContacts] = useState<Contact[]>(initialContacts);
+  const { t } = useLocale();
 
   const handleUpdate = (updatedContact: Contact) => {
     setContacts((prevContacts) =>
@@ -22,10 +24,10 @@ export default function ContactsPage() {
       <header className="flex justify-between items-start">
         <div>
           <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Contacts
+            {t('contacts.title')}
           </h1>
           <p className="text-muted-foreground mt-2">
-            Your important people. Tap a button to call or video chat.
+            {t('contacts.description')}
           </p>
         </div>
         <EditContactsSheet

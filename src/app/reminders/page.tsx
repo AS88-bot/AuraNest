@@ -20,20 +20,22 @@ import {
 } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
+import { useLocale } from '@/hooks/use-locale';
 
 interface VoiceOption {
-  value: string;
-  label: string;
-}
-
+    value: string;
+    label: string;
+    lang: string;
+  }
+  
 const voiceOptions: VoiceOption[] = [
-    { value: 'Algenib', label: 'English (US), Algenib (Female)' },
-    { value: 'Achernar', label: 'English (UK), Achernar (Male)' },
-    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)' },
-    { value: 'Spica', label: 'French (France), Spica (Female)' },
-    { value: 'Shaula', label: 'German (Germany), Shaula (Female)' },
-    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)' },
-    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)' },
+    { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US' },
+    { value: 'Achernar', label: 'English (UK), Achernar (Male)', lang: 'en-GB' },
+    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)', lang: 'es-ES' },
+    { value: 'Spica', label: 'French (France), Spica (Female)', lang: 'fr-FR' },
+    { value: 'Shaula', label: 'German (Germany), Shaula (Female)', lang: 'de-DE' },
+    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)', lang: 'hi-IN' },
+    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)', lang: 'it-IT' },
 ];
 
 export default function RemindersPage() {
@@ -41,6 +43,7 @@ export default function RemindersPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [selectedVoice, setSelectedVoice] = useState<VoiceOption>(voiceOptions[0]);
+  const { t } = useLocale();
 
   const handleGenerateReminder = async () => {
     if (!reminderText) return;
@@ -72,27 +75,26 @@ export default function RemindersPage() {
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Verbal Reminders
+          {t('reminders.title')}
         </h1>
         <p className="text-muted-foreground mt-2">
-          Create and listen to verbal reminders in your preferred language and voice.
+          {t('reminders.description')}
         </p>
       </header>
 
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Create a Reminder</CardTitle>
+          <CardTitle className="text-2xl">{t('reminders.createTitle')}</CardTitle>
           <CardDescription>
-            Type your reminder text below and select a language and voice to generate the
-            audio.
+            {t('reminders.createDescription')}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           <div className="grid gap-2">
-            <Label htmlFor="language">Language & Voice</Label>
+            <Label htmlFor="language">{t('reminders.languageLabel')}</Label>
             <Select onValueChange={handleVoiceChange} defaultValue={selectedVoice.value}>
               <SelectTrigger id="language" className="w-[280px]">
-                <SelectValue placeholder="Select language & voice" />
+                <SelectValue placeholder={t('reminders.selectPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
                 {voiceOptions.map(option => (
@@ -102,10 +104,10 @@ export default function RemindersPage() {
             </Select>
           </div>
           <div className="grid gap-2">
-            <Label htmlFor="reminder-text">Reminder Text</Label>
+            <Label htmlFor="reminder-text">{t('reminders.textLabel')}</Label>
             <Textarea
               id="reminder-text"
-              placeholder="e.g., 'Remember to take medication at 8 PM.'"
+              placeholder={t('reminders.textPlaceholder')}
               value={reminderText}
               onChange={(e) => setReminderText(e.target.value)}
               className="min-h-[150px] text-lg"
@@ -121,19 +123,19 @@ export default function RemindersPage() {
               {isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-6 w-6 animate-spin" />
-                  Generating Audio...
+                  {t('reminders.generating')}
                 </>
               ) : (
                 <>
                   <Wand2 className="mr-2 h-6 w-6" />
-                  Generate Reminder
+                  {t('reminders.generate')}
                 </>
               )}
             </Button>
           </div>
           {audioSrc && !isLoading && (
             <div className="space-y-4 rounded-lg bg-muted p-4">
-              <Label className="text-lg">Generated Audio</Label>
+              <Label className="text-lg">{t('reminders.generatedAudio')}</Label>
               <div className='flex items-center gap-4'>
                 <Volume2 className="h-8 w-8 text-primary" />
                 <audio controls src={audioSrc} className="w-full">

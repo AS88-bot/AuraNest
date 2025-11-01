@@ -2,6 +2,8 @@ import type {Metadata} from 'next';
 import './globals.css';
 import ClientLayout from '@/components/layout/client-layout';
 import { FirebaseClientProvider } from '@/firebase';
+import { LocaleProvider } from '@/hooks/use-locale';
+
 
 export const metadata: Metadata = {
   title: 'AuraNest',
@@ -21,9 +23,11 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased">
-        <FirebaseClientProvider>
-          <ClientLayout>{children}</ClientLayout>
-        </FirebaseClientProvider>
+        <LocaleProvider>
+          <FirebaseClientProvider>
+            <ClientLayout>{children}</ClientLayout>
+          </FirebaseClientProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

@@ -1,0 +1,121 @@
+{
+    "nav": {
+        "dashboard": "Tablero",
+        "contacts": "Contactos",
+        "journal": "Diario",
+        "location": "Ubicación",
+        "reminders": "Recordatorios",
+        "caregiver": "Cuidador",
+        "settings": "Ajustes"
+    },
+    "userMenu": {
+        "editProfile": "Editar Perfil",
+        "logout": "Cerrar Sesión",
+        "anonymousUser": "Usuario Anónimo"
+    },
+    "sosButton": {
+        "ariaLabel": "SOS de Emergencia",
+        "alertTitle": "¿Enviar Alerta de Emergencia?",
+        "alertDescription": "Esto enviará inmediatamente una alerta con tu ubicación actual a tus contactos de emergencia. ¿Estás seguro de que quieres continuar?",
+        "cancel": "Cancelar",
+        "send": "Enviar Alerta",
+        "sentTitle": "Alerta de Emergencia Enviada",
+        "sentDescription": "Tu ubicación ha sido enviada a tus contactos de emergencia.",
+        "errorTitle": "No se pudo Enviar la Alerta",
+        "errorDescription": "Asegúrate de haber iniciado sesión y de tener activados los servicios de ubicación."
+    },
+    "voiceAssistant": {
+        "ariaLabel": "Comando de Voz",
+        "listeningTitle": "Escuchando...",
+        "listeningDescription": "¿En qué puedo ayudarte?",
+        "placeholder": "p. ej., \"Llamar a Sarah\" o \"Ayúdame\"",
+        "cancel": "Cancelar"
+    },
+    "dashboard": {
+        "title": "Plan de Hoy",
+        "description": "Este es tu horario para hoy. Toca el círculo para marcar las tareas como completadas.",
+        "editPlan": "Editar Plan",
+        "editTitle": "Editar Plan Diario",
+        "editDescription": "Haz cambios en tu horario diario aquí. Haz clic en guardar cuando hayas terminado.",
+        "save": "Guardar Cambios"
+    },
+    "contacts": {
+        "title": "Contactos",
+        "description": "Tus personas importantes. Toca un botón para llamar o hacer una videollamada.",
+        "editContacts": "Editar Contactos",
+        "editTitle": "Editar Contactos",
+        "editDescription": "Haz cambios en tus contactos aquí. Los cambios se guardan automáticamente.",
+        "done": "Hecho",
+        "call": "Llamar",
+        "videoCall": "Videollamada"
+    },
+    "journal": {
+        "title": "Diario de Recuerdos",
+        "description": "Anota tus pensamientos, fotos o notas de voz del día. Luego, ve un resumen de tu día.",
+        "formTitle": "¿En qué estás pensando?",
+        "formPlaceholder": "Cuéntame sobre tu día...",
+        "addPhoto": "Añadir Foto",
+        "recordNote": "Grabar Nota",
+        "generateSummary": "Generar Resumen",
+        "generating": "Generando...",
+        "summaryTitle": "Hoy en Mi Vida",
+        "summaryPlaceholder": "Tu resumen aparecerá aquí."
+    },
+    "location": {
+        "title": "Ubicación y Navegación",
+        "description": "Mira tu ubicación, comprueba las zonas seguras y obtén indicaciones para volver a casa.",
+        "yourLocation": "Tu Ubicación",
+        "safeZone": "Estás en una Zona Segura",
+        "navigation": "Navegación",
+        "navDescription": "Acciones rápidas para ayudarte a desplazarte.",
+        "takeHome": "Llévame a Casa",
+        "guidedRoute": "Ruta Guiada",
+        "routeDescription": "Indicaciones paso a paso para llegar a casa.",
+        "editRoute": "Editar Ruta"
+    },
+    "reminders": {
+        "title": "Recordatorios Verbales",
+        "description": "Crea y escucha recordatorios verbales en tu idioma y voz preferidos.",
+        "createTitle": "Crear un Recordatorio",
+        "createDescription": "Escribe el texto de tu recordatorio a continuación y selecciona un idioma y voz para generar el audio.",
+        "languageLabel": "Idioma y Voz",
+        "selectPlaceholder": "Selecciona idioma y voz",
+        "textLabel": "Texto del Recordatorio",
+        "textPlaceholder": "p. ej., 'Recordar tomar la medicación a las 8 PM.'",
+        "generate": "Generar Recordatorio",
+        "generating": "Generando Audio...",
+        "generatedAudio": "Audio Generado"
+    },
+    "caregiver": {
+        "title": "Tablero del Cuidador",
+        "description": "Ve la ubicación y el estado de la persona que estás cuidando.",
+        "userLocation": "Ubicación del Usuario de Aura",
+        "sosAlert": "Alerta SOS Activada",
+        "locationDetails": "Detalles de Ubicación",
+        "locationDescription": "Información de la última ubicación conocida.",
+        "lastUpdated": "Última actualización:",
+        "latitude": "Latitud:",
+        "longitude": "Longitud:",
+        "noData": "No hay datos de ubicación disponibles.",
+        "loginPrompt": "Por favor, Inicia Sesión",
+        "loginDescription": "Necesitas iniciar sesión para ver el tablero del cuidador."
+    },
+    "settings": {
+        "title": "Ajustes",
+        "description": "Gestiona los ajustes de tu aplicación.",
+        "language": {
+            "title": "Idioma",
+            "description": "Elige tu idioma preferido para la aplicación y los recordatorios verbales.",
+            "label": "Idioma",
+            "selectPlaceholder": "Selecciona idioma"
+        }
+    },
+    "editProfile": {
+        "title": "Editar Perfil",
+        "description": "Haz cambios en tu perfil aquí. Haz clic en guardar cuando hayas terminado.",
+        "name": "Nombre",
+        "email": "Correo electrónico",
+        "avatar": "Avatar",
+        "save": "Guardar cambios"
+    }
+}

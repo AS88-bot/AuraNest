@@ -1,14 +1,17 @@
+'use client';
 import DailyPlanner from '@/components/dashboard/daily-planner';
+import { useLocale } from '@/hooks/use-locale';
 
 export default function Home() {
+  const { t } = useLocale();
   return (
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Today's Plan
+          {t('dashboard.title')}
         </h1>
         <p className="text-muted-foreground mt-2">
-          Here is your schedule for today. Tap the circle to mark items as complete.
+          {t('dashboard.description')}
         </p>
       </header>
       <DailyPlanner />

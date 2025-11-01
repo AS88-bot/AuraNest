@@ -11,6 +11,7 @@ import { doc } from 'firebase/firestore';
 import { useMemo, useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 import { Skeleton } from '../ui/skeleton';
+import { useLocale } from '@/hooks/use-locale';
 
 export default function CaregiverDashboard() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'map-placeholder');
@@ -18,6 +19,7 @@ export default function CaregiverDashboard() {
   const { user, isUserLoading } = useUser();
   const [timeSinceUpdate, setTimeSinceUpdate] = useState('');
   const [isClient, setIsClient] = useState(false);
+  const { t } = useLocale();
 
   useEffect(() => {
     setIsClient(true);
@@ -52,10 +54,10 @@ export default function CaregiverDashboard() {
     return (
         <Card className="shadow-lg">
             <CardHeader>
-                <CardTitle>Please Log In</CardTitle>
+                <CardTitle>{t('caregiver.loginPrompt')}</CardTitle>
             </CardHeader>
             <CardContent>
-                <p>You need to be logged in to view the caregiver dashboard.</p>
+                <p>{t('caregiver.loginDescription')}</p>
             </CardContent>
         </Card>
     )
@@ -67,10 +69,10 @@ export default function CaregiverDashboard() {
             <Card className="shadow-lg">
                 <CardHeader>
                     <div className="flex justify-between items-center">
-                        <CardTitle className="text-2xl">Aura User's Location</CardTitle>
+                        <CardTitle className="text-2xl">{t('caregiver.userLocation')}</CardTitle>
                         <Badge variant="destructive" className="text-md py-2 px-4">
                             <AlertTriangle className="mr-2 h-5 w-5" />
-                            SOS Alert Triggered
+                            {t('caregiver.sosAlert')}
                         </Badge>
                     </div>
                 </CardHeader>
@@ -101,8 +103,8 @@ export default function CaregiverDashboard() {
         <div className="space-y-8">
             <Card className="shadow-lg">
                 <CardHeader>
-                    <CardTitle className="text-2xl">Location Details</CardTitle>
-                    <CardDescription>Last known location information.</CardDescription>
+                    <CardTitle className="text-2xl">{t('caregiver.locationDetails')}</CardTitle>
+                    <CardDescription>{t('caregiver.locationDescription')}</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {isLoading && (
@@ -117,16 +119,16 @@ export default function CaregiverDashboard() {
                             <div className="flex items-center gap-3">
                                 <Clock className="h-6 w-6 text-muted-foreground" />
                                 {isClient && timeSinceUpdate ? (
-                                   <span>Last updated: <strong>{timeSinceUpdate}</strong></span>
+                                   <span>{t('caregiver.lastUpdated')} <strong>{timeSinceUpdate}</strong></span>
                                 ) : (
                                   <Skeleton className="h-6 w-32" />
                                 )}
                             </div>
-                            <p>Latitude: {locationData.latitude.toFixed(5)}</p>
-                            <p>Longitude: {locationData.longitude.toFixed(5)}</p>
+                            <p>{t('caregiver.latitude')} {locationData.latitude.toFixed(5)}</p>
+                            <p>{t('caregiver.longitude')} {locationData.longitude.toFixed(5)}</p>
                         </div>
                     )}
-                    {!isLoading && !locationData && <p>No location data available.</p>}
+                    {!isLoading && !locationData && <p>{t('caregiver.noData')}</p>}
                 </CardContent>
             </Card>
         </div>

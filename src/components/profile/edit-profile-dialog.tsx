@@ -17,6 +17,7 @@ import { Label } from '@/components/ui/label';
 import { User, Save } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useLocale } from '@/hooks/use-locale';
 
 interface EditProfileDialogProps {
   name: string;
@@ -35,6 +36,7 @@ export function EditProfileDialog({
   const [currentName, setCurrentName] = useState(name);
   const [currentEmail, setCurrentEmail] = useState(email);
   const [currentAvatar, setCurrentAvatar] = useState(avatar);
+  const { t } = useLocale();
 
   const handleSave = () => {
     onSave(currentName, currentEmail, currentAvatar);
@@ -48,20 +50,20 @@ export function EditProfileDialog({
       <DialogTrigger asChild>
         <DropdownMenuItem onSelect={(e) => e.preventDefault()}>
           <User className="mr-2 h-4 w-4" />
-          <span>Edit Profile</span>
+          <span>{t('userMenu.editProfile')}</span>
         </DropdownMenuItem>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
+          <DialogTitle>{t('editProfile.title')}</DialogTitle>
           <DialogDescription>
-            Make changes to your profile here. Click save when you're done.
+            {t('editProfile.description')}
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="name" className="text-right">
-              Name
+              {t('editProfile.name')}
             </Label>
             <Input
               id="name"
@@ -72,7 +74,7 @@ export function EditProfileDialog({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="email" className="text-right">
-              Email
+              {t('editProfile.email')}
             </Label>
             <Input
               id="email"
@@ -83,7 +85,7 @@ export function EditProfileDialog({
             />
           </div>
            <div className="grid grid-cols-4 items-start gap-4">
-            <Label className="text-right pt-2">Avatar</Label>
+            <Label className="text-right pt-2">{t('editProfile.avatar')}</Label>
             <div className="col-span-3">
                  <div className="flex items-center gap-4">
                     <Avatar className="h-16 w-16">
@@ -106,7 +108,7 @@ export function EditProfileDialog({
         <DialogFooter>
           <Button onClick={handleSave}>
             <Save className="mr-2" />
-            Save changes
+            {t('editProfile.save')}
           </Button>
         </DialogFooter>
       </DialogContent>

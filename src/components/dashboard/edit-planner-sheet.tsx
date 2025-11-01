@@ -15,30 +15,34 @@ import { FilePen, Save } from 'lucide-react';
 import { PlannerItem as PlannerItemType } from '@/lib/types';
 import EditPlannerItem from './edit-planner-item';
 import { Separator } from '../ui/separator';
+import { useLocale } from '@/hooks/use-locale';
 
 interface EditPlannerSheetProps {
   schedule: PlannerItemType[];
   onUpdate: (item: PlannerItemType) => void;
   onSave: () => void;
+  triggerText: string;
 }
 
 export function EditPlannerSheet({
   schedule,
   onUpdate,
   onSave,
+  triggerText,
 }: EditPlannerSheetProps) {
+  const { t } = useLocale();
   return (
     <Sheet>
       <SheetTrigger asChild>
         <Button>
-          <FilePen className="mr-2" /> Edit Plan
+          <FilePen className="mr-2" /> {triggerText}
         </Button>
       </SheetTrigger>
       <SheetContent className="w-[400px] sm:w-[540px] overflow-y-auto">
         <SheetHeader>
-          <SheetTitle>Edit Daily Plan</SheetTitle>
+          <SheetTitle>{t('dashboard.editTitle')}</SheetTitle>
           <SheetDescription>
-            Make changes to your daily schedule here. Click save when you're done.
+            {t('dashboard.editDescription')}
           </SheetDescription>
         </SheetHeader>
         <div className="space-y-6 py-6">
@@ -51,7 +55,7 @@ export function EditPlannerSheet({
         </div>
         <SheetFooter>
           <SheetClose asChild>
-            <Button onClick={onSave}><Save className="mr-2" />Save Changes</Button>
+            <Button onClick={onSave}><Save className="mr-2" />{t('dashboard.save')}</Button>
           </SheetClose>
         </SheetFooter>
       </SheetContent>
