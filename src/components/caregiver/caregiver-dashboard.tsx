@@ -8,12 +8,13 @@ import { AlertTriangle, Clock } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc } from 'firebase/firestore';
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
 
 export default function CaregiverDashboard() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'map-placeholder');
   const { firestore, user } = useFirebase();
+  const [timeSinceUpdate, setTimeSinceUpdate] = useState('N/A');
 
   // This assumes we are finding the location for a specific hardcoded user.
   // In a real app, you would have a way to determine which user the caregiver is looking for.
@@ -28,9 +29,12 @@ export default function CaregiverDashboard() {
 
   const { data: locationData, isLoading } = useDoc(emergencyLocationRef);
   
-  const timeSinceUpdate = locationData?.timestamp 
-    ? formatDistanceToNow(locationData.timestamp.toDate(), { addSuffix: true })
-    : 'N/A';
+  useEffect(() => {
+    if (locationData?.timestamp) {
+      setTimeSinceUpdate(formatDistanceToNow(locationData.timestamp.toDate(), { addSuffix: true }));
+    }
+  }, [locationData]);
+
 
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
@@ -93,4 +97,3 @@ export default function CaregiverDashboard() {
         </div>
     </div>
   );
-}
