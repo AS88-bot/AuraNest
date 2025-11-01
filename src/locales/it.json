@@ -9,9 +9,36 @@
         "caregiver": "Assistente",
         "settings": "Impostazioni"
     },
+    "userMenu": {
+        "editProfile": "Modifica profilo",
+        "logout": "Esci",
+        "anonymousUser": "Utente anonimo"
+    },
+    "sosButton": {
+        "ariaLabel": "SOS di emergenza",
+        "alertTitle": "Inviare un avviso di emergenza?",
+        "alertDescription": "Questo invierà immediatamente un avviso con la tua posizione attuale ai tuoi contatti di emergenza. Sei sicuro di voler procedere?",
+        "cancel": "Annulla",
+        "send": "Invia avviso",
+        "sentTitle": "Avviso di emergenza inviato",
+        "sentDescription": "La tua posizione è stata inviata ai tuoi contatti di emergenza.",
+        "errorTitle": "Impossibile inviare l'avviso",
+        "errorDescription": "Assicurati di aver effettuato l'accesso e che i servizi di localizzazione siano abilitati."
+    },
+    "voiceAssistant": {
+        "ariaLabel": "Comando vocale",
+        "listeningTitle": "In ascolto...",
+        "listeningDescription": "In cosa posso aiutarti?",
+        "placeholder": "ad es., \"Chiama Sarah\" o \"Aiutami\"",
+        "cancel": "Annulla"
+    },
     "dashboard": {
         "title": "Piano di oggi",
         "description": "Ecco il tuo programma per oggi. Tocca il cerchio per contrassegnare gli elementi come completati.",
+        "editPlan": "Modifica piano",
+        "editTitle": "Modifica piano giornaliero",
+        "editDescription": "Apporta modifiche al tuo programma giornaliero qui. Fai clic su Salva quando hai finito.",
+        "save": "Salva modifiche",
         "schedule": {
             "item1": { "title": "Medicinale del mattino", "description": "Prendere una pillola bianca con un bicchiere pieno d'acqua." },
             "item2": { "title": "Colazione", "description": "Fiocchi d'avena con frutti di bosco freschi e una tazza di tè." },
@@ -25,6 +52,12 @@
     "contacts": {
         "title": "Contatti",
         "description": "Le tue persone importanti. Tocca un pulsante per chiamare o videochattare.",
+        "editContacts": "Modifica contatti",
+        "editTitle": "Modifica contatti",
+        "editDescription": "Apporta modifiche ai tuoi contatti qui. Le modifiche vengono salvate automaticamente.",
+        "done": "Fatto",
+        "call": "Chiama",
+        "videoCall": "Videochiama",
         "relation": {
             "daughter": "Figlia",
             "doctor": "Dottore",
@@ -33,13 +66,73 @@
             "neighbor": "Vicino"
         }
     },
+    "journal": {
+        "title": "Diario della memoria",
+        "description": "Registra i tuoi pensieri, le tue foto o le tue note vocali della giornata. Quindi, visualizza un riepilogo della tua giornata.",
+        "formTitle": "A cosa stai pensando?",
+        "formPlaceholder": "Parlami della tua giornata...",
+        "addPhoto": "Aggiungi foto",
+        "recordNote": "Registra nota",
+        "generateSummary": "Genera riepilogo",
+        "generating": "Generazione in corso...",
+        "summaryTitle": "Oggi nella mia vita",
+        "summaryPlaceholder": "Il tuo riepilogo apparirà qui."
+    },
+    "location": {
+        "title": "Posizione e navigazione",
+        "description": "Visualizza la tua posizione, controlla le zone sicure e ottieni indicazioni per tornare a casa.",
+        "yourLocation": "La tua posizione",
+        "safeZone": "Sei in una zona sicura",
+        "navigation": "Navigazione",
+        "navDescription": "Azioni rapide per aiutarti a muoverti.",
+        "takeHome": "Portami a casa",
+        "guidedRoute": "Percorso guidato",
+        "routeDescription": "Indicazioni passo-passo per tornare a casa.",
+        "editRoute": "Modifica percorso"
+    },
+    "reminders": {
+        "title": "Promemoria verbali",
+        "description": "Crea e ascolta promemoria verbali nella tua lingua e voce preferite.",
+        "createTitle": "Crea un promemoria",
+        "createDescription": "Digita il testo del promemoria qui sotto e seleziona una lingua e una voce per generare l'audio.",
+        "languageLabel": "Lingua e voce",
+        "selectPlaceholder": "Seleziona lingua e voce",
+        "textLabel": "Testo del promemoria",
+        "textPlaceholder": "ad es., 'Ricorda di prendere la medicina alle 20:00.'",
+        "generate": "Genera promemoria",
+        "generating": "Generazione audio in corso...",
+        "generatedAudio": "Audio generato"
+    },
+    "caregiver": {
+        "title": "Cruscotto dell'assistente",
+        "description": "Visualizza la posizione e lo stato della persona che stai assistendo.",
+        "userLocation": "Posizione dell'utente Aura",
+        "sosAlert": "Avviso SOS attivato",
+        "locationDetails": "Dettagli sulla posizione",
+        "locationDescription": "Informazioni sull'ultima posizione nota.",
+        "lastUpdated": "Ultimo aggiornamento:",
+        "latitude": "Latitudine:",
+        "longitude": "Longitudine:",
+        "noData": "Nessun dato sulla posizione disponibile.",
+        "loginPrompt": "Effettua l'accesso",
+        "loginDescription": "Devi effettuare l'accesso per visualizzare il cruscotto dell'assistente."
+    },
     "settings": {
         "title": "Impostazioni",
         "description": "Gestisci le impostazioni della tua applicazione.",
         "language": {
             "title": "Lingua",
             "description": "Scegli la tua lingua preferita per l'applicazione e i promemoria verbali.",
-            "label": "Lingua"
+            "label": "Lingua",
+            "selectPlaceholder": "Seleziona lingua"
         }
+    },
+    "editProfile": {
+        "title": "Modifica profilo",
+        "description": "Apporta modifiche al tuo profilo qui. Fai clic su Salva quando hai finito.",
+        "name": "Nome",
+        "email": "Email",
+        "avatar": "Avatar",
+        "save": "Salva modifiche"
     }
 }

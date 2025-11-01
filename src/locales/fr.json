@@ -9,9 +9,36 @@
         "caregiver": "Aidant",
         "settings": "Paramètres"
     },
+    "userMenu": {
+        "editProfile": "Modifier le profil",
+        "logout": "Se déconnecter",
+        "anonymousUser": "Utilisateur anonyme"
+    },
+    "sosButton": {
+        "ariaLabel": "SOS d'urgence",
+        "alertTitle": "Envoyer une alerte d'urgence ?",
+        "alertDescription": "Cela enverra immédiatement une alerte avec votre position actuelle à vos contacts d'urgence. Êtes-vous sûr de vouloir continuer ?",
+        "cancel": "Annuler",
+        "send": "Envoyer l'alerte",
+        "sentTitle": "Alerte d'urgence envoyée",
+        "sentDescription": "Votre position a été envoyée à vos contacts d'urgence.",
+        "errorTitle": "Impossible d'envoyer l'alerte",
+        "errorDescription": "Veuillez vous assurer que vous êtes connecté et que les services de localisation sont activés."
+    },
+    "voiceAssistant": {
+        "ariaLabel": "Commande vocale",
+        "listeningTitle": "Écoute...",
+        "listeningDescription": "Que puis-je faire pour vous ?",
+        "placeholder": "par ex., « Appelle Sarah » ou « Aide-moi »",
+        "cancel": "Annuler"
+    },
     "dashboard": {
         "title": "Plan d'aujourd'hui",
         "description": "Voici votre programme pour aujourd'hui. Appuyez sur le cercle pour marquer les éléments comme terminés.",
+        "editPlan": "Modifier le plan",
+        "editTitle": "Modifier le plan quotidien",
+        "editDescription": "Apportez des modifications à votre programme quotidien ici. Cliquez sur Enregistrer lorsque vous avez terminé.",
+        "save": "Enregistrer les modifications",
         "schedule": {
             "item1": { "title": "Médicament du matin", "description": "Prendre un comprimé blanc avec un grand verre d'eau." },
             "item2": { "title": "Petit déjeuner", "description": "Flocons d'avoine avec des baies fraîches et une tasse de thé." },
@@ -25,6 +52,12 @@
     "contacts": {
         "title": "Contacts",
         "description": "Vos personnes importantes. Appuyez sur un bouton pour appeler ou discuter en vidéo.",
+        "editContacts": "Modifier les contacts",
+        "editTitle": "Modifier les contacts",
+        "editDescription": "Apportez des modifications à vos contacts ici. Les modifications sont enregistrées automatiquement.",
+        "done": "Terminé",
+        "call": "Appeler",
+        "videoCall": "Appel vidéo",
         "relation": {
             "daughter": "Fille",
             "doctor": "Docteur",
@@ -33,13 +66,73 @@
             "neighbor": "Voisin"
         }
     },
+    "journal": {
+        "title": "Journal de mémoire",
+        "description": "Enregistrez vos pensées, photos ou notes vocales de la journée. Ensuite, consultez un résumé de votre journée.",
+        "formTitle": "À quoi pensez-vous ?",
+        "formPlaceholder": "Parlez-moi de votre journée...",
+        "addPhoto": "Ajouter une photo",
+        "recordNote": "Enregistrer une note",
+        "generateSummary": "Générer un résumé",
+        "generating": "Génération en cours...",
+        "summaryTitle": "Aujourd'hui dans ma vie",
+        "summaryPlaceholder": "Votre résumé apparaîtra ici."
+    },
+    "location": {
+        "title": "Localisation & Navigation",
+        "description": "Consultez votre position, vérifiez les zones de sécurité et obtenez l'itinéraire pour rentrer chez vous.",
+        "yourLocation": "Votre position",
+        "safeZone": "Vous êtes dans une zone de sécurité",
+        "navigation": "Navigation",
+        "navDescription": "Actions rapides pour vous aider à vous déplacer.",
+        "takeHome": "Ramenez-moi à la maison",
+        "guidedRoute": "Itinéraire guidé",
+        "routeDescription": "Itinéraire détaillé pour rentrer à la maison.",
+        "editRoute": "Modifier l'itinéraire"
+    },
+    "reminders": {
+        "title": "Rappels verbaux",
+        "description": "Créez et écoutez des rappels verbaux dans votre langue et votre voix préférées.",
+        "createTitle": "Créer un rappel",
+        "createDescription": "Saisissez le texte de votre rappel ci-dessous et sélectionnez une langue et une voix pour générer l'audio.",
+        "languageLabel": "Langue et voix",
+        "selectPlaceholder": "Sélectionner la langue et la voix",
+        "textLabel": "Texte du rappel",
+        "textPlaceholder": "par ex., « N'oubliez pas de prendre vos médicaments à 20h. »",
+        "generate": "Générer un rappel",
+        "generating": "Génération de l'audio...",
+        "generatedAudio": "Audio généré"
+    },
+    "caregiver": {
+        "title": "Tableau de bord de l'aidant",
+        "description": "Affichez la position et l'état de la personne dont vous vous occupez.",
+        "userLocation": "Position de l'utilisateur Aura",
+        "sosAlert": "Alerte SOS déclenchée",
+        "locationDetails": "Détails de la position",
+        "locationDescription": "Dernières informations de position connues.",
+        "lastUpdated": "Dernière mise à jour :",
+        "latitude": "Latitude :",
+        "longitude": "Longitude :",
+        "noData": "Aucune donnée de position disponible.",
+        "loginPrompt": "Veuillez vous connecter",
+        "loginDescription": "Vous devez être connecté pour afficher le tableau de bord de l'aidant."
+    },
     "settings": {
         "title": "Paramètres",
         "description": "Gérez les paramètres de votre application.",
         "language": {
             "title": "Langue",
             "description": "Choisissez votre langue préférée pour l'application et les rappels verbaux.",
-            "label": "Langue"
+            "label": "Langue",
+            "selectPlaceholder": "Sélectionner la langue"
         }
+    },
+    "editProfile": {
+        "title": "Modifier le profil",
+        "description": "Apportez des modifications à votre profil ici. Cliquez sur Enregistrer lorsque vous avez terminé.",
+        "name": "Nom",
+        "email": "E-mail",
+        "avatar": "Avatar",
+        "save": "Enregistrer les modifications"
     }
 }

@@ -9,9 +9,36 @@
         "caregiver": "Betreuer",
         "settings": "Einstellungen"
     },
+    "userMenu": {
+        "editProfile": "Profil bearbeiten",
+        "logout": "Ausloggen",
+        "anonymousUser": "Anonymer Benutzer"
+    },
+    "sosButton": {
+        "ariaLabel": "Notfall-SOS",
+        "alertTitle": "Notfall-Alarm senden?",
+        "alertDescription": "Dadurch wird sofort eine Benachrichtigung mit Ihrem aktuellen Standort an Ihre Notfallkontakte gesendet. Sind Sie sicher, dass Sie fortfahren möchten?",
+        "cancel": "Abbrechen",
+        "send": "Alarm senden",
+        "sentTitle": "Notfall-Alarm gesendet",
+        "sentDescription": "Ihr Standort wurde an Ihre Notfallkontakte gesendet.",
+        "errorTitle": "Alarm konnte nicht gesendet werden",
+        "errorDescription": "Bitte stellen Sie sicher, dass Sie angemeldet sind und die Ortungsdienste aktiviert haben."
+    },
+    "voiceAssistant": {
+        "ariaLabel": "Sprachbefehl",
+        "listeningTitle": "Hören...",
+        "listeningDescription": "Wie kann ich Ihnen helfen?",
+        "placeholder": "z.B. „Sarah anrufen“ oder „Hilf mir“",
+        "cancel": "Abbrechen"
+    },
     "dashboard": {
         "title": "Heutiger Plan",
         "description": "Hier ist Ihr Zeitplan für heute. Tippen Sie auf den Kreis, um Elemente als erledigt zu markieren.",
+        "editPlan": "Plan bearbeiten",
+        "editTitle": "Tagesplan bearbeiten",
+        "editDescription": "Nehmen Sie hier Änderungen an Ihrem Tagesablauf vor. Klicken Sie auf „Speichern“, wenn Sie fertig sind.",
+        "save": "Änderungen speichern",
         "schedule": {
             "item1": { "title": "Morgenmedikation", "description": "Nehmen Sie eine weiße Pille mit einem vollen Glas Wasser." },
             "item2": { "title": "Frühstück", "description": "Haferflocken mit frischen Beeren und einer Tasse Tee." },
@@ -25,6 +52,12 @@
     "contacts": {
         "title": "Kontakte",
         "description": "Ihre wichtigen Personen. Tippen Sie auf eine Schaltfläche, um anzurufen oder einen Video-Chat zu führen.",
+        "editContacts": "Kontakte bearbeiten",
+        "editTitle": "Kontakte bearbeiten",
+        "editDescription": "Nehmen Sie hier Änderungen an Ihren Kontakten vor. Änderungen werden automatisch gespeichert.",
+        "done": "Fertig",
+        "call": "Anrufen",
+        "videoCall": "Videoanruf",
         "relation": {
             "daughter": "Tochter",
             "doctor": "Arzt",
@@ -33,13 +66,73 @@
             "neighbor": "Nachbar"
         }
     },
+    "journal": {
+        "title": "Gedächtnis-Tagebuch",
+        "description": "Zeichnen Sie Ihre Gedanken, Fotos oder Sprachnotizen des Tages auf. Sehen Sie sich dann eine Zusammenfassung Ihres Tages an.",
+        "formTitle": "Was geht Ihnen durch den Kopf?",
+        "formPlaceholder": "Erzählen Sie mir von Ihrem Tag...",
+        "addPhoto": "Foto hinzufügen",
+        "recordNote": "Notiz aufnehmen",
+        "generateSummary": "Zusammenfassung erstellen",
+        "generating": "Wird erstellt...",
+        "summaryTitle": "Heute in meinem Leben",
+        "summaryPlaceholder": "Ihre Zusammenfassung wird hier angezeigt."
+    },
+    "location": {
+        "title": "Standort & Navigation",
+        "description": "Sehen Sie Ihren Standort, überprüfen Sie sichere Zonen und erhalten Sie eine Wegbeschreibung nach Hause.",
+        "yourLocation": "Ihr Standort",
+        "safeZone": "Sie befinden sich in einer sicheren Zone",
+        "navigation": "Navigation",
+        "navDescription": "Schnelle Aktionen, die Ihnen helfen, sich zurechtzufinden.",
+        "takeHome": "Bring mich nach Hause",
+        "guidedRoute": "Geführte Route",
+        "routeDescription": "Schritt-für-Schritt-Anleitung nach Hause.",
+        "editRoute": "Route bearbeiten"
+    },
+    "reminders": {
+        "title": "Mündliche Erinnerungen",
+        "description": "Erstellen und hören Sie mündliche Erinnerungen in Ihrer bevorzugten Sprache und Stimme.",
+        "createTitle": "Erinnerung erstellen",
+        "createDescription": "Geben Sie unten Ihren Erinnerungstext ein und wählen Sie eine Sprache und Stimme aus, um die Audiodatei zu erstellen.",
+        "languageLabel": "Sprache & Stimme",
+        "selectPlaceholder": "Sprache & Stimme auswählen",
+        "textLabel": "Erinnerungstext",
+        "textPlaceholder": "z.B. „Denken Sie daran, die Medikamente um 20 Uhr einzunehmen.“",
+        "generate": "Erinnerung erstellen",
+        "generating": "Audio wird erstellt...",
+        "generatedAudio": "Erstelltes Audio"
+    },
+    "caregiver": {
+        "title": "Betreuer-Dashboard",
+        "description": "Sehen Sie den Standort und den Status der Person, die Sie betreuen.",
+        "userLocation": "Standort des Aura-Benutzers",
+        "sosAlert": "SOS-Alarm ausgelöst",
+        "locationDetails": "Standortdetails",
+        "locationDescription": "Letzte bekannte Standortinformationen.",
+        "lastUpdated": "Zuletzt aktualisiert:",
+        "latitude": "Breitengrad:",
+        "longitude": "Längengrad:",
+        "noData": "Keine Standortdaten verfügbar.",
+        "loginPrompt": "Bitte einloggen",
+        "loginDescription": "Sie müssen eingeloggt sein, um das Betreuer-Dashboard anzuzeigen."
+    },
     "settings": {
         "title": "Einstellungen",
         "description": "Verwalten Sie Ihre Anwendungseinstellungen.",
         "language": {
             "title": "Sprache",
             "description": "Wählen Sie Ihre bevorzugte Sprache für die Anwendung und die mündlichen Erinnerungen.",
-            "label": "Sprache"
+            "label": "Sprache",
+            "selectPlaceholder": "Sprache auswählen"
         }
+    },
+    "editProfile": {
+        "title": "Profil bearbeiten",
+        "description": "Nehmen Sie hier Änderungen an Ihrem Profil vor. Klicken Sie auf „Speichern“, wenn Sie fertig sind.",
+        "name": "Name",
+        "email": "Email",
+        "avatar": "Avatar",
+        "save": "Änderungen speichern"
     }
 }
