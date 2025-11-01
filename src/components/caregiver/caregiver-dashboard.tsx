@@ -5,15 +5,17 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { AlertTriangle, Clock } from 'lucide-react';
-import { useFirebase } from '@/firebase';
+import { useFirebase, useUser } from '@/firebase';
 import { useDoc } from '@/firebase/firestore/use-doc';
 import { doc } from 'firebase/firestore';
 import { useMemo, useState, useEffect } from 'react';
 import { formatDistanceToNow } from 'date-fns';
+import { Skeleton } from '../ui/skeleton';
 
 export default function CaregiverDashboard() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'map-placeholder');
   const { firestore } = useFirebase();
+  const { user, isUserLoading } = useUser();
   const [timeSinceUpdate, setTimeSinceUpdate] = useState('');
   const [isClient, setIsClient] = useState(false);
 
@@ -26,13 +28,12 @@ export default function CaregiverDashboard() {
   const caredForUserId = 'test-user-id'; 
 
   const emergencyLocationRef = useMemo(() => {
-    if (!firestore) return null;
-    // In a real app, we would only construct this ref if the current user is an authorized caregiver.
-    // For now, we allow reading for demonstration.
+    // Only create the reference if we have a logged-in user and firestore instance
+    if (!firestore || !user) return null;
     return doc(firestore, `users/${caredForUserId}/emergencyLocation`, 'latest');
-  }, [firestore]);
+  }, [firestore, user]);
 
-  const { data: locationData, isLoading } = useDoc(emergencyLocationRef);
+  const { data: locationData, isLoading: isLocationLoading } = useDoc(emergencyLocationRef);
   
   useEffect(() => {
     if (locationData?.timestamp && typeof locationData.timestamp.toDate === 'function') {
@@ -44,6 +45,21 @@ export default function CaregiverDashboard() {
       return () => clearInterval(interval);
     }
   }, [locationData]);
+
+  const isLoading = isUserLoading || isLocationLoading;
+
+  if (!user && !isUserLoading) {
+    return (
+        <Card className="shadow-lg">
+            <CardHeader>
+                <CardTitle>Please Log In</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <p>You need to be logged in to view the caregiver dashboard.</p>
+            </CardContent>
+        </Card>
+    )
+  }
 
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
@@ -89,15 +105,21 @@ export default function CaregiverDashboard() {
                     <CardDescription>Last known location information.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                    {isLoading && <p>Loading location...</p>}
+                    {isLoading && (
+                        <div className="space-y-2">
+                            <Skeleton className="h-6 w-3/4" />
+                            <Skeleton className="h-5 w-1/2" />
+                            <Skeleton className="h-5 w-1/2" />
+                        </div>
+                    )}
                     {!isLoading && locationData && (
                          <div className="space-y-2 text-lg">
                             <div className="flex items-center gap-3">
                                 <Clock className="h-6 w-6 text-muted-foreground" />
-                                {isClient ? (
+                                {isClient && timeSinceUpdate ? (
                                    <span>Last updated: <strong>{timeSinceUpdate}</strong></span>
                                 ) : (
-                                  <span>Loading update time...</span>
+                                  <Skeleton className="h-6 w-32" />
                                 )}
                             </div>
                             <p>Latitude: {locationData.latitude.toFixed(5)}</p>

@@ -12,11 +12,12 @@ import { SidebarNav } from './sidebar-nav';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { BrainCircuit, LogOut, User } from 'lucide-react';
+import { BrainCircuit, LogOut, User, LogIn } from 'lucide-react';
 import { SOSButton } from '../sos-button';
 import { VoiceAssistant } from '../voice-assistant';
 import { EditProfileDialog } from '../profile/edit-profile-dialog';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useUser, useFirebase, initiateAnonymousSignIn } from '@/firebase';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const defaultUserImage = PlaceHolderImages.find(p => p.id === 'user-avatar');
@@ -24,15 +25,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const [userEmail, setUserEmail] = useState('user@auranest.com');
     const [userAvatar, setUserAvatar] = useState(defaultUserImage?.imageUrl || "https://picsum.photos/seed/user/100/100");
     const [isClient, setIsClient] = useState(false);
+    const { user, isUserLoading } = useUser();
+    const { auth } = useFirebase();
 
     useEffect(() => {
       setIsClient(true);
     }, []);
-
-    if (!isClient) {
-      // Render nothing on the server to avoid hydration mismatches
-      return null;
-    }
 
   return (
     <SidebarProvider>
@@ -58,6 +56,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-4">
                 {isClient && <VoiceAssistant />}
                 <SOSButton />
+                {!user && !isUserLoading && (
+                  <Button onClick={() => initiateAnonymousSignIn(auth)}>
+                    <LogIn className="mr-2 h-4 w-4" />
+                    Log In
+                  </Button>
+                )}
+                {user && (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                     <Button
@@ -65,37 +70,38 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         className="relative h-12 w-12 rounded-full"
                     >
                         <Avatar className="h-12 w-12">
-                            <AvatarImage src={userAvatar} alt={userName} />
-                            <AvatarFallback>{userName.charAt(0)}</AvatarFallback>
+                            <AvatarImage src={user.photoURL || userAvatar} alt={user.displayName || userName} />
+                            <AvatarFallback>{(user.displayName || userName).charAt(0)}</AvatarFallback>
                         </Avatar>
                     </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">{userName}</p>
+                        <p className="text-sm font-medium leading-none">{user.displayName || userName}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            {userEmail}
+                            {user.email || 'Anonymous User'}
                         </p>
                         </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <EditProfileDialog
-                      name={userName}
-                      email={userEmail}
-                      avatar={userAvatar}
+                      name={user.displayName || userName}
+                      email={user.email || userEmail}
+                      avatar={user.photoURL || userAvatar}
                       onSave={(newName, newEmail, newAvatar) => {
                         setUserName(newName);
                         setUserEmail(newEmail);
                         setUserAvatar(newAvatar);
                       }}
                     />
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => auth.signOut()}>
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Log out</span>
                     </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
+                )}
             </div>
         </header>
         <main>{children}</main>
