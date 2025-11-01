@@ -48,10 +48,10 @@ export default function RemindersPage() {
     setIsLoading(true);
     setAudioSrc(null);
     try {
-      const result = await textToSpeech({ 
-        text: reminderText, 
+      const result = await textToSpeech({
+        text: reminderText,
         voice: selectedVoice.value,
-        languageCode: selectedVoice.lang
+        languageCode: selectedVoice.lang,
       });
       setAudioSrc(result.audio);
     } catch (error) {
