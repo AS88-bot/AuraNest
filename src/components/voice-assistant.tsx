@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef }from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -10,11 +10,82 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Mic, MicOff, Phone } from 'lucide-react';
+import { Mic, MicOff } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { sendEmergencyAlert } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { contacts } from '@/lib/data';
+import type { User } from 'firebase/auth';
+import type { Firestore } from 'firebase/firestore';
+
+
+// This function is moved outside the component to prevent it from capturing a stale `user` state.
+const handleCommand = (
+  command: string, 
+  setFeedback: (feedback: string) => void,
+  stopListening: () => void,
+  firestore: Firestore | null, 
+  user: User | null,
+  toast: (options: any) => void
+) => {
+  let actionTaken = false;
+  setFeedback(`I heard: "${command}"`);
+
+  // Emergency commands
+  if (command.includes('help') || command.includes('emergency') || command.includes('sos')) {
+    setFeedback('Sending emergency alert...');
+    if (firestore && user) {
+        sendEmergencyAlert(firestore, user);
+        toast({
+            title: 'Emergency Alert Sent',
+            description: 'Your location has been sent to your emergency contacts.',
+            variant: 'destructive',
+        });
+    } else {
+      toast({
+          title: 'Could Not Send Alert',
+          description: 'Please log in to send an alert.',
+          variant: 'destructive',
+      });
+    }
+    actionTaken = true;
+  }
+  // Navigation commands
+  else if (command.includes('go to') || command.includes('show me') || command.includes('open')) {
+    const targets = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
+    const target = targets.find(t => command.includes(t));
+    if (target) {
+      setFeedback(`Navigating to ${target}...`);
+      window.location.href = `/${target === 'dashboard' ? '' : target}`;
+      actionTaken = true;
+    }
+  }
+  // Calling commands
+  else if (command.startsWith('call')) {
+    const contactName = command.replace('call ', '').trim();
+    const contactToCall = contacts.find(c => c.name.toLowerCase() === contactName);
+    if (contactToCall && contactToCall.phone) {
+      setFeedback(`Calling ${contactToCall.name}...`);
+      window.location.href = `tel:${contactToCall.phone}`;
+      actionTaken = true;
+    } else {
+      setFeedback(`Sorry, I couldn't find a contact named ${contactName}.`);
+    }
+  }
+  // Reminder commands
+  else if (command.startsWith('remind me') || command.startsWith('set a reminder')) {
+    setFeedback('Opening reminders...');
+    window.location.href = '/reminders';
+    actionTaken = true;
+  }
+
+  if (actionTaken) {
+    setTimeout(() => stopListening(), 2000);
+  } else {
+     setFeedback('Sorry, I didn\'t understand that. Please try again.');
+  }
+};
+
 
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
@@ -39,7 +110,8 @@ export function VoiceAssistant() {
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim().toLowerCase();
         setTranscript(currentTranscript);
-        handleCommand(currentTranscript);
+        // We pass the current user and firestore instances directly to the handler
+        handleCommand(currentTranscript, setFeedback, stopListening, firestore, user, toast);
       };
 
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -71,7 +143,6 @@ export function VoiceAssistant() {
       });
     }
 
-    // Cleanup function
     return () => {
       if (recognitionRef.current) {
         recognitionRef.current.onresult = null;
@@ -81,72 +152,9 @@ export function VoiceAssistant() {
         recognitionRef.current = null;
       }
     };
-  }, [toast]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [firestore, user, toast]); // Add firestore, user, and toast to deps
 
-  const handleCommand = (command: string) => {
-    let actionTaken = false;
-    setFeedback(`I heard: "${command}"`);
-
-    // Emergency commands
-    if (command.includes('help') || command.includes('emergency') || command.includes('sos')) {
-      setFeedback('Sending emergency alert...');
-      if (firestore && user) {
-          sendEmergencyAlert(firestore, user);
-          toast({
-              title: 'Emergency Alert Sent',
-              description: 'Your location has been sent to your emergency contacts.',
-              variant: 'destructive',
-          });
-      } else {
-        toast({
-            title: 'Could Not Send Alert',
-            description: 'Please log in to send an alert.',
-            variant: 'destructive',
-        });
-      }
-      actionTaken = true;
-    }
-    // Navigation commands
-    else if (command.includes('go to') || command.includes('show me') || command.includes('open')) {
-      const targets = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
-      const target = targets.find(t => command.includes(t));
-      if (target) {
-        setFeedback(`Navigating to ${target}...`);
-        window.location.href = `/${target === 'dashboard' ? '' : target}`;
-        actionTaken = true;
-      }
-    }
-    // Calling commands
-    else if (command.startsWith('call')) {
-      const contactName = command.replace('call ', '').trim();
-      const contactToCall = contacts.find(c => c.name.toLowerCase() === contactName);
-      if (contactToCall && contactToCall.phone) {
-        setFeedback(`Calling ${contactToCall.name}...`);
-        window.location.href = `tel:${contactToCall.phone}`;
-        actionTaken = true;
-      } else {
-        setFeedback(`Sorry, I couldn't find a contact named ${contactName}.`);
-      }
-    }
-    // Reminder commands
-    else if (command.startsWith('remind me') || command.startsWith('set a reminder')) {
-      setFeedback('Opening reminders...');
-      window.location.href = '/reminders';
-      actionTaken = true;
-    }
-
-
-    if (actionTaken) {
-      setTimeout(() => stopListening(), 2000);
-    } else {
-      setTimeout(() => {
-        if (isListening) { // Only clear if still in a listening state
-          setFeedback('Sorry, I didn\'t understand that. Please try again.');
-        }
-      }, 1500);
-    }
-  };
-  
   const startListening = () => {
     if (recognitionRef.current) {
       setTranscript('');
@@ -169,7 +177,7 @@ export function VoiceAssistant() {
   }
   
   const stopListening = () => {
-     if (recognitionRef.current) {
+     if (recognitionRef.current && isListening) {
       recognitionRef.current.stop();
     }
     setIsListening(false);
@@ -187,7 +195,7 @@ export function VoiceAssistant() {
     return null; 
   }
   
-  if (!recognitionRef.current && isMounted) {
+  if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
      return (
       <Button variant="outline" size="lg" className="h-16 w-16 rounded-full shadow-lg" disabled>
         <MicOff className="h-8 w-8" />
