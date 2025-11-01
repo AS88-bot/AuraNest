@@ -14,7 +14,12 @@ import { formatDistanceToNow } from 'date-fns';
 export default function CaregiverDashboard() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'map-placeholder');
   const { firestore } = useFirebase();
-  const [timeSinceUpdate, setTimeSinceUpdate] = useState('N/A');
+  const [timeSinceUpdate, setTimeSinceUpdate] = useState('');
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   // This assumes we are finding the location for a specific hardcoded user.
   // In a real app, you would have a way to determine which user the caregiver is looking for.
@@ -40,6 +45,9 @@ export default function CaregiverDashboard() {
     }
   }, [locationData]);
 
+  if (!isClient) {
+    return null;
+  }
 
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
@@ -86,7 +94,7 @@ export default function CaregiverDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {isLoading && <p>Loading location...</p>}
-                    {locationData && (
+                    {!isLoading && locationData && timeSinceUpdate && (
                          <div className="space-y-2 text-lg">
                             <div className="flex items-center gap-3">
                                 <Clock className="h-6 w-6 text-muted-foreground" />

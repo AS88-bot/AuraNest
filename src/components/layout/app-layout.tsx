@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   SidebarProvider,
   Sidebar,
@@ -23,6 +23,12 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const [userName, setUserName] = useState('Aura User');
     const [userEmail, setUserEmail] = useState('user@auranest.com');
     const [userAvatar, setUserAvatar] = useState(defaultUserImage?.imageUrl || "https://picsum.photos/seed/user/100/100");
+    const [isClient, setIsClient] = useState(false);
+
+    useEffect(() => {
+      setIsClient(true);
+    }, []);
+
 
   return (
     <SidebarProvider>
@@ -46,7 +52,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
              <div className="flex-1" />
             <div className="flex items-center gap-4">
-                <VoiceAssistant />
+                {isClient && <VoiceAssistant />}
                 <SOSButton />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
