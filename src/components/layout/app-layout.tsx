@@ -1,4 +1,5 @@
-import React from 'react';
+'use client';
+import React, { useState } from 'react';
 import {
   SidebarProvider,
   Sidebar,
@@ -14,8 +15,15 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { BrainCircuit, LogOut, User } from 'lucide-react';
 import { SOSButton } from '../sos-button';
 import { VoiceAssistant } from '../voice-assistant';
+import { EditProfileDialog } from '../profile/edit-profile-dialog';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
+    const defaultUserImage = PlaceHolderImages.find(p => p.id === 'user-avatar');
+    const [userName, setUserName] = useState('Aura User');
+    const [userEmail, setUserEmail] = useState('user@auranest.com');
+    const [userAvatar, setUserAvatar] = useState(defaultUserImage?.imageUrl || "https://picsum.photos/seed/user/100/100");
+
   return (
     <SidebarProvider>
       <Sidebar variant="inset" collapsible="icon">
@@ -47,25 +55,31 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         className="relative h-12 w-12 rounded-full"
                     >
                         <Avatar className="h-12 w-12">
-                            <AvatarImage src="https://picsum.photos/seed/user/100/100" alt="User" />
-                            <AvatarFallback>U</AvatarFallback>
+                            <AvatarImage src={userAvatar} alt={userName} />
+                            <AvatarFallback>{userName.charAt(0)}</AvatarFallback>
                         </Avatar>
                     </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="end" forceMount>
                     <DropdownMenuLabel className="font-normal">
                         <div className="flex flex-col space-y-1">
-                        <p className="text-sm font-medium leading-none">Aura User</p>
+                        <p className="text-sm font-medium leading-none">{userName}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            user@auranest.com
+                            {userEmail}
                         </p>
                         </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                    </DropdownMenuItem>
+                    <EditProfileDialog
+                      name={userName}
+                      email={userEmail}
+                      avatar={userAvatar}
+                      onSave={(newName, newEmail, newAvatar) => {
+                        setUserName(newName);
+                        setUserEmail(newEmail);
+                        setUserAvatar(newAvatar);
+                      }}
+                    />
                     <DropdownMenuItem>
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>Log out</span>
