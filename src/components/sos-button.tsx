@@ -23,13 +23,15 @@ export function SOSButton() {
       navigator.geolocation.getCurrentPosition(
         (position) => {
           const { latitude, longitude } = position.coords;
+          // In a real app, this would be fetched from the user's profile or contacts list.
+          const mockEmergencyContactIds = ['contact1-uid', 'contact2-uid'];
+          
           const locationData = {
             userId: user.uid,
             latitude,
             longitude,
             timestamp: serverTimestamp(),
-            // This would be populated with actual caregiver UIDs
-            caregiverIds: ['caregiver1-uid', 'caregiver2-uid'], 
+            emergencyContactIds: mockEmergencyContactIds, 
           };
           
           // We use a fixed document ID 'latest' to always store the last known location.
@@ -78,5 +80,3 @@ export function SOSButton() {
     </AlertDialog>
   );
 }
-
-    

@@ -13,18 +13,22 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
     
-    function isCaregiver(userId) {
-      // Allow if the user is a caregiver for the given userId
-      return isSignedIn() && get(/databases/$(database)/documents/users/$(userId)).data.caregiverIds.hasAny([request.auth.uid]);
+    function isEmergencyContact(userId) {
+      // Allow if the requesting user is in the target user's list of emergency contacts.
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(userId)).data.emergencyContactIds.hasAny([request.auth.uid]);
     }
     
-    function isAuthorizedCaregiverForLocation(userId) {
+    function isAuthorizedForLocation(userId) {
+        // This checks the denormalized list of IDs on the location document itself.
         let locationData = get(/databases/$(database)/documents/users/$(userId)/emergencyLocation/latest).data;
-        return isSignedIn() && locationData.caregiverIds.hasAny([request.auth.uid]);
+        return isSignedIn() && locationData.emergencyContactIds.hasAny([request.auth.uid]);
     }
 
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      // A user can read their own profile, and their emergency contacts can also read it.
+      allow get: if isOwner(userId) || isEmergencyContact(userId);
+      // Only the user can write to their own profile.
+      allow write: if isOwner(userId);
 
       match /caregivers/{caregiverId} {
         allow read, write: if isOwner(userId);
@@ -42,6 +46,7 @@ service cloud.firestore {
         allow read, write: if isOwner(userId);
       }
       match /emergencyContacts/{emergencyContactId} {
+        // User can manage their own contacts. An emergency contact can read their own entry.
         allow read, write: if isOwner(userId);
       }
       match /moodEntries/{moodEntryId} {
@@ -49,9 +54,10 @@ service cloud.firestore {
       }
       
       match /emergencyLocation/{locationId} {
+        // Only the user can create or update their location.
         allow create, update: if isOwner(userId);
-        // A caregiver can only read the location
-        allow get: if isOwner(userId) || isAuthorizedCaregiverForLocation(userId);
+        // The user or an authorized emergency contact can read the location.
+        allow get: if isOwner(userId) || isAuthorizedForLocation(userId);
         allow list: if isOwner(userId);
       }
     }

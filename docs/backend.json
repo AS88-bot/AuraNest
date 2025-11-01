@@ -24,9 +24,9 @@
           "description": "URL to the user's profile picture.",
           "format": "uri"
         },
-        "caregiverIds": {
+        "emergencyContactIds": {
           "type": "array",
-          "description": "References to Caregivers. (Relationship: User 1:N Caregiver)",
+          "description": "References to Emergency Contacts who are also users.",
           "items": {
             "type": "string"
           }
@@ -227,12 +227,12 @@
           "description": "The time the location was recorded.",
           "format": "date-time"
         },
-        "caregiverIds": {
+        "emergencyContactIds": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "A list of caregiver UIDs who are authorized to view this location data."
+          "description": "A list of emergency contact UIDs who are authorized to view this location data."
         }
       },
       "required": [
@@ -291,7 +291,7 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "Unique identifier for the EmergencyContact entity."
+          "description": "Unique identifier for the EmergencyContact entity. Should be the user's UID if they are an app user."
         },
         "userId": {
           "type": "string",
@@ -412,9 +412,7 @@
       "schema": {
         "$ref": "#/backend/entities/Location"
       },
-      "description": "Stores the user's location data for emergency access by caregivers. Includes a denormalized 'caregiverIds' array for authorization."
+      "description": "Stores the user's location data for emergency access by authorized contacts. Includes a denormalized 'emergencyContactIds' array for authorization."
     }
   }
 }
-
-    
