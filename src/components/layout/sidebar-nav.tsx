@@ -9,6 +9,8 @@ import {
   Users,
   BookHeart,
   Map,
+  Settings,
+  Bell,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -19,6 +21,8 @@ const menuItems = [
   { href: '/contacts', label: 'Contacts', icon: Users },
   { href: '/journal', label: 'Journal', icon: BookHeart },
   { href: '/location', label: 'Location', icon: Map },
+  { href: '/reminders', label: 'Reminders', icon: Bell },
+  { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
 export function SidebarNav() {
