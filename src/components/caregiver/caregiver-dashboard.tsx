@@ -13,7 +13,7 @@ import { formatDistanceToNow } from 'date-fns';
 
 export default function CaregiverDashboard() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'map-placeholder');
-  const { firestore, user } = useFirebase();
+  const { firestore } = useFirebase();
   const [timeSinceUpdate, setTimeSinceUpdate] = useState('N/A');
 
   // This assumes we are finding the location for a specific hardcoded user.
@@ -30,8 +30,13 @@ export default function CaregiverDashboard() {
   const { data: locationData, isLoading } = useDoc(emergencyLocationRef);
   
   useEffect(() => {
-    if (locationData?.timestamp) {
-      setTimeSinceUpdate(formatDistanceToNow(locationData.timestamp.toDate(), { addSuffix: true }));
+    if (locationData?.timestamp && typeof locationData.timestamp.toDate === 'function') {
+      const updateTime = () => {
+        setTimeSinceUpdate(formatDistanceToNow(locationData.timestamp.toDate(), { addSuffix: true }));
+      };
+      updateTime();
+      const interval = setInterval(updateTime, 60000); // Update every minute
+      return () => clearInterval(interval);
     }
   }, [locationData]);
 
@@ -97,3 +102,4 @@ export default function CaregiverDashboard() {
         </div>
     </div>
   );
+}
