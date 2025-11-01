@@ -1,20 +1,37 @@
+'use client';
+
 import Image from 'next/image';
+import { useState } from 'react';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { CheckCircle2, Shield, Home, ArrowRight } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Separator } from '../ui/separator';
+import { EditRouteSheet } from './edit-route-sheet';
 
-const navigationSteps = [
-    { instruction: 'Turn left onto Main Street.', distance: '50 ft' },
-    { instruction: 'Continue straight for 2 blocks.', distance: '0.2 mi' },
-    { instruction: 'Turn right onto Park Avenue.', distance: '0.5 mi' },
-    { instruction: 'Your destination will be on the left.', distance: '200 ft' }
+const initialNavigationSteps = [
+    { id: '1', instruction: 'Turn left onto Main Street.', distance: '50 ft' },
+    { id: '2', instruction: 'Continue straight for 2 blocks.', distance: '0.2 mi' },
+    { id: '3', instruction: 'Turn right onto Park Avenue.', distance: '0.5 mi' },
+    { id: '4', instruction: 'Your destination will be on the left.', distance: '200 ft' }
 ];
+
+export type NavigationStep = {
+    id: string;
+    instruction: string;
+    distance: string;
+};
 
 export default function MapView() {
   const mapImage = PlaceHolderImages.find(p => p.id === 'map-placeholder');
+  const [navigationSteps, setNavigationSteps] = useState<NavigationStep[]>(initialNavigationSteps);
+
+  const handleUpdate = (updatedStep: NavigationStep) => {
+    setNavigationSteps((prevSteps) =>
+      prevSteps.map((step) => (step.id === updatedStep.id ? updatedStep : step))
+    );
+  };
 
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
@@ -71,9 +88,12 @@ export default function MapView() {
             </Card>
 
              <Card className="shadow-lg">
-                <CardHeader>
-                    <CardTitle className="text-2xl">Guided Route</CardTitle>
-                     <CardDescription>Step-by-step directions to home.</CardDescription>
+                <CardHeader className="flex flex-row items-center justify-between">
+                    <div>
+                        <CardTitle className="text-2xl">Guided Route</CardTitle>
+                        <CardDescription>Step-by-step directions to home.</CardDescription>
+                    </div>
+                    <EditRouteSheet route={navigationSteps} onUpdate={handleUpdate} />
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {navigationSteps.map((step, index) => (

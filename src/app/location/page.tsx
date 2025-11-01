@@ -1,3 +1,6 @@
+'use client';
+
+import { useState } from 'react';
 import MapView from '@/components/location/map-view';
 
 export default function LocationPage() {
