@@ -11,6 +11,9 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Mic, MicOff } from 'lucide-react';
+import { useFirebase } from '@/firebase';
+import { sendEmergencyAlert } from '@/lib/actions';
+import { useToast } from '@/hooks/use-toast';
 
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
@@ -18,6 +21,8 @@ export function VoiceAssistant() {
   const [isMounted, setIsMounted] = useState(false);
   
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const { firestore, user } = useFirebase();
+  const { toast } = useToast();
   
   useEffect(() => {
     setIsMounted(true);
@@ -38,6 +43,13 @@ export function VoiceAssistant() {
 
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
         console.error('Speech recognition error', event.error);
+        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+          toast({
+            variant: 'destructive',
+            title: 'Microphone Access Denied',
+            description: 'Please enable microphone permissions in your browser settings.',
+          });
+        }
         stopListening();
       };
 
@@ -57,7 +69,7 @@ export function VoiceAssistant() {
         recognitionRef.current.stop();
       }
     };
-  }, []);
+  }, [toast]);
 
   const handleCommand = (command: string) => {
     console.log('Command received:', command);
@@ -66,19 +78,40 @@ export function VoiceAssistant() {
       window.location.href = '/';
     } else if (command.includes('go to contacts')) {
       window.location.href = '/contacts';
+    } else if (command.includes('go to journal')) {
+        window.location.href = '/journal';
+    } else if (command.includes('go to location')) {
+        window.location.href = '/location';
+    } else if (command.includes('go to reminders')) {
+        window.location.href = '/reminders';
+    } else if (command.includes('go to caregiver')) {
+        window.location.href = '/caregiver';
+    } else if (command.includes('send emergency alert')) {
+        if (firestore && user) {
+            sendEmergencyAlert(firestore, user);
+            toast({
+                title: 'Emergency Alert Sent',
+                description: 'Your location has been sent to your emergency contacts.',
+                variant: 'destructive',
+            });
+        }
     }
     
-    // Allow time for user to see the command before closing
     setTimeout(() => {
       setTranscript('');
-    }, 2000);
+    }, 3000);
   };
   
   const startListening = () => {
     if (recognitionRef.current) {
       setTranscript('');
       setIsListening(true);
-      recognitionRef.current.start();
+      try {
+        recognitionRef.current.start();
+      } catch(e) {
+        console.error("Error starting speech recognition: ", e);
+        setIsListening(false);
+      }
     }
   }
   
@@ -97,7 +130,6 @@ export function VoiceAssistant() {
     }
   };
   
-  // Guard against rendering on the server or if API is not supported
   if (!isMounted || !recognitionRef.current) {
     return null; 
   }
@@ -129,7 +161,7 @@ export function VoiceAssistant() {
                 <MicOff className="h-24 w-24 text-muted-foreground" />
             )}
             <p className="text-muted-foreground text-center min-h-[50px] text-xl">
-              {transcript || '...'}
+              {transcript || 'e.g., "Go to contacts" or "Send emergency alert"'}
             </p>
           </div>
            <DialogFooter>

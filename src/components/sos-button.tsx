@@ -11,42 +11,33 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useFirebase, setDocumentNonBlocking } from '@/firebase';
+import { useFirebase } from '@/firebase';
 import { HeartPulse } from 'lucide-react';
-import { doc, serverTimestamp } from 'firebase/firestore';
+import { sendEmergencyAlert } from '@/lib/actions';
+import { useToast } from '@/hooks/use-toast';
 
 export function SOSButton() {
   const { firestore, user } = useFirebase();
+  const { toast } = useToast();
 
   const handleSendAlert = () => {
-    if (navigator.geolocation && user && firestore) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          const { latitude, longitude } = position.coords;
-          // In a real app, this would be fetched from the user's profile or contacts list.
-          const mockEmergencyContactIds = ['contact1-uid', 'contact2-uid'];
-          
-          const locationData = {
-            userId: user.uid,
-            latitude,
-            longitude,
-            timestamp: serverTimestamp(),
-            emergencyContactIds: mockEmergencyContactIds, 
-          };
-          
-          // We use a fixed document ID 'latest' to always store the last known location.
-          const emergencyLocationRef = doc(firestore, `users/${user.uid}/emergencyLocation`, 'latest');
-
-          setDocumentNonBlocking(emergencyLocationRef, locationData, { merge: true });
-
-          console.log('Location sent to emergency contacts.');
-        },
-        (error) => {
-          console.error('Error getting location:', error);
-        }
-      );
+    if (firestore && user) {
+      sendEmergencyAlert(firestore, user);
+      toast({
+        title: 'Emergency Alert Sent',
+        description: 'Your location has been sent to your emergency contacts.',
+        variant: 'destructive',
+      });
     } else {
-        console.log("Could not send alert. User not logged in, firestore not available or geolocation is not supported.");
+      console.log(
+        'Could not send alert. User not logged in, firestore not available or geolocation is not supported.'
+      );
+      toast({
+        title: 'Could Not Send Alert',
+        description:
+          'Please make sure you are logged in and have location services enabled.',
+        variant: 'destructive',
+      });
     }
   };
 
