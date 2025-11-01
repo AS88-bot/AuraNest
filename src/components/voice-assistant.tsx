@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -16,76 +16,90 @@ export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [isMounted, setIsMounted] = useState(false);
-  const [recognition, setRecognition] = useState<SpeechRecognition | null>(null);
-  const [SpeechRecognition, setSpeechRecognition] = useState<any>(null);
-
+  
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  
   useEffect(() => {
     setIsMounted(true);
-    const recognitionApi = window.SpeechRecognition || window.webkitSpeechRecognition;
-    setSpeechRecognition(() => recognitionApi);
-  }, []);
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
 
-  useEffect(() => {
-    if (!SpeechRecognition) {
-      if(isMounted) console.warn('Speech Recognition API not supported in this browser.');
-      return;
-    }
+    if (SpeechRecognitionAPI) {
+      const recognitionInstance = new SpeechRecognitionAPI();
+      recognitionInstance.continuous = false;
+      recognitionInstance.lang = 'en-US';
+      recognitionInstance.interimResults = false;
 
-    const rec = new SpeechRecognition();
-    rec.continuous = false;
-    rec.lang = 'en-US';
-    rec.interimResults = false;
+      recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
+        const currentTranscript = event.results[0][0].transcript.trim().toLowerCase();
+        setTranscript(currentTranscript);
+        handleCommand(currentTranscript);
+        stopListening();
+      };
 
-    rec.onresult = (event: any) => {
-      const currentTranscript = event.results[0][0].transcript;
-      setTranscript(currentTranscript);
-      handleCommand(currentTranscript);
-      setIsListening(false);
-    };
+      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
+        console.error('Speech recognition error', event.error);
+        stopListening();
+      };
 
-    rec.onerror = (event: any) => {
-      console.error('Speech recognition error', event.error);
-      setIsListening(false);
-    };
-
-    rec.onend = () => {
-        if (isListening) {
-            // This check is to prevent it from stopping and starting if the user clicks the button to stop.
+      recognitionInstance.onend = () => {
+        if (recognitionRef.current) {
+          setIsListening(false);
         }
-        setIsListening(false);
-    };
-    
-    setRecognition(rec);
+      };
+      
+      recognitionRef.current = recognitionInstance;
+    } else {
+      console.warn('Speech Recognition API not supported in this browser.');
+    }
 
     return () => {
-        if (rec) {
-            rec.stop();
-        }
+      if (recognitionRef.current) {
+        recognitionRef.current.stop();
+      }
     };
-  }, [isListening, SpeechRecognition, isMounted]);
+  }, []);
 
   const handleCommand = (command: string) => {
-    // In the future, this will process commands.
     console.log('Command received:', command);
-    // For now, we just close the dialog.
-    setTimeout(() => setTranscript(''), 2000);
+
+    if (command.includes('go to dashboard')) {
+      window.location.href = '/';
+    } else if (command.includes('go to contacts')) {
+      window.location.href = '/contacts';
+    }
+    
+    // Allow time for user to see the command before closing
+    setTimeout(() => {
+      setTranscript('');
+    }, 2000);
   };
+  
+  const startListening = () => {
+    if (recognitionRef.current) {
+      setTranscript('');
+      setIsListening(true);
+      recognitionRef.current.start();
+    }
+  }
+  
+  const stopListening = () => {
+     if (recognitionRef.current) {
+      recognitionRef.current.stop();
+      setIsListening(false);
+    }
+  }
 
   const toggleListening = () => {
-    if (!recognition) return;
-
     if (isListening) {
-      recognition.stop();
-      setIsListening(false);
+      stopListening();
     } else {
-      setTranscript('');
-      recognition.start();
-      setIsListening(true);
+      startListening();
     }
   };
-
-  if (!isMounted || !SpeechRecognition) {
-    return null; // Don't render the button if the API is not supported or on the server.
+  
+  // Guard against rendering on the server or if API is not supported
+  if (!isMounted || !recognitionRef.current) {
+    return null; 
   }
 
   return (
@@ -101,7 +115,7 @@ export function VoiceAssistant() {
       </Button>
 
       <Dialog open={isListening} onOpenChange={setIsListening}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle className="text-center text-2xl">Listening...</DialogTitle>
             <DialogDescription className="text-center text-lg">
@@ -119,10 +133,7 @@ export function VoiceAssistant() {
             </p>
           </div>
            <DialogFooter>
-            <Button variant="destructive" onClick={() => {
-                if (recognition) recognition.stop();
-                setIsListening(false);
-            }}>
+            <Button variant="destructive" onClick={stopListening}>
               Cancel
             </Button>
           </DialogFooter>
