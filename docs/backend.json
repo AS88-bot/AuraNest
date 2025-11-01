@@ -226,6 +226,13 @@
           "type": "string",
           "description": "The time the location was recorded.",
           "format": "date-time"
+        },
+        "caregiverIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "A list of caregiver UIDs who are authorized to view this location data."
         }
       },
       "required": [
@@ -353,184 +360,61 @@
     ]
   },
   "firestore": {
-    "structure": [
-      {
-        "path": "/users/{userId}",
-        "definition": {
-          "entityName": "User",
-          "schema": {
-            "$ref": "#/backend/entities/User"
-          },
-          "description": "Stores user profile information. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            }
-          ]
-        }
+    "/users/{userId}": {
+      "schema": {
+        "$ref": "#/backend/entities/User"
       },
-      {
-        "path": "/users/{userId}/caregivers/{caregiverId}",
-        "definition": {
-          "entityName": "Caregiver",
-          "schema": {
-            "$ref": "#/backend/entities/Caregiver"
-          },
-          "description": "Stores caregiver information for a specific user. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "caregiverId",
-              "description": "The unique identifier of the caregiver."
-            }
-          ]
-        }
+      "description": "Stores user profile information. Path-based ownership enforced."
+    },
+    "/users/{userId}/caregivers/{caregiverId}": {
+      "schema": {
+        "$ref": "#/backend/entities/Caregiver"
       },
-      {
-        "path": "/users/{userId}/dailyTasks/{dailyTaskId}",
-        "definition": {
-          "entityName": "DailyTask",
-          "schema": {
-            "$ref": "#/backend/entities/DailyTask"
-          },
-          "description": "Stores daily tasks for a specific user. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "dailyTaskId",
-              "description": "The unique identifier of the daily task."
-            }
-          ]
-        }
+      "description": "Stores caregiver information for a specific user. Path-based ownership enforced."
+    },
+    "/users/{userId}/dailyTasks/{dailyTaskId}": {
+      "schema": {
+        "$ref": "#/backend/entities/DailyTask"
       },
-      {
-        "path": "/users/{userId}/medications/{medicationId}",
-        "definition": {
-          "entityName": "Medication",
-          "schema": {
-            "$ref": "#/backend/entities/Medication"
-          },
-          "description": "Stores medication information for a specific user. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "medicationId",
-              "description": "The unique identifier of the medication."
-            }
-          ]
-        }
+      "description": "Stores daily tasks for a specific user. Path-based ownership enforced."
+    },
+    "/users/{userId}/medications/{medicationId}": {
+      "schema": {
+        "$ref": "#/backend/entities/Medication"
       },
-      {
-        "path": "/users/{userId}/memoryJournalEntries/{memoryJournalEntryId}",
-        "definition": {
-          "entityName": "MemoryJournalEntry",
-          "schema": {
-            "$ref": "#/backend/entities/MemoryJournalEntry"
-          },
-          "description": "Stores memory journal entries for a specific user. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "memoryJournalEntryId",
-              "description": "The unique identifier of the memory journal entry."
-            }
-          ]
-        }
+      "description": "Stores medication information for a specific user. Path-based ownership enforced."
+    },
+    "/users/{userId}/memoryJournalEntries/{memoryJournalEntryId}": {
+      "schema": {
+        "$ref": "#/backend/entities/MemoryJournalEntry"
       },
-      {
-        "path": "/users/{userId}/safeZones/{safeZoneId}",
-        "definition": {
-          "entityName": "SafeZone",
-          "schema": {
-            "$ref": "#/backend/entities/SafeZone"
-          },
-          "description": "Stores safe zone information for a specific user. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "safeZoneId",
-              "description": "The unique identifier of the safe zone."
-            }
-          ]
-        }
+      "description": "Stores memory journal entries for a specific user. Path-based ownership enforced."
+    },
+    "/users/{userId}/safeZones/{safeZoneId}": {
+      "schema": {
+        "$ref": "#/backend/entities/SafeZone"
       },
-      {
-        "path": "/users/{userId}/emergencyContacts/{emergencyContactId}",
-        "definition": {
-          "entityName": "EmergencyContact",
-          "schema": {
-            "$ref": "#/backend/entities/EmergencyContact"
-          },
-          "description": "Stores emergency contact information for a specific user. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "emergencyContactId",
-              "description": "The unique identifier of the emergency contact."
-            }
-          ]
-        }
+      "description": "Stores safe zone information for a specific user. Path-based ownership enforced."
+    },
+    "/users/{userId}/emergencyContacts/{emergencyContactId}": {
+      "schema": {
+        "$ref": "#/backend/entities/EmergencyContact"
       },
-      {
-        "path": "/users/{userId}/moodEntries/{moodEntryId}",
-        "definition": {
-          "entityName": "MoodEntry",
-          "schema": {
-            "$ref": "#/backend/entities/MoodEntry"
-          },
-          "description": "Stores mood entries for a specific user. Path-based ownership enforced.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "moodEntryId",
-              "description": "The unique identifier of the mood entry."
-            }
-          ]
-        }
+      "description": "Stores emergency contact information for a specific user. Path-based ownership enforced."
+    },
+    "/users/{userId}/moodEntries/{moodEntryId}": {
+      "schema": {
+        "$ref": "#/backend/entities/MoodEntry"
       },
-      {
-        "path": "/users/{userId}/emergencyLocation/{emergencyLocationId}",
-        "definition": {
-          "entityName": "Location",
-          "schema": {
-            "$ref": "#/backend/entities/Location"
-          },
-          "description": "Stores the user's location data for emergency access by caregivers, when the user is unable to provide it themselves. Includes denormalized 'caregiverIds' array for authorization independence.",
-          "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "emergencyLocationId",
-              "description": "The unique identifier for the emergency location entry."
-            }
-          ]
-        }
-      }
-    ],
-    "reasoning": "The Firestore data structure is designed to support the AuraNest application's features while adhering to the principles of Authorization Independence, Structural Segregation, Access Modeling, and Data Clarity. The core concept is to ensure data related to users and their caregivers is readily accessible and secure. To implement the user's request, the location is stored separately and can be accessible to emergency contacts if the user is unable to send it themselves.\n\n1.  **Authorization Independence**: This is achieved primarily through path-based ownership and denormalization. User-specific data is stored under `/users/{userId}`, ensuring clear ownership. Caregiver access is managed through a dedicated subcollection `/users/{userId}/caregivers/{caregiverId}`. The crucial element for emergency location access involves creating `/users/{userId}/emergencyLocation/{emergencyLocationId}`. The caregiver ids are denormalized into the `emergencyLocation` document. This approach avoids the need for `get()` calls in security rules, maintaining atomicity of operations.\n\n2.  **Structural Segregation**:  Each collection is designed to hold a single type of entity, ensuring a homogeneous security posture. For instance, user profiles, tasks, medications, journal entries, and safe zones each reside in their respective collections or subcollections under the user's document, enabling focused security rules.\n\n3.  **Access Modeling**: Path-based ownership (`/users/{userId}/...`) is used extensively for private user data. Collaborative data is implicitly supported via emergency contact access to location when the user is unable to send location data themselves, though this access is governed by user-specific settings.\n\n4.  **QAPs (Rules Are Not Filters)**: The structure facilitates secure `list` operations by structuring data in a way that enforces access control at the path level. For example, listing tasks for a user is done via `/users/{userId}/dailyTasks`, which allows a rule to easily check `request.auth.uid == userId`.\n\n5.  **Invariants**: The structure supports invariants such as ownership through the consistent use of `userId` and timestamps where relevant.\n\n**Emergency Location Access:**\nTo facilitate location access for emergency contacts when the user cannot send it themselves, a specific structure and process is implemented:\n\n*   `/users/{userId}/emergencyLocation/{emergencyLocationId}`: This subcollection stores the user's location data specifically for emergency purposes. The location data includes the last known latitude, longitude, timestamp, and an array of `caregiverIds` who are authorized to access this location information.\n\nThis approach ensures that only designated emergency contacts can access the user's location, and only when the user is unable to provide it themselves. This structure adheres to the principle of Authorization Independence by including the list of allowed caregiver id's directly within the `emergencyLocation` document, avoiding the need to fetch caregiver information from other collections. This allows for direct, secure, and efficient rule definitions."
+      "description": "Stores mood entries for a specific user. Path-based ownership enforced."
+    },
+    "/users/{userId}/emergencyLocation/{locationId}": {
+      "schema": {
+        "$ref": "#/backend/entities/Location"
+      },
+      "description": "Stores the user's location data for emergency access by caregivers. Includes a denormalized 'caregiverIds' array for authorization."
+    }
   }
 }
+
+    

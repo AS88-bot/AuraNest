@@ -1,302 +1,60 @@
-/**
- * @fileoverview Firestore Security Rules for the AuraNest application.
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model for most data,
- * ensuring that only the authenticated user can access their own data.
- * A special case is implemented for emergency location sharing with caregivers
- * when the user is unable to share their location themselves.
- *
- * Data Structure:
- * - /users/{userId}: Stores user profiles. Only the authenticated user can
- *   read or write their own profile.
- * - /users/{userId}/caregivers/{caregiverId}: Stores caregiver information
- *   associated with a specific user. Only the user can manage their own caregivers.
- * - /users/{userId}/dailyTasks/{dailyTaskId}: Stores daily tasks for a user.
- *   Only the user can manage their own tasks.
- * - /users/{userId}/medications/{medicationId}: Stores medication information
- *   for a user. Only the user can manage their own medications.
- * - /users/{userId}/memoryJournalEntries/{memoryJournalEntryId}: Stores memory
- *   journal entries for a user. Only the user can manage their own journal entries.
- * - /users/{userId}/safeZones/{safeZoneId}: Stores safe zone information for a user.
- *   Only the user can manage their own safe zones.
- * - /users/{userId}/emergencyContacts/{emergencyContactId}: Stores emergency contact
- *   information for a user. Only the user can manage their own emergency contacts.
- * - /users/{userId}/moodEntries/{moodEntryId}: Stores mood entries for a user.
- *   Only the user can manage their own mood entries.
- * - /users/{userId}/emergencyLocation/{emergencyLocationId}: Stores the user's location
- *   specifically for emergency access by caregivers. Caregiver access is controlled
- *   by a denormalized 'caregiverIds' array in the document.
- *
- * Key Security Decisions:
- * - User listing is disallowed to protect user privacy.
- * - All data is private to the user by default, except for the emergency location,
- *   which can be accessed by specified caregivers under specific conditions.
- * - Schema validation is relaxed to allow for rapid prototyping, but ownership
- *   and relational integrity are strictly enforced.
- *
- * Denormalization for Authorization:
- * - The 'emergencyLocation' document includes a 'caregiverIds' array to
- *   allow direct authorization without additional reads.
- */
+
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    /**
-     * @description Checks if the request is authenticated.
-     */
+    // Helper Functions
     function isSignedIn() {
       return request.auth != null;
     }
 
-    /**
-     * @description Checks if the authenticated user is the owner of the document.
-     */
     function isOwner(userId) {
       return isSignedIn() && request.auth.uid == userId;
     }
-
-    /**
-     * @description Checks if the authenticated user is the owner of an existing document.
-     *              This also verifies that the document exists.
-     */
-    function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
+    
+    function isCaregiver(userId) {
+      // Allow if the user is a caregiver for the given userId
+      return isSignedIn() && get(/databases/$(database)/documents/users/$(userId)).data.caregiverIds.hasAny([request.auth.uid]);
+    }
+    
+    function isAuthorizedCaregiverForLocation(userId) {
+        let locationData = get(/databases/$(database)/documents/users/$(userId)/emergencyLocation/latest).data;
+        return isSignedIn() && locationData.caregiverIds.hasAny([request.auth.uid]);
     }
 
-    /**
-     * @description Checks if the authenticated user is authorized to access the
-     *              emergency location data based on the 'caregiverIds' array in the document.
-     */
-    function isAuthorizedCaregiver(caregiverIds) {
-        return isSignedIn() && caregiverIds.hasAny([request.auth.uid]);
-    }
-
-    /**
-     * @description Enforces that the ID in the path matches the ID in the data.
-     *              This is used on create operations to prevent clients from
-     *              creating documents with mismatched IDs.
-     */
-    function isValidNewDocumentId(documentId) {
-        return request.resource.data.id == documentId;
-    }
-
-    /**
-     * @description Enforces that the a critical relational ID field like creatorId, ownerId, or userId
-     *              must be immutable. This prevents clients from changing the ownership of a
-     *              document after it is created.
-     */
-    function isRelationalIdImmutable(field) {
-        return request.resource.data[field] == resource.data[field];
-    }
-
-    /**
-     * @description
-     * This rule governs access to user profile documents.
-     *
-     * @path /users/{userId}
-     * @allow (create) User with ID 'user_abc' can create their profile.
-     *        request.auth.uid == 'user_abc' and request.resource.data.id == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create a profile for 'user_abc'.
-     *       request.auth.uid == 'user_def' and request.resource.data.id == 'user_abc'
-     * @principle Enforces document ownership.
-     */
     match /users/{userId} {
-      allow get: if isOwner(userId);
-      allow list: if false; // User listing is not allowed for privacy.
-      allow create: if isOwner(userId) && isValidNewDocumentId(userId);
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('id');
-      allow delete: if isExistingOwner(userId);
-    }
+      allow read, write: if isOwner(userId);
 
-    /**
-     * @description
-     * This rule governs access to caregiver documents for a specific user.
-     *
-     * @path /users/{userId}/caregivers/{caregiverId}
-     * @allow (create) User with ID 'user_abc' can create a caregiver for their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read a caregiver associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update a caregiver associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create a caregiver for 'user_abc'.
-     *        request.auth.uid == 'user_def'
-     * @principle Enforces document ownership.
-     */
-    match /users/{userId}/caregivers/{caregiverId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description
-     * This rule governs access to daily task documents for a specific user.
-     *
-     * @path /users/{userId}/dailyTasks/{dailyTaskId}
-     * @allow (create) User with ID 'user_abc' can create a daily task for their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read a daily task associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update a daily task associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create a daily task for 'user_abc'.
-     *        request.auth.uid == 'user_def'
-     * @principle Enforces document ownership.
-     */
-    match /users/{userId}/dailyTasks/{dailyTaskId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description
-     * This rule governs access to medication documents for a specific user.
-     *
-     * @path /users/{userId}/medications/{medicationId}
-     * @allow (create) User with ID 'user_abc' can create a medication for their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read a medication associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update a medication associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create a medication for 'user_abc'.
-     *        request.auth.uid == 'user_def'
-     * @principle Enforces document ownership.
-     */
-    match /users/{userId}/medications/{medicationId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description
-     * This rule governs access to memory journal entry documents for a specific user.
-     *
-     * @path /users/{userId}/memoryJournalEntries/{memoryJournalEntryId}
-     * @allow (create) User with ID 'user_abc' can create a memory journal entry for their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read a memory journal entry associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update a memory journal entry associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create a memory journal entry for 'user_abc'.
-     *        request.auth.uid == 'user_def'
-     * @principle Enforces document ownership.
-     */
-    match /users/{userId}/memoryJournalEntries/{memoryJournalEntryId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description
-     * This rule governs access to safe zone documents for a specific user.
-     *
-     * @path /users/{userId}/safeZones/{safeZoneId}
-     * @allow (create) User with ID 'user_abc' can create a safe zone for their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read a safe zone associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update a safe zone associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create a safe zone for 'user_abc'.
-     *        request.auth.uid == 'user_def'
-     * @principle Enforces document ownership.
-     */
-    match /users/{userId}/safeZones/{safeZoneId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description
-     * This rule governs access to emergency contact documents for a specific user.
-     *
-     * @path /users/{userId}/emergencyContacts/{emergencyContactId}
-     * @allow (create) User with ID 'user_abc' can create an emergency contact for their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read an emergency contact associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update an emergency contact associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create an emergency contact for 'user_abc'.
-     *        request.auth.uid == 'user_def'
-     * @principle Enforces document ownership.
-     */
-    match /users/{userId}/emergencyContacts/{emergencyContactId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description
-     * This rule governs access to mood entry documents for a specific user.
-     *
-     * @path /users/{userId}/moodEntries/{moodEntryId}
-     * @allow (create) User with ID 'user_abc' can create a mood entry for their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (get) User with ID 'user_abc' can read a mood entry associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @allow (update) User with ID 'user_abc' can update a mood entry associated with their profile.
-     *        request.auth.uid == 'user_abc'
-     * @deny (create) User with ID 'user_def' cannot create a mood entry for 'user_abc'.
-     *        request.auth.uid == 'user_def'
-     * @principle Enforces document ownership.
-     */
-    match /users/{userId}/moodEntries/{moodEntryId} {
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
-    }
-
-     /**
-      * @description
-      * This rule governs access to emergency location documents for a specific user.
-      * Caregivers can access this location data if the user is unable to provide it themselves.
-      *
-      * @path /users/{userId}/emergencyLocation/{emergencyLocationId}
-      * @allow (create) User with ID 'user_abc' can create an emergency location entry for their profile.
-      *        request.auth.uid == 'user_abc'
-      * @allow (get) Caregiver with ID 'caregiver_xyz' can read the emergency location if authorized.
-      *        request.auth.uid == 'caregiver_xyz' and 'caregiver_xyz' is in the 'caregiverIds' array.
-      * @allow (update) User with ID 'user_abc' can update the emergency location entry for their profile.
-      *        request.auth.uid == 'user_abc'
-      * @deny (create) User with ID 'user_def' cannot create an emergency location entry for 'user_abc'.
-      *        request.auth.uid == 'user_def'
-      * @principle Enforces document ownership and caregiver access to emergency location data.
-      */
-    match /users/{userId}/emergencyLocation/{emergencyLocationId} {
-      allow get: if isAuthorizedCaregiver(resource.data.caregiverIds) || isOwner(userId);
-      allow list: if false; // Listing not allowed for security reasons
-      allow create: if isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && isRelationalIdImmutable('userId');
-      allow delete: if isExistingOwner(userId);
+      match /caregivers/{caregiverId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /dailyTasks/{dailyTaskId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /medications/{medicationId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /memoryJournalEntries/{memoryJournalEntryId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /safeZones/{safeZoneId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /emergencyContacts/{emergencyContactId} {
+        allow read, write: if isOwner(userId);
+      }
+      match /moodEntries/{moodEntryId} {
+        allow read, write: if isOwner(userId);
+      }
+      
+      match /emergencyLocation/{locationId} {
+        allow create, update: if isOwner(userId);
+        // A caregiver can only read the location
+        allow get: if isOwner(userId) || isAuthorizedCaregiverForLocation(userId);
+        allow list: if isOwner(userId);
+      }
     }
   }
 }
+    
