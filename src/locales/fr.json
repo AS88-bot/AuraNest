@@ -1,0 +1,45 @@
+
+{
+    "nav": {
+        "dashboard": "Tableau de bord",
+        "contacts": "Contacts",
+        "journal": "Journal",
+        "location": "Localisation",
+        "reminders": "Rappels",
+        "caregiver": "Aidant",
+        "settings": "Paramètres"
+    },
+    "dashboard": {
+        "title": "Plan d'aujourd'hui",
+        "description": "Voici votre programme pour aujourd'hui. Appuyez sur le cercle pour marquer les éléments comme terminés.",
+        "schedule": {
+            "item1": { "title": "Médicament du matin", "description": "Prendre un comprimé blanc avec un grand verre d'eau." },
+            "item2": { "title": "Petit déjeuner", "description": "Flocons d'avoine avec des baies fraîches et une tasse de thé." },
+            "item3": { "title": "Rendez-vous chez le médecin", "description": "Consultation avec le Dr Evans. N'oubliez pas d'apporter vos questions." },
+            "item4": { "title": "Déjeuner", "description": "Sandwich à la salade de poulet et une portion de fruits." },
+            "item5": { "title": "Marche de l'après-midi", "description": "Une promenade douce dans le parc avec Sarah." },
+            "item6": { "title": "Médicament du soir", "description": "Prendre deux petits comprimés bleus avant le dîner." },
+            "item7": { "title": "Dîner", "description": "Saumon au four avec des légumes rôtis." }
+        }
+    },
+    "contacts": {
+        "title": "Contacts",
+        "description": "Vos personnes importantes. Appuyez sur un bouton pour appeler ou discuter en vidéo.",
+        "relation": {
+            "daughter": "Fille",
+            "doctor": "Docteur",
+            "grandchild": "Petit-enfant",
+            "caregiver": "Aidant",
+            "neighbor": "Voisin"
+        }
+    },
+    "settings": {
+        "title": "Paramètres",
+        "description": "Gérez les paramètres de votre application.",
+        "language": {
+            "title": "Langue",
+            "description": "Choisissez votre langue préférée pour l'application et les rappels verbaux.",
+            "label": "Langue"
+        }
+    }
+}

@@ -1,0 +1,45 @@
+
+{
+    "nav": {
+        "dashboard": "Cruscotto",
+        "contacts": "Contatti",
+        "journal": "Diario",
+        "location": "Posizione",
+        "reminders": "Promemoria",
+        "caregiver": "Assistente",
+        "settings": "Impostazioni"
+    },
+    "dashboard": {
+        "title": "Piano di oggi",
+        "description": "Ecco il tuo programma per oggi. Tocca il cerchio per contrassegnare gli elementi come completati.",
+        "schedule": {
+            "item1": { "title": "Medicinale del mattino", "description": "Prendere una pillola bianca con un bicchiere pieno d'acqua." },
+            "item2": { "title": "Colazione", "description": "Fiocchi d'avena con frutti di bosco freschi e una tazza di tè." },
+            "item3": { "title": "Appuntamento dal dottore", "description": "Controllo con il Dr. Evans. Ricorda di portare le tue domande." },
+            "item4": { "title": "Pranzo", "description": "Panino con insalata di pollo e un contorno di frutta." },
+            "item5": { "title": "Passeggiata pomeridiana", "description": "Una passeggiata tranquilla nel parco con Sarah." },
+            "item6": { "title": "Medicinale della sera", "description": "Prendere due piccole pillole blu prima di cena." },
+            "item7": { "title": "Cena", "description": "Salmone al forno con verdure arrosto." }
+        }
+    },
+    "contacts": {
+        "title": "Contatti",
+        "description": "Le tue persone importanti. Tocca un pulsante per chiamare o videochattare.",
+        "relation": {
+            "daughter": "Figlia",
+            "doctor": "Dottore",
+            "grandchild": "Nipote",
+            "caregiver": "Assistente",
+            "neighbor": "Vicino"
+        }
+    },
+    "settings": {
+        "title": "Impostazioni",
+        "description": "Gestisci le impostazioni della tua applicazione.",
+        "language": {
+            "title": "Lingua",
+            "description": "Scegli la tua lingua preferita per l'applicazione e i promemoria verbali.",
+            "label": "Lingua"
+        }
+    }
+}

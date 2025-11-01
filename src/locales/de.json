@@ -1,0 +1,45 @@
+
+{
+    "nav": {
+        "dashboard": "Instrumententafel",
+        "contacts": "Kontakte",
+        "journal": "Tagebuch",
+        "location": "Standort",
+        "reminders": "Erinnerungen",
+        "caregiver": "Betreuer",
+        "settings": "Einstellungen"
+    },
+    "dashboard": {
+        "title": "Heutiger Plan",
+        "description": "Hier ist Ihr Zeitplan für heute. Tippen Sie auf den Kreis, um Elemente als erledigt zu markieren.",
+        "schedule": {
+            "item1": { "title": "Morgenmedikation", "description": "Nehmen Sie eine weiße Pille mit einem vollen Glas Wasser." },
+            "item2": { "title": "Frühstück", "description": "Haferflocken mit frischen Beeren und einer Tasse Tee." },
+            "item3": { "title": "Arzttermin", "description": "Untersuchung bei Dr. Evans. Denken Sie daran, Ihre Fragen mitzubringen." },
+            "item4": { "title": "Mittagessen", "description": "Hühnersalat-Sandwich und eine Portion Obst." },
+            "item5": { "title": "Nachmittagsspaziergang", "description": "Ein sanfter Spaziergang im Park mit Sarah." },
+            "item6": { "title": "Abendmedikation", "description": "Nehmen Sie zwei kleine blaue Pillen vor dem Abendessen." },
+            "item7": { "title": "Abendessen", "description": "Gebackener Lachs mit geröstetem Gemüse." }
+        }
+    },
+    "contacts": {
+        "title": "Kontakte",
+        "description": "Ihre wichtigen Personen. Tippen Sie auf eine Schaltfläche, um anzurufen oder einen Video-Chat zu führen.",
+        "relation": {
+            "daughter": "Tochter",
+            "doctor": "Arzt",
+            "grandchild": "Enkelkind",
+            "caregiver": "Betreuer",
+            "neighbor": "Nachbar"
+        }
+    },
+    "settings": {
+        "title": "Einstellungen",
+        "description": "Verwalten Sie Ihre Anwendungseinstellungen.",
+        "language": {
+            "title": "Sprache",
+            "description": "Wählen Sie Ihre bevorzugte Sprache für die Anwendung und die mündlichen Erinnerungen.",
+            "label": "Sprache"
+        }
+    }
+}

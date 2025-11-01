@@ -3,12 +3,10 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
-
-// For simplicity in this exercise, we'll just reuse english for other languages
-const fr = en;
-const de = en;
-const hi = en;
-const it = en;
+import fr from '@/locales/fr.json';
+import de from '@/locales/de.json';
+import hi from '@/locales/hi.json';
+import it from '@/locales/it.json';
 
 
 type Locale = 'en' | 'es' | 'fr' | 'de' | 'hi' | 'it';
@@ -68,6 +66,7 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   }, [locale]);
 
   if (!isMounted) {
+    // Avoid rendering mismatch between server and client
     return null;
   }
 
