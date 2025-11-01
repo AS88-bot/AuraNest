@@ -29,6 +29,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       setIsClient(true);
     }, []);
 
+    if (!isClient) {
+      // Render nothing on the server to avoid hydration mismatches
+      return null;
+    }
 
   return (
     <SidebarProvider>
