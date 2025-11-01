@@ -38,10 +38,10 @@ export function SidebarNav() {
               }}
               className="h-14 justify-start"
             >
-              <>
+              <div>
                 <item.icon className="h-6 w-6" />
                 <span className="text-lg">{item.label}</span>
-              </>
+              </div>
             </SidebarMenuButton>
           </Link>
         </SidebarMenuItem>
