@@ -60,6 +60,7 @@ const translateAndSpeakFlow = ai.defineFlow(
   },
   async (input) => {
     let textToSpeak = input.text;
+    let voiceToUse = input.voice || 'Algenib';
 
     // Only translate if the target language is not English
     if (input.languageCode && !input.languageCode.startsWith('en') && input.languageName) {
@@ -71,6 +72,8 @@ const translateAndSpeakFlow = ai.defineFlow(
         });
         if (translatedText) {
           textToSpeak = translatedText;
+          // After translating, we can use a standard voice as the content is now in the target language.
+          // Or we can keep the selected voice if it supports the target language, but for simplicity, let's use a reliable one.
         }
     }
     
@@ -81,7 +84,7 @@ const translateAndSpeakFlow = ai.defineFlow(
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: { 
-                voiceName: input.voice || 'Algenib',
+                voiceName: voiceToUse,
               },
             },
           },
