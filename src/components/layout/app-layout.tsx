@@ -13,6 +13,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
 import { BrainCircuit, LogOut, User } from 'lucide-react';
 import { SOSButton } from '../sos-button';
+import { VoiceAssistant } from '../voice-assistant';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -37,6 +38,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
              <div className="flex-1" />
             <div className="flex items-center gap-4">
+                <VoiceAssistant />
                 <SOSButton />
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
