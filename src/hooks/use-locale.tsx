@@ -1,6 +1,6 @@
 'use client';
 
-import React, { createContext, useContext, useState, ReactNode, useCallback } from 'react';
+import React, { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 
@@ -32,6 +32,22 @@ const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
 
 export const LocaleProvider = ({ children }: { children: ReactNode }) => {
   const [locale, setLocale] = useState<Locale>('en');
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+    const savedLocale = localStorage.getItem('locale') as Locale;
+    if (savedLocale && translations[savedLocale]) {
+      setLocale(savedLocale);
+    }
+  }, []);
+
+  const handleSetLocale = (newLocale: Locale) => {
+    if (isMounted) {
+      localStorage.setItem('locale', newLocale);
+    }
+    setLocale(newLocale);
+  };
 
   const t = useCallback((key: string): string => {
     const keys = key.split('.');
@@ -51,8 +67,12 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     return result || key;
   }, [locale]);
 
+  if (!isMounted) {
+    return null;
+  }
+
   return (
-    <LocaleContext.Provider value={{ locale, setLocale, t }}>
+    <LocaleContext.Provider value={{ locale, setLocale: handleSetLocale, t }}>
       {children}
     </LocaleContext.Provider>
   );
