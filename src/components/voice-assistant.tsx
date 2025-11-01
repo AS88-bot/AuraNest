@@ -10,14 +10,16 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, Phone } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import { sendEmergencyAlert } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
+import { contacts } from '@/lib/data';
 
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
+  const [feedback, setFeedback] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   
   const recognitionRef = useRef<SpeechRecognition | null>(null);
@@ -38,7 +40,6 @@ export function VoiceAssistant() {
         const currentTranscript = event.results[0][0].transcript.trim().toLowerCase();
         setTranscript(currentTranscript);
         handleCommand(currentTranscript);
-        stopListening();
       };
 
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -54,6 +55,7 @@ export function VoiceAssistant() {
       };
 
       recognitionInstance.onend = () => {
+        // Check ref before setting state to avoid updates on unmounted component
         if (recognitionRef.current) {
           setIsListening(false);
         }
@@ -62,54 +64,105 @@ export function VoiceAssistant() {
       recognitionRef.current = recognitionInstance;
     } else {
       console.warn('Speech Recognition API not supported in this browser.');
+      toast({
+        variant: 'destructive',
+        title: 'Voice Assistant Not Supported',
+        description: 'Your browser does not support the Web Speech API.',
+      });
     }
 
+    // Cleanup function
     return () => {
       if (recognitionRef.current) {
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.onerror = null;
+        recognitionRef.current.onend = null;
         recognitionRef.current.stop();
+        recognitionRef.current = null;
       }
     };
   }, [toast]);
 
   const handleCommand = (command: string) => {
-    console.log('Command received:', command);
+    let actionTaken = false;
+    setFeedback(`I heard: "${command}"`);
 
-    if (command.includes('go to dashboard')) {
-      window.location.href = '/';
-    } else if (command.includes('go to contacts')) {
-      window.location.href = '/contacts';
-    } else if (command.includes('go to journal')) {
-        window.location.href = '/journal';
-    } else if (command.includes('go to location')) {
-        window.location.href = '/location';
-    } else if (command.includes('go to reminders')) {
-        window.location.href = '/reminders';
-    } else if (command.includes('go to caregiver')) {
-        window.location.href = '/caregiver';
-    } else if (command.includes('send emergency alert')) {
-        if (firestore && user) {
-            sendEmergencyAlert(firestore, user);
-            toast({
-                title: 'Emergency Alert Sent',
-                description: 'Your location has been sent to your emergency contacts.',
-                variant: 'destructive',
-            });
-        }
+    // Emergency commands
+    if (command.includes('help') || command.includes('emergency') || command.includes('sos')) {
+      setFeedback('Sending emergency alert...');
+      if (firestore && user) {
+          sendEmergencyAlert(firestore, user);
+          toast({
+              title: 'Emergency Alert Sent',
+              description: 'Your location has been sent to your emergency contacts.',
+              variant: 'destructive',
+          });
+      } else {
+        toast({
+            title: 'Could Not Send Alert',
+            description: 'Please log in to send an alert.',
+            variant: 'destructive',
+        });
+      }
+      actionTaken = true;
     }
-    
-    setTimeout(() => {
-      setTranscript('');
-    }, 3000);
+    // Navigation commands
+    else if (command.includes('go to') || command.includes('show me') || command.includes('open')) {
+      const targets = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
+      const target = targets.find(t => command.includes(t));
+      if (target) {
+        setFeedback(`Navigating to ${target}...`);
+        window.location.href = `/${target === 'dashboard' ? '' : target}`;
+        actionTaken = true;
+      }
+    }
+    // Calling commands
+    else if (command.startsWith('call')) {
+      const contactName = command.replace('call ', '').trim();
+      const contactToCall = contacts.find(c => c.name.toLowerCase() === contactName);
+      if (contactToCall && contactToCall.phone) {
+        setFeedback(`Calling ${contactToCall.name}...`);
+        window.location.href = `tel:${contactToCall.phone}`;
+        actionTaken = true;
+      } else {
+        setFeedback(`Sorry, I couldn't find a contact named ${contactName}.`);
+      }
+    }
+    // Reminder commands
+    else if (command.startsWith('remind me') || command.startsWith('set a reminder')) {
+      setFeedback('Opening reminders...');
+      window.location.href = '/reminders';
+      actionTaken = true;
+    }
+
+
+    if (actionTaken) {
+      setTimeout(() => stopListening(), 2000);
+    } else {
+      setTimeout(() => {
+        if (isListening) { // Only clear if still in a listening state
+          setFeedback('Sorry, I didn\'t understand that. Please try again.');
+        }
+      }, 1500);
+    }
   };
   
   const startListening = () => {
     if (recognitionRef.current) {
       setTranscript('');
+      setFeedback('');
       setIsListening(true);
       try {
         recognitionRef.current.start();
       } catch(e) {
         console.error("Error starting speech recognition: ", e);
+        if((e as DOMException).name === 'NotAllowedError') {
+             toast({
+                variant: 'destructive',
+                title: 'Microphone Access Denied',
+                description: 'Please enable microphone permissions in your browser settings.',
+            });
+        }
         setIsListening(false);
       }
     }
@@ -118,8 +171,8 @@ export function VoiceAssistant() {
   const stopListening = () => {
      if (recognitionRef.current) {
       recognitionRef.current.stop();
-      setIsListening(false);
     }
+    setIsListening(false);
   }
 
   const toggleListening = () => {
@@ -130,9 +183,19 @@ export function VoiceAssistant() {
     }
   };
   
-  if (!isMounted || !recognitionRef.current) {
+  if (!isMounted) {
     return null; 
   }
+  
+  if (!recognitionRef.current && isMounted) {
+     return (
+      <Button variant="outline" size="lg" className="h-16 w-16 rounded-full shadow-lg" disabled>
+        <MicOff className="h-8 w-8" />
+        <span className="sr-only">Voice Commands Not Supported</span>
+      </Button>
+    );
+  }
+
 
   return (
     <>
@@ -142,7 +205,7 @@ export function VoiceAssistant() {
         className="h-16 w-16 rounded-full shadow-lg"
         onClick={toggleListening}
       >
-        <Mic className="h-8 w-8" />
+        {isListening ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
         <span className="sr-only">Voice Command</span>
       </Button>
 
@@ -151,17 +214,13 @@ export function VoiceAssistant() {
           <DialogHeader>
             <DialogTitle className="text-center text-2xl">Listening...</DialogTitle>
             <DialogDescription className="text-center text-lg">
-              Please say a command.
+              What can I help you with?
             </DialogDescription>
           </DialogHeader>
-          <div className="flex flex-col items-center justify-center p-8 gap-6">
-            {isListening ? (
-                <Mic className="h-24 w-24 text-primary animate-pulse" />
-            ) : (
-                <MicOff className="h-24 w-24 text-muted-foreground" />
-            )}
-            <p className="text-muted-foreground text-center min-h-[50px] text-xl">
-              {transcript || 'e.g., "Go to contacts" or "Send emergency alert"'}
+          <div className="flex flex-col items-center justify-center p-8 gap-6 min-h-[250px]">
+            <Mic className="h-24 w-24 text-primary animate-pulse" />
+            <p className="text-muted-foreground text-center min-h-[2.5rem] text-xl px-4 py-2 rounded-lg bg-muted w-full">
+              {feedback || transcript || 'e.g., "Call Sarah" or "Help me"'}
             </p>
           </div>
            <DialogFooter>

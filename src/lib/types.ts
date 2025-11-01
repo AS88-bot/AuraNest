@@ -21,4 +21,5 @@ export interface Contact {
   name: string;
   relation: string;
   avatar: string;
+  phone?: string;
 }
