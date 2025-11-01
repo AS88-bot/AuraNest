@@ -11,8 +11,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { useFirebase } from '@/firebase';
-import { setDocumentNonBlocking } from '@/firebase/non-blocking-updates';
+import { useFirebase, setDocumentNonBlocking } from '@/firebase';
 import { HeartPulse } from 'lucide-react';
 import { doc, serverTimestamp } from 'firebase/firestore';
 
@@ -44,6 +43,8 @@ export function SOSButton() {
           console.error('Error getting location:', error);
         }
       );
+    } else {
+        console.log("Could not send alert. User not logged in, firestore not available or geolocation is not supported.");
     }
   };
 
