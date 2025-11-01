@@ -21,18 +21,38 @@ import {
 import { Label } from '@/components/ui/label';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
 
+interface VoiceOption {
+  value: string;
+  label: string;
+  lang: string;
+}
+
+const voiceOptions: VoiceOption[] = [
+    { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US' },
+    { value: 'Achernar', label: 'English (UK), Achernar (Male)', lang: 'en-GB' },
+    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)', lang: 'es-ES' },
+    { value: 'Spica', label: 'French (France), Spica (Female)', lang: 'fr-FR' },
+    { value: 'Shaula', label: 'German (Germany), Shaula (Female)', lang: 'de-DE' },
+    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)', lang: 'hi-IN' },
+    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)', lang: 'it-IT' },
+];
+
 export default function RemindersPage() {
   const [reminderText, setReminderText] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
-  const [voice, setVoice] = useState('Algenib');
+  const [selectedVoice, setSelectedVoice] = useState<VoiceOption>(voiceOptions[0]);
 
   const handleGenerateReminder = async () => {
     if (!reminderText) return;
     setIsLoading(true);
     setAudioSrc(null);
     try {
-      const result = await textToSpeech({ text: reminderText, voice: voice });
+      const result = await textToSpeech({ 
+        text: reminderText, 
+        voice: selectedVoice.value,
+        languageCode: selectedVoice.lang
+      });
       setAudioSrc(result.audio);
     } catch (error) {
       console.error('Error generating audio:', error);
@@ -41,6 +61,14 @@ export default function RemindersPage() {
       setIsLoading(false);
     }
   };
+
+  const handleVoiceChange = (value: string) => {
+    const voice = voiceOptions.find(opt => opt.value === value);
+    if(voice) {
+      setSelectedVoice(voice);
+    }
+  };
+
 
   return (
     <div className="flex flex-col gap-8">
@@ -64,18 +92,14 @@ export default function RemindersPage() {
         <CardContent className="space-y-6">
           <div className="grid gap-2">
             <Label htmlFor="language">Language & Voice</Label>
-            <Select onValueChange={setVoice} defaultValue={voice}>
+            <Select onValueChange={handleVoiceChange} defaultValue={selectedVoice.value}>
               <SelectTrigger id="language" className="w-[280px]">
                 <SelectValue placeholder="Select language & voice" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Algenib">English (US), Algenib (Female)</SelectItem>
-                <SelectItem value="Achernar">English (UK), Achernar (Male)</SelectItem>
-                <SelectItem value="Proxima-C">Spanish, Proxima C (Female)</SelectItem>
-                <SelectItem value="Spica">French, Spica (Female)</SelectItem>
-                <SelectItem value="Shaula">German, Shaula (Female)</SelectItem>
-                <SelectItem value="en-IN-Wavenet-D">Hindi, Wavenet-D (Female)</SelectItem>
-                <SelectItem value="it-IT-Wavenet-A">Italian, Wavenet-A (Female)</SelectItem>
+                {voiceOptions.map(option => (
+                    <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>
