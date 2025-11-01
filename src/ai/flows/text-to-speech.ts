@@ -60,23 +60,27 @@ const translateAndSpeakFlow = ai.defineFlow(
   },
   async (input) => {
     let textToSpeak = input.text;
-    let voiceToUse = input.voice || 'Algenib';
 
-    // Only translate if the target language is not English
-    if (input.languageCode && !input.languageCode.startsWith('en') && input.languageName) {
-        const { text: translatedText } = await ai.generate({
-          prompt: `Translate the following text to ${input.languageName}: "${input.text}"`,
-          config: {
-            temperature: 0.1, // Low temperature for more deterministic translation
-          }
-        });
-        if (translatedText) {
-          textToSpeak = translatedText;
-          // After translating, we can use a standard voice as the content is now in the target language.
-          // Or we can keep the selected voice if it supports the target language, but for simplicity, let's use a reliable one.
-        }
+    // Step 1: Translate the text if a non-English language is selected.
+    if (input.languageName && input.languageCode && !input.languageCode.startsWith('en')) {
+      console.log(`Translating to ${input.languageName}`);
+      const translationResponse = await ai.generate({
+        prompt: `Translate the following English text to ${input.languageName}: "${input.text}"`,
+        model: 'googleai/gemini-2.5-flash',
+        config: { temperature: 0.1 },
+      });
+      const translatedText = translationResponse.text;
+
+      if (translatedText) {
+        textToSpeak = translatedText;
+        console.log(`Translated text: ${textToSpeak}`);
+      } else {
+        console.error('Translation failed, using original text.');
+      }
     }
-    
+
+    // Step 2: Generate speech from the (potentially translated) text.
+    console.log(`Generating speech for: "${textToSpeak}"`);
     const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
         config: {
@@ -84,7 +88,8 @@ const translateAndSpeakFlow = ai.defineFlow(
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: { 
-                voiceName: voiceToUse,
+                // Use a reliable voice; the language is determined by the translated text content.
+                voiceName: input.voice || 'Algenib',
               },
             },
           },
