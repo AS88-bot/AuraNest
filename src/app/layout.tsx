@@ -1,7 +1,7 @@
 import type {Metadata} from 'next';
 import './globals.css';
-import { AppLayout } from '@/components/layout/app-layout';
 import { Toaster } from '@/components/ui/toaster';
+import ClientLayout from '@/components/layout/client-layout';
 
 export const metadata: Metadata = {
   title: 'AuraNest',
@@ -21,7 +21,7 @@ export default function RootLayout({
         <link href="https://fonts.googleapis.com/css2?family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
       </head>
       <body className="font-body antialiased" key="body">
-        <AppLayout>{children}</AppLayout>
+        <ClientLayout>{children}</ClientLayout>
         <Toaster />
       </body>
     </html>
