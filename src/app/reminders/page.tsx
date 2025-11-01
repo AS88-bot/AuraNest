@@ -74,6 +74,8 @@ export default function RemindersPage() {
                 <SelectItem value="Proxima-C">Spanish, Proxima C (Female)</SelectItem>
                 <SelectItem value="Spica">French, Spica (Female)</SelectItem>
                 <SelectItem value="Shaula">German, Shaula (Female)</SelectItem>
+                <SelectItem value="en-IN-Wavenet-D">Hindi, Wavenet-D (Female)</SelectItem>
+                <SelectItem value="it-IT-Wavenet-A">Italian, Wavenet-A (Female)</SelectItem>
               </SelectContent>
             </Select>
           </div>
