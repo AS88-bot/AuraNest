@@ -46,7 +46,7 @@ export default function CaregiverDashboard() {
   }, [locationData]);
 
   if (!isClient) {
-    return null;
+    return null; // Don't render anything on the server to prevent hydration issues.
   }
 
   return (
@@ -94,11 +94,13 @@ export default function CaregiverDashboard() {
                 </CardHeader>
                 <CardContent className="space-y-4">
                     {isLoading && <p>Loading location...</p>}
-                    {!isLoading && locationData && timeSinceUpdate && (
+                    {!isLoading && locationData && (
                          <div className="space-y-2 text-lg">
                             <div className="flex items-center gap-3">
                                 <Clock className="h-6 w-6 text-muted-foreground" />
-                                <span>Last updated: <strong>{timeSinceUpdate}</strong></span>
+                                {timeSinceUpdate && (
+                                   <span>Last updated: <strong>{timeSinceUpdate}</strong></span>
+                                )}
                             </div>
                             <p>Latitude: {locationData.latitude.toFixed(5)}</p>
                             <p>Longitude: {locationData.longitude.toFixed(5)}</p>
