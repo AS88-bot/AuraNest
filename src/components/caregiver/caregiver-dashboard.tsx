@@ -36,11 +36,11 @@ export default function CaregiverDashboard() {
   
   useEffect(() => {
     if (locationData?.timestamp && typeof locationData.timestamp.toDate === 'function') {
-      const updateTdsime = () => {
+      const updateTime = () => {
         setTimeSinceUpdate(formatDistanceToNow(locationData.timestamp.toDate(), { addSuffix: true }));
       };
-      updateTdsime();
-      const interval = setInterval(updateTdsime, 60000); // Update every minute
+      updateTime();
+      const interval = setInterval(updateTime, 60000); // Update every minute
       return () => clearInterval(interval);
     }
   }, [locationData]);
@@ -94,8 +94,10 @@ export default function CaregiverDashboard() {
                          <div className="space-y-2 text-lg">
                             <div className="flex items-center gap-3">
                                 <Clock className="h-6 w-6 text-muted-foreground" />
-                                {isClient && timeSinceUpdate && (
+                                {isClient ? (
                                    <span>Last updated: <strong>{timeSinceUpdate}</strong></span>
+                                ) : (
+                                  <span>Loading update time...</span>
                                 )}
                             </div>
                             <p>Latitude: {locationData.latitude.toFixed(5)}</p>
