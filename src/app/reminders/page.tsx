@@ -32,8 +32,7 @@ export default function RemindersPage() {
     setIsLoading(true);
     setAudioSrc(null);
     try {
-      // TODO: Pass the selected voice to the textToSpeech function
-      const result = await textToSpeech({ text: reminderText });
+      const result = await textToSpeech({ text: reminderText, voice: voice });
       setAudioSrc(result.audio);
     } catch (error) {
       console.error('Error generating audio:', error);
