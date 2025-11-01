@@ -30,7 +30,7 @@ export default function EditPlannerItem({ item, onUpdate }: EditPlannerItemProps
 
   return (
     <div className="grid gap-4">
-        <h4 className="font-semibold text-lg text-primary">{title} ({item.category})</h4>
+        <h4 className="font-semibold text-lg text-primary">{t(item.titleKey)} ({item.category})</h4>
       <div className="grid grid-cols-4 items-center gap-4">
         <Label htmlFor={`time-${item.id}`} className="text-right">
           Time

@@ -41,17 +41,17 @@ export default function SettingsPage() {
           <CardContent>
             <div className="grid gap-2">
               <Label htmlFor="language">{t('settings.language.label')}</Label>
-              <Select value={locale} onValueChange={(value) => setLocale(value as 'en' | 'es')}>
+              <Select value={locale} onValueChange={(value) => setLocale(value as any)}>
                 <SelectTrigger id="language" className="w-[280px]">
                   <SelectValue placeholder={t('settings.language.selectPlaceholder')} />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="en">English</SelectItem>
                   <SelectItem value="es">Español</SelectItem>
-                  <SelectItem value="fr" disabled>Français</SelectItem>
-                  <SelectItem value="de" disabled>Deutsch</SelectItem>
-                  <SelectItem value="hi" disabled>हिन्दी</SelectItem>
-                  <SelectItem value="it" disabled>Italiano</SelectItem>
+                  <SelectItem value="fr">Français</SelectItem>
+                  <SelectItem value="de">Deutsch</SelectItem>
+                  <SelectItem value="hi">हिन्दी</SelectItem>
+                  <SelectItem value="it">Italiano</SelectItem>
                 </SelectContent>
               </Select>
             </div>

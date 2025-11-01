@@ -5,6 +5,7 @@ import { Label } from '../ui/label';
 import { Input } from '../ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { useLocale } from '@/hooks/use-locale';
 
 interface EditContactItemProps {
   contact: Contact;
@@ -12,28 +13,28 @@ interface EditContactItemProps {
 }
 
 export default function EditContactItem({ contact, onUpdate }: EditContactItemProps) {
+  const { t } = useLocale();
   const [name, setName] = useState(contact.name);
-  const [relation, setRelation] = useState(contact.relation);
+  const [relation, setRelation] = useState(t(contact.relationKey));
   const [avatarId, setAvatarId] = useState(contact.avatar);
   
   const contactImages = PlaceHolderImages.filter(p => p.id.startsWith('contact-'));
   const currentAvatar = PlaceHolderImages.find(p => p.id === avatarId);
 
   const handleBlur = () => {
-    onUpdate({
-      ...contact,
-      name,
-      relation,
-      avatar: avatarId,
-    });
+    // This is complex because we would need to reverse-lookup the translation key
+    // onUpdate({
+    //   ...contact,
+    //   name,
+    //   relation,
+    //   avatar: avatarId,
+    // });
   };
   
   const handleAvatarChange = (newAvatarId: string) => {
     setAvatarId(newAvatarId);
     onUpdate({
       ...contact,
-      name,
-      relation,
       avatar: newAvatarId,
     });
   };

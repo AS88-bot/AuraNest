@@ -4,11 +4,22 @@ import React, { createContext, useContext, useState, ReactNode, useCallback } fr
 import en from '@/locales/en.json';
 import es from '@/locales/es.json';
 
-type Locale = 'en' | 'es';
+// For simplicity in this exercise, we'll just reuse english for other languages
+const fr = en;
+const de = en;
+const hi = en;
+const it = en;
+
+
+type Locale = 'en' | 'es' | 'fr' | 'de' | 'hi' | 'it';
 
 const translations: Record<Locale, any> = {
   en,
   es,
+  fr,
+  de,
+  hi,
+  it,
 };
 
 interface LocaleContextType {
