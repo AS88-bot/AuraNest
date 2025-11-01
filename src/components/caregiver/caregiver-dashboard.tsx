@@ -36,18 +36,14 @@ export default function CaregiverDashboard() {
   
   useEffect(() => {
     if (locationData?.timestamp && typeof locationData.timestamp.toDate === 'function') {
-      const updateTime = () => {
+      const updateTdsime = () => {
         setTimeSinceUpdate(formatDistanceToNow(locationData.timestamp.toDate(), { addSuffix: true }));
       };
-      updateTime();
-      const interval = setInterval(updateTime, 60000); // Update every minute
+      updateTdsime();
+      const interval = setInterval(updateTdsime, 60000); // Update every minute
       return () => clearInterval(interval);
     }
   }, [locationData]);
-
-  if (!isClient) {
-    return null; // Don't render anything on the server to prevent hydration issues.
-  }
 
   return (
     <div className="grid lg:grid-cols-3 gap-8 items-start">
@@ -98,7 +94,7 @@ export default function CaregiverDashboard() {
                          <div className="space-y-2 text-lg">
                             <div className="flex items-center gap-3">
                                 <Clock className="h-6 w-6 text-muted-foreground" />
-                                {timeSinceUpdate && (
+                                {isClient && timeSinceUpdate && (
                                    <span>Last updated: <strong>{timeSinceUpdate}</strong></span>
                                 )}
                             </div>
