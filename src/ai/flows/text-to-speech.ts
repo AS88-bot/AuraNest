@@ -15,7 +15,6 @@ import { googleAI } from '@genkit-ai/google-genai';
 const TextToSpeechInputSchema = z.object({
   text: z.string().describe('The text to convert to speech.'),
   voice: z.string().optional().describe('The voice to use for the speech.'),
-  languageCode: z.string().optional().describe('The language code for the speech.'),
 });
 export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
@@ -58,7 +57,6 @@ export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpee
           responseModalities: ['AUDIO'],
           speechConfig: {
             voiceConfig: {
-              languageCode: input.languageCode || 'en-US',
               prebuiltVoiceConfig: { 
                 voiceName: input.voice || 'Algenib',
               },

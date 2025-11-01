@@ -24,17 +24,16 @@ import { textToSpeech } from '@/ai/flows/text-to-speech';
 interface VoiceOption {
   value: string;
   label: string;
-  lang: string;
 }
 
 const voiceOptions: VoiceOption[] = [
-    { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US' },
-    { value: 'Achernar', label: 'English (UK), Achernar (Male)', lang: 'en-GB' },
-    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)', lang: 'es-ES' },
-    { value: 'Spica', label: 'French (France), Spica (Female)', lang: 'fr-FR' },
-    { value: 'Shaula', label: 'German (Germany), Shaula (Female)', lang: 'de-DE' },
-    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)', lang: 'hi-IN' },
-    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)', lang: 'it-IT' },
+    { value: 'Algenib', label: 'English (US), Algenib (Female)' },
+    { value: 'Achernar', label: 'English (UK), Achernar (Male)' },
+    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)' },
+    { value: 'Spica', label: 'French (France), Spica (Female)' },
+    { value: 'Shaula', label: 'German (Germany), Shaula (Female)' },
+    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)' },
+    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)' },
 ];
 
 export default function RemindersPage() {
@@ -51,7 +50,6 @@ export default function RemindersPage() {
       const result = await textToSpeech({
         text: reminderText,
         voice: selectedVoice.value,
-        languageCode: selectedVoice.lang,
       });
       setAudioSrc(result.audio);
     } catch (error) {
