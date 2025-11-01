@@ -1,0 +1,102 @@
+import type { PlannerItem, Contact } from './types';
+
+export const dailySchedule: PlannerItem[] = [
+  {
+    id: '1',
+    time: '08:00 AM',
+    title: 'Morning Medication',
+    category: 'medication',
+    description: 'Take one white pill with a full glass of water.',
+    icon: 'Pill',
+    image: 'medication-1',
+    isCompleted: true,
+  },
+  {
+    id: '2',
+    time: '08:30 AM',
+    title: 'Breakfast',
+    category: 'meal',
+    description: 'Oatmeal with fresh berries and a cup of tea.',
+    icon: 'Utensils',
+    isCompleted: false,
+  },
+  {
+    id: '3',
+    time: '10:00 AM',
+    title: "Doctor's Appointment",
+    category: 'appointment',
+    description: 'Check-up with Dr. Evans. Remember to bring your questions.',
+    icon: 'Calendar',
+    isCompleted: false,
+  },
+  {
+    id: '4',
+    time: '01:00 PM',
+    title: 'Lunch',
+    category: 'meal',
+    description: 'Chicken salad sandwich and a side of fruit.',
+    icon: 'Utensils',
+    isCompleted: false,
+  },
+    {
+    id: '5',
+    time: '03:00 PM',
+    title: 'Afternoon Walk',
+    category: 'activity',
+    description: 'A gentle walk in the park with Sarah.',
+    icon: 'Smile',
+    isCompleted: false,
+  },
+  {
+    id: '6',
+    time: '06:00 PM',
+    title: 'Evening Medication',
+    category: 'medication',
+    description: 'Take two small blue pills before dinner.',
+    icon: 'Pill',
+    image: 'medication-2',
+    isCompleted: false,
+  },
+  {
+    id: '7',
+    time: '06:30 PM',
+    title: 'Dinner',
+    category: 'meal',
+    description: 'Baked salmon with roasted vegetables.',
+    icon: 'Utensils',
+    isCompleted: false,
+  },
+];
+
+export const contacts: Contact[] = [
+  {
+    id: '1',
+    name: 'Sarah',
+    relation: 'Daughter',
+    avatar: 'contact-1',
+  },
+  {
+    id: '2',
+    name: 'Dr. Evans',
+    relation: 'Doctor',
+    avatar: 'contact-2',
+  },
+    {
+    id: '3',
+    name: 'Alex',
+    relation: 'Grandchild',
+    avatar: 'contact-3',
+  },
+  {
+    id: '4',
+    name: 'Maria',
+    relation: 'Caregiver',
+    avatar: 'contact-4',
+  },
+  {
+    id: '5',
+    name: 'Leo',
+    relation: 'Neighbor',
+    avatar: 'contact-5',
+  },
+];

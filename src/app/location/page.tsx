@@ -1,17 +1,17 @@
-import DailyPlanner from '@/components/dashboard/daily-planner';
+import MapView from '@/components/location/map-view';
 
-export default function Home() {
+export default function LocationPage() {
   return (
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Today's Plan
+          Location & Navigation
         </h1>
         <p className="text-muted-foreground mt-2">
-          Here is your schedule for today. Tap the circle to mark items as complete.
+          See your location, check safe zones, and get directions home.
         </p>
       </header>
-      <DailyPlanner />
+      <MapView />
     </div>
   );
 }

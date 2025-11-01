@@ -1,17 +1,17 @@
-import DailyPlanner from '@/components/dashboard/daily-planner';
+import JournalForm from '@/components/journal/journal-form';
 
-export default function Home() {
+export default function JournalPage() {
   return (
     <div className="flex flex-col gap-8">
       <header>
         <h1 className="text-3xl font-bold tracking-tight text-foreground">
-          Today's Plan
+          Memory Journal
         </h1>
         <p className="text-muted-foreground mt-2">
-          Here is your schedule for today. Tap the circle to mark items as complete.
+          Record your thoughts, photos, or voice notes from the day. Then, see a summary of your day.
         </p>
       </header>
-      <DailyPlanner />
+      <JournalForm />
     </div>
   );
 }

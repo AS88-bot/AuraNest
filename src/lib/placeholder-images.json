@@ -1,3 +1,52 @@
 {
-  "placeholderImages": []
+  "placeholderImages": [
+    {
+      "id": "contact-1",
+      "description": "Profile picture of a smiling woman with blonde hair",
+      "imageUrl": "https://images.unsplash.com/photo-1598625873873-52f9aefd7d9d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw4fHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzYxOTgwMjIyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "woman smiling"
+    },
+    {
+      "id": "contact-2",
+      "description": "Profile picture of a smiling man with glasses",
+      "imageUrl": "https://images.unsplash.com/photo-1569779213435-ba3167dde7cc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwyfHxtYW4lMjBnbGFzc2VzfGVufDB8fHx8MTc2MTkxODMyMXww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "man glasses"
+    },
+    {
+      "id": "contact-3",
+      "description": "Profile picture of a young person with short dark hair",
+      "imageUrl": "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw5fHx5b3VuZyUyMHBlcnNvbnxlbnwwfHx8fDE3NjE5NDE2MzZ8MA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "young person"
+    },
+    {
+      "id": "contact-4",
+      "description": "Profile picture of an older woman with grey hair",
+      "imageUrl": "https://images.unsplash.com/photo-1534180477871-5d6cc81f3920?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw2fHxvbGRlciUyMHdvbWFufGVufDB8fHx8MTc2MTkyODg4OHww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "older woman"
+    },
+    {
+      "id": "contact-5",
+      "description": "Profile picture of a person with a friendly dog",
+      "imageUrl": "https://images.unsplash.com/photo-1630063812164-fe6e50f2ad49?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw0fHxwZXJzb24lMjBkb2d8ZW58MHx8fHwxNzYyMDA5NzQyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "person dog"
+    },
+    {
+      "id": "medication-1",
+      "description": "Image of a round white pill",
+      "imageUrl": "https://images.unsplash.com/photo-1698494306903-4799201ff109?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHx3aGl0ZSUyMHBpbGx8ZW58MHx8fHwxNzYyMDE1MzAyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "white pill"
+    },
+    {
+      "id": "medication-2",
+      "description": "Image of two small blue pills",
+      "imageUrl": "https://images.unsplash.com/photo-1652129889120-4bfc50058fbe?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHw3fHxibHVlJTIwcGlsbHN8ZW58MHx8fHwxNzYyMDE1MzAyfDA&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "blue pills"
+    },
+    {
+      "id": "map-placeholder",
+      "description": "A placeholder image of a city map with streets and parks.",
+      "imageUrl": "https://images.unsplash.com/photo-1717343824623-06293a62a70d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwxfHxjaXR5JTIwbWFwfGVufDB8fHx8MTc2MTkxMTUzM3ww&ixlib=rb-4.1.0&q=80&w=1080",
+      "imageHint": "city map"
+    }
+  ]
 }
