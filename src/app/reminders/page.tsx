@@ -26,16 +26,17 @@ interface VoiceOption {
     value: string;
     label: string;
     lang: string;
+    languageName: string;
   }
   
 const voiceOptions: VoiceOption[] = [
-    { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US' },
-    { value: 'Achernar', label: 'English (UK), Achernar (Male)', lang: 'en-GB' },
-    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)', lang: 'es-ES' },
-    { value: 'Spica', label: 'French (France), Spica (Female)', lang: 'fr-FR' },
-    { value: 'Shaula', label: 'German (Germany), Shaula (Female)', lang: 'de-DE' },
-    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)', lang: 'hi-IN' },
-    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)', lang: 'it-IT' },
+    { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US', languageName: 'English' },
+    { value: 'Achernar', label: 'English (UK), Achernar (Male)', lang: 'en-GB', languageName: 'English' },
+    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)', lang: 'es-ES', languageName: 'Spanish' },
+    { value: 'Spica', label: 'French (France), Spica (Female)', lang: 'fr-FR', languageName: 'French' },
+    { value: 'Shaula', label: 'German (Germany), Shaula (Female)', lang: 'de-DE', languageName: 'German' },
+    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)', lang: 'hi-IN', languageName: 'Hindi' },
+    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)', lang: 'it-IT', languageName: 'Italian' },
 ];
 
 export default function RemindersPage() {
@@ -53,6 +54,8 @@ export default function RemindersPage() {
       const result = await textToSpeech({
         text: reminderText,
         voice: selectedVoice.value,
+        languageCode: selectedVoice.lang,
+        languageName: selectedVoice.languageName,
       });
       setAudioSrc(result.audio);
     } catch (error) {

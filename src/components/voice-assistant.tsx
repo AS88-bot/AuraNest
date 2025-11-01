@@ -17,6 +17,7 @@ import { useToast } from '@/hooks/use-toast';
 import { contacts } from '@/lib/data';
 import type { User } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
+import { useLocale } from '@/hooks/use-locale';
 
 
 // This function is moved outside the component to prevent it from capturing a stale `user` state.
@@ -51,7 +52,7 @@ const handleCommand = (
     actionTaken = true;
   }
   // Navigation commands
-  else if (command.includes('go to') || command.includes('show me') || command.includes('open')) {
+  else if (command.includes('go to') || command.includes('show me') || command.includes('open') || command.includes('ir a') || command.includes('muéstrame')) {
     const targets = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
     const target = targets.find(t => command.includes(t));
     if (target) {
@@ -61,8 +62,8 @@ const handleCommand = (
     }
   }
   // Calling commands
-  else if (command.startsWith('call')) {
-    const contactName = command.replace('call ', '').trim();
+  else if (command.startsWith('call') || command.startsWith('llama a')) {
+    const contactName = command.replace('call ', '').replace('llama a', '').trim();
     const contactToCall = contacts.find(c => c.name.toLowerCase() === contactName);
     if (contactToCall && contactToCall.phone) {
       setFeedback(`Calling ${contactToCall.name}...`);
@@ -73,7 +74,7 @@ const handleCommand = (
     }
   }
   // Reminder commands
-  else if (command.startsWith('remind me') || command.startsWith('set a reminder')) {
+  else if (command.includes('remind me') || command.includes('set a reminder') || command.includes('recuérdame')) {
     setFeedback('Opening reminders...');
     window.location.href = '/reminders';
     actionTaken = true;
@@ -96,6 +97,7 @@ export function VoiceAssistant() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { firestore, user } = useFirebase();
   const { toast } = useToast();
+  const { locale } = useLocale();
   
   useEffect(() => {
     setIsMounted(true);
@@ -104,8 +106,10 @@ export function VoiceAssistant() {
     if (SpeechRecognitionAPI) {
       const recognitionInstance = new SpeechRecognitionAPI();
       recognitionInstance.continuous = false;
-      recognitionInstance.lang = 'en-US';
       recognitionInstance.interimResults = false;
+      
+      // Set the language based on the current app locale
+      recognitionInstance.lang = locale;
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim().toLowerCase();
@@ -153,10 +157,12 @@ export function VoiceAssistant() {
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firestore, user, toast]); // Add firestore, user, and toast to deps
+  }, [firestore, user, toast, locale]); // Add locale to deps
 
   const startListening = () => {
     if (recognitionRef.current) {
+      // Update language on the recognition instance right before starting
+      recognitionRef.current.lang = locale;
       setTranscript('');
       setFeedback('');
       setIsListening(true);

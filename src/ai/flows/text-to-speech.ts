@@ -1,8 +1,8 @@
 'use server';
 /**
- * @fileOverview A text-to-speech flow using Genkit and Google AI.
+ * @fileOverview A text-to-speech flow that can translate text before synthesizing it.
  *
- * - textToSpeech - A function that converts text to audio.
+ * - textToSpeech - A function that converts text to audio, with optional translation.
  * - TextToSpeechInput - The input type for the textToSpeech function.
  * - TextToSpeechOutput - The return type for the textToSpeech function.
  */
@@ -15,6 +15,8 @@ import { googleAI } from '@genkit-ai/google-genai';
 const TextToSpeechInputSchema = z.object({
   text: z.string().describe('The text to convert to speech.'),
   voice: z.string().optional().describe('The voice to use for the speech.'),
+  languageCode: z.string().optional().describe('The BCP-47 language code for the target audio (e.g., "en-US", "es-ES").'),
+  languageName: z.string().optional().describe('The full name of the target language (e.g., "Spanish").'),
 });
 export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
@@ -50,7 +52,28 @@ async function toWav(
   });
 }
 
-export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpeechOutput> {
+const translateAndSpeakFlow = ai.defineFlow(
+  {
+    name: 'translateAndSpeakFlow',
+    inputSchema: TextToSpeechInputSchema,
+    outputSchema: TextToSpeechOutputSchema,
+  },
+  async (input) => {
+    let textToSpeak = input.text;
+
+    // Only translate if the target language is not English
+    if (input.languageCode && !input.languageCode.startsWith('en') && input.languageName) {
+        const { text: translatedText } = await ai.generate({
+          prompt: `Translate the following text to ${input.languageName}: "${input.text}"`,
+          config: {
+            temperature: 0.1, // Low temperature for more deterministic translation
+          }
+        });
+        if (translatedText) {
+          textToSpeak = translatedText;
+        }
+    }
+    
     const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
         config: {
@@ -63,7 +86,7 @@ export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpee
             },
           },
         },
-        prompt: input.text,
+        prompt: textToSpeak,
       });
 
       if (!media) {
@@ -80,4 +103,10 @@ export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpee
       return {
         audio: 'data:audio/wav;base64,' + wavBase64,
       };
+  }
+);
+
+
+export async function textToSpeech(input: TextToSpeechInput): Promise<TextToSpeechOutput> {
+    return translateAndSpeakFlow(input);
 }
