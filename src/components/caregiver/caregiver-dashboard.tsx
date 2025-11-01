@@ -1,0 +1,96 @@
+'use client';
+
+import Image from 'next/image';
+import { PlaceHolderImages } from '@/lib/placeholder-images';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card';
+import { Badge } from '../ui/badge';
+import { AlertTriangle, Clock } from 'lucide-react';
+import { useFirebase } from '@/firebase';
+import { useDoc } from '@/firebase/firestore/use-doc';
+import { doc } from 'firebase/firestore';
+import { useMemo } from 'react';
+import { formatDistanceToNow } from 'date-fns';
+
+export default function CaregiverDashboard() {
+  const mapImage = PlaceHolderImages.find(p => p.id === 'map-placeholder');
+  const { firestore, user } = useFirebase();
+
+  // This assumes we are finding the location for a specific hardcoded user.
+  // In a real app, you would have a way to determine which user the caregiver is looking for.
+  const caredForUserId = 'test-user-id'; 
+
+  const emergencyLocationRef = useMemo(() => {
+    if (!firestore) return null;
+    // In a real app, we would only construct this ref if the current user is an authorized caregiver.
+    // For now, we allow reading for demonstration.
+    return doc(firestore, `users/${caredForUserId}/emergencyLocation`, 'latest');
+  }, [firestore]);
+
+  const { data: locationData, isLoading } = useDoc(emergencyLocationRef);
+  
+  const timeSinceUpdate = locationData?.timestamp 
+    ? formatDistanceToNow(locationData.timestamp.toDate(), { addSuffix: true })
+    : 'N/A';
+
+  return (
+    <div className="grid lg:grid-cols-3 gap-8 items-start">
+        <div className="lg:col-span-2 space-y-8">
+            <Card className="shadow-lg">
+                <CardHeader>
+                    <div className="flex justify-between items-center">
+                        <CardTitle className="text-2xl">Aura User's Location</CardTitle>
+                        <Badge variant="destructive" className="text-md py-2 px-4">
+                            <AlertTriangle className="mr-2 h-5 w-5" />
+                            SOS Alert Triggered
+                        </Badge>
+                    </div>
+                </CardHeader>
+                <CardContent>
+                {mapImage && (
+                    <div className="relative aspect-[4/3] w-full rounded-lg overflow-hidden border-2 border-destructive/40">
+                        <Image
+                            src={mapImage.imageUrl}
+                            alt={mapImage.description}
+                            fill
+                            style={{ objectFit: 'cover' }}
+                            data-ai-hint={mapImage.imageHint}
+                        />
+                        {/* Mock User Location Pin - this would be driven by real lat/long data */}
+                         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+                            <div className="relative flex items-center justify-center">
+                                <span className="absolute h-10 w-10 animate-ping rounded-full bg-destructive opacity-75"></span>
+                                <span className="relative rounded-full h-4 w-4 bg-destructive border-2 border-white"></span>
+                            </div>
+                        </div>
+
+                    </div>
+                )}
+                </CardContent>
+            </Card>
+        </div>
+        
+        <div className="space-y-8">
+            <Card className="shadow-lg">
+                <CardHeader>
+                    <CardTitle className="text-2xl">Location Details</CardTitle>
+                    <CardDescription>Last known location information.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    {isLoading && <p>Loading location...</p>}
+                    {locationData && (
+                         <div className="space-y-2 text-lg">
+                            <div className="flex items-center gap-3">
+                                <Clock className="h-6 w-6 text-muted-foreground" />
+                                <span>Last updated: <strong>{timeSinceUpdate}</strong></span>
+                            </div>
+                            <p>Latitude: {locationData.latitude.toFixed(5)}</p>
+                            <p>Longitude: {locationData.longitude.toFixed(5)}</p>
+                        </div>
+                    )}
+                    {!isLoading && !locationData && <p>No location data available.</p>}
+                </CardContent>
+            </Card>
+        </div>
+    </div>
+  );
+}

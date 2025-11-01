@@ -11,6 +11,7 @@ import {
   Map,
   Settings,
   Bell,
+  HeartHandshake,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -22,6 +23,7 @@ const menuItems = [
   { href: '/journal', label: 'Journal', icon: BookHeart },
   { href: '/location', label: 'Location', icon: Map },
   { href: '/reminders', label: 'Reminders', icon: Bell },
+  { href: '/caregiver', label: 'Caregiver', icon: HeartHandshake },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
