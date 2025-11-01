@@ -37,7 +37,37 @@
         "editPlan": "Edit Plan",
         "editTitle": "Edit Daily Plan",
         "editDescription": "Make changes to your daily schedule here. Click save when you're done.",
-        "save": "Save Changes"
+        "save": "Save Changes",
+        "schedule": {
+            "item1": {
+                "title": "Morning Medication",
+                "description": "Take one white pill with a full glass of water."
+            },
+            "item2": {
+                "title": "Breakfast",
+                "description": "Oatmeal with fresh berries and a cup of tea."
+            },
+            "item3": {
+                "title": "Doctor's Appointment",
+                "description": "Check-up with Dr. Evans. Remember to bring your questions."
+            },
+            "item4": {
+                "title": "Lunch",
+                "description": "Chicken salad sandwich and a side of fruit."
+            },
+            "item5": {
+                "title": "Afternoon Walk",
+                "description": "A gentle walk in the park with Sarah."
+            },
+            "item6": {
+                "title": "Evening Medication",
+                "description": "Take two small blue pills before dinner."
+            },
+            "item7": {
+                "title": "Dinner",
+                "description": "Baked salmon with roasted vegetables."
+            }
+        }
     },
     "contacts": {
         "title": "Contacts",
@@ -47,7 +77,14 @@
         "editDescription": "Make changes to your contacts here. Changes are saved automatically.",
         "done": "Done",
         "call": "Call",
-        "videoCall": "Video call"
+        "videoCall": "Video call",
+        "relation": {
+            "daughter": "Daughter",
+            "doctor": "Doctor",
+            "grandchild": "Grandchild",
+            "caregiver": "Caregiver",
+            "neighbor": "Neighbor"
+        }
     },
     "journal": {
         "title": "Memory Journal",

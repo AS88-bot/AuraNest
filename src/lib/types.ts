@@ -7,9 +7,9 @@ export type IconName = "Pill" | "Utensils" | "Calendar" | "Smile";
 export interface PlannerItem {
   id: string;
   time: string;
-  title: string;
+  titleKey: string;
   category: PlannerCategory;
-  description: string;
+  descriptionKey: string;
   icon: IconName;
   image?: string; 
   isCompleted: boolean;
@@ -19,7 +19,7 @@ export interface PlannerItem {
 export interface Contact {
   id: string;
   name: string;
-  relation: string;
+  relationKey: string;
   avatar: string;
   phone?: string;
 }

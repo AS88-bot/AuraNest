@@ -7,6 +7,7 @@ import { useState } from 'react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { Calendar, Pill, Smile, Utensils } from 'lucide-react';
+import { useLocale } from '@/hooks/use-locale';
 
 interface PlannerItemProps {
   item: PlannerItemType;
@@ -29,10 +30,13 @@ const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
 
 export default function PlannerItem({ item }: PlannerItemProps) {
     const [isChecked, setIsChecked] = useState(item.isCompleted);
+    const { t } = useLocale();
 
     const medicationImage = item.image ? PlaceHolderImages.find(p => p.id === item.image) : null;
     
     const Icon = icons[item.icon];
+    const title = t(item.titleKey);
+    const description = t(item.descriptionKey);
 
     return (
         <Card className={cn("overflow-hidden transition-all hover:shadow-md", categoryColors[item.category], 'border-l-8')}>
@@ -43,9 +47,9 @@ export default function PlannerItem({ item }: PlannerItemProps) {
                 <div className="flex-1 space-y-2">
                     <div className="flex items-center gap-3">
                          {Icon && <Icon className="h-8 w-8 text-foreground" />}
-                        <h3 className="text-xl font-bold text-foreground">{item.title}</h3>
+                        <h3 className="text-xl font-bold text-foreground">{title}</h3>
                     </div>
-                    <p className="text-lg text-muted-foreground">{item.description}</p>
+                    <p className="text-lg text-muted-foreground">{description}</p>
                     {medicationImage && (
                         <div className="mt-2">
                             <Image 
@@ -64,7 +68,7 @@ export default function PlannerItem({ item }: PlannerItemProps) {
                         checked={isChecked}
                         onCheckedChange={() => setIsChecked(!isChecked)}
                         className="h-10 w-10 border-4"
-                        aria-label={`Mark ${item.title} as completed`}
+                        aria-label={`Mark ${title} as completed`}
                     />
                 </div>
             </CardContent>

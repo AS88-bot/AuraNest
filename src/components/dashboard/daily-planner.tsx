@@ -10,7 +10,7 @@ import { EditPlannerSheet } from './edit-planner-sheet';
 import { useLocale } from '@/hooks/use-locale';
 
 export default function DailyPlanner() {
-  const [schedule, setSchedule] = useState<PlannerItemType[]>(initialSchedule);
+  const [schedule, setSchedule] = useState<Omit<PlannerItemType, 'onUpdate'>[]>(initialSchedule);
   const [isEditing, setIsEditing] = useState(false);
   const { t } = useLocale();
 
@@ -31,7 +31,7 @@ export default function DailyPlanner() {
         />
       </div>
       {schedule.map((item) => (
-        <PlannerItem key={item.id} item={item} />
+        <PlannerItem key={item.id} item={item as PlannerItemType} />
       ))}
     </div>
   );

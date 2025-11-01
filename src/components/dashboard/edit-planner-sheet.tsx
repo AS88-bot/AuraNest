@@ -18,7 +18,7 @@ import { Separator } from '../ui/separator';
 import { useLocale } from '@/hooks/use-locale';
 
 interface EditPlannerSheetProps {
-  schedule: PlannerItemType[];
+  schedule: Omit<PlannerItemType, 'onUpdate'>[];
   onUpdate: (item: PlannerItemType) => void;
   onSave: () => void;
   triggerText: string;
@@ -48,7 +48,7 @@ export function EditPlannerSheet({
         <div className="space-y-6 py-6">
           {schedule.map((item, index) => (
             <>
-              <EditPlannerItem key={item.id} item={item} onUpdate={onUpdate} />
+              <EditPlannerItem key={item.id} item={item as PlannerItemType} onUpdate={onUpdate} />
               {index < schedule.length - 1 && <Separator />}
             </>
           ))}

@@ -37,7 +37,37 @@
         "editPlan": "Editar Plan",
         "editTitle": "Editar Plan Diario",
         "editDescription": "Haz cambios en tu horario diario aquí. Haz clic en guardar cuando hayas terminado.",
-        "save": "Guardar Cambios"
+        "save": "Guardar Cambios",
+        "schedule": {
+            "item1": {
+                "title": "Medicación Matutina",
+                "description": "Tomar una pastilla blanca con un vaso lleno de agua."
+            },
+            "item2": {
+                "title": "Desayuno",
+                "description": "Avena con bayas frescas y una taza de té."
+            },
+            "item3": {
+                "title": "Cita con el Médico",
+                "description": "Revisión con el Dr. Evans. Recuerda llevar tus preguntas."
+            },
+            "item4": {
+                "title": "Almuerzo",
+                "description": "Sándwich de ensalada de pollo y una porción de fruta."
+            },
+            "item5": {
+                "title": "Paseo por la Tarde",
+                "description": "Un paseo suave por el parque con Sarah."
+            },
+            "item6": {
+                "title": "Medicación Vespertina",
+                "description": "Tomar dos pastillas azules pequeñas antes de cenar."
+            },
+            "item7": {
+                "title": "Cena",
+                "description": "Salmón al horno con verduras asadas."
+            }
+        }
     },
     "contacts": {
         "title": "Contactos",
@@ -47,7 +77,14 @@
         "editDescription": "Haz cambios en tus contactos aquí. Los cambios se guardan automáticamente.",
         "done": "Hecho",
         "call": "Llamar",
-        "videoCall": "Videollamada"
+        "videoCall": "Videollamada",
+        "relation": {
+            "daughter": "Hija",
+            "doctor": "Doctor",
+            "grandchild": "Nieto/a",
+            "caregiver": "Cuidador/a",
+            "neighbor": "Vecino/a"
+        }
     },
     "journal": {
         "title": "Diario de Recuerdos",
