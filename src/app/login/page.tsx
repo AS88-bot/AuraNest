@@ -18,8 +18,14 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { BrainCircuit, Loader2 } from 'lucide-react';
-import { useFirebase, initiateEmailSignIn, initiateEmailSignUp, initiateGoogleSignIn } from '@/firebase';
+import { useFirebase } from '@/firebase';
 import { Separator } from '@/components/ui/separator';
+import {
+    GoogleAuthProvider,
+    signInWithPopup,
+    createUserWithEmailAndPassword,
+    signInWithEmailAndPassword
+} from 'firebase/auth';
 
 const GoogleIcon = () => (
     <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24">
@@ -51,10 +57,11 @@ export default function LoginPage() {
     const [error, setError] = useState<string | null>(null);
 
     const handleEmailSignIn = async () => {
+        if (!auth) return;
         setIsLoading('email');
         setError(null);
         try {
-            await initiateEmailSignIn(auth, email, password);
+            await signInWithEmailAndPassword(auth, email, password);
         } catch (e: any) {
             setError(e.message);
         } finally {
@@ -63,10 +70,11 @@ export default function LoginPage() {
     }
 
     const handleSignUp = async () => {
+        if (!auth) return;
         setIsLoading('email');
         setError(null);
         try {
-            await initiateEmailSignUp(auth, email, password);
+            await createUserWithEmailAndPassword(auth, email, password);
         } catch (e: any) {
             setError(e.message);
         } finally {
@@ -74,13 +82,18 @@ export default function LoginPage() {
         }
     }
 
-    const handleGoogleSignIn = () => {
+    const handleGoogleSignIn = async () => {
+        if (!auth) return;
         setIsLoading('google');
         setError(null);
-        initiateGoogleSignIn(auth).catch((e: any) => {
+        try {
+            const provider = new GoogleAuthProvider();
+            await signInWithPopup(auth, provider);
+            // The onAuthStateChanged listener in FirebaseProvider will handle the redirect.
+        } catch(e: any) {
             setError(e.message);
             setIsLoading(null);
-        });
+        }
     }
 
   return (
