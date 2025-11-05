@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { User, Save } from 'lucide-react';
+import { User, Save, Upload } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useLocale } from '@/hooks/use-locale';
@@ -36,12 +36,26 @@ export function EditProfileDialog({
   const [currentName, setCurrentName] = useState(name);
   const [currentEmail, setCurrentEmail] = useState(email);
   const [currentAvatar, setCurrentAvatar] = useState(avatar);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useLocale();
 
   const handleSave = () => {
     onSave(currentName, currentEmail, currentAvatar);
     setIsOpen(false);
   };
+
+  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCurrentAvatar(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+  
+  const triggerFileSelect = () => fileInputRef.current?.click();
 
   const contactImages = PlaceHolderImages.filter(p => p.id.startsWith('contact-'));
 
@@ -87,15 +101,19 @@ export function EditProfileDialog({
            <div className="grid grid-cols-4 items-start gap-4">
             <Label className="text-right pt-2">{t('editProfile.avatar')}</Label>
             <div className="col-span-3">
-                 <div className="flex items-center gap-4">
-                    <Avatar className="h-16 w-16">
-                        <AvatarImage src={currentAvatar} alt={currentName} />
-                        <AvatarFallback>{currentName.charAt(0)}</AvatarFallback>
-                    </Avatar>
-                    <div className="grid grid-cols-3 gap-2">
+                 <div className="flex flex-col gap-4">
+                    <div className="flex items-center gap-4">
+                        <Avatar className="h-24 w-24">
+                            <AvatarImage src={currentAvatar} alt={currentName} />
+                            <AvatarFallback>{currentName.charAt(0)}</AvatarFallback>
+                        </Avatar>
+                        <Input type="file" accept="image/*" ref={fileInputRef} onChange={handleFileSelect} className="hidden" />
+                        <Button variant="outline" onClick={triggerFileSelect}><Upload className="mr-2 h-4 w-4" /> Upload</Button>
+                    </div>
+                    <div className="grid grid-cols-4 gap-2">
                         {contactImages.map(image => (
-                            <button key={image.id} onClick={() => setCurrentAvatar(image.imageUrl)} className="rounded-full overflow-hidden border-2 hover:border-primary focus:border-primary focus:outline-none">
-                                <Avatar className="h-10 w-10">
+                            <button key={image.id} onClick={() => setCurrentAvatar(image.imageUrl)} className={`rounded-full overflow-hidden border-2 hover:border-primary focus:border-primary focus:outline-none ${currentAvatar === image.imageUrl ? 'border-primary' : 'border-transparent'}`}>
+                                <Avatar className="h-12 w-12">
                                     <AvatarImage src={image.imageUrl} alt={image.description} />
                                 </Avatar>
                             </button>
