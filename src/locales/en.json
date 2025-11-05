@@ -29,7 +29,7 @@
         "ariaLabel": "Voice Command",
         "listeningTitle": "Listening...",
         "listeningDescription": "What can I help you with?",
-        "placeholder": "e.g., \"Call Sarah\" or \"Remind me to take my pills\"",
+        "placeholder": "e.g., \"Call Sarah\" or \"Remind me to take my pills at 8pm\"",
         "cancel": "Cancel",
         "heard": "I heard",
         "sendingAlert": "Sending emergency alert...",
@@ -37,7 +37,8 @@
         "calling": "Calling",
         "contactNotFound": "Sorry, I couldn't find a contact named {contactName}.",
         "creatingReminder": "Creating your reminder...",
-        "reminderCreated": "Here is your audio reminder.",
+        "reminderCreatedNoTime": "Here is your audio reminder.",
+        "reminderSetFor": "OK. I've set a reminder for",
         "reminderError": "Sorry, I couldn't create the reminder.",
         "didNotUnderstand": "Sorry, I didn't understand that. Please try again.",
         "notSupported": "Voice commands not supported"
@@ -149,7 +150,11 @@
         "textPlaceholder": "e.g., 'Remember to take medication at 8 PM.'",
         "generate": "Generate Reminder",
         "generating": "Generating Audio...",
-        "generatedAudio": "Generated Audio"
+        "generatedAudio": "Generated Audio",
+        "notificationTitle": "Gentle Reminder",
+        "notificationDescription": "It's time for your reminder.",
+        "playAudio": "Play Audio",
+        "dismiss": "Dismiss"
     },
     "caregiver": {
         "title": "Caregiver Dashboard",

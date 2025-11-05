@@ -10,8 +10,8 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Mic, MicOff, Waves, Volume2 } from 'lucide-react';
-import { useFirebase, useUser } from '@/firebase';
+import { Mic, MicOff, Waves, Volume2, Loader2 } from 'lucide-react';
+import { useFirebase } from '@/firebase';
 import { sendEmergencyAlert } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { contacts } from '@/lib/data';
@@ -19,6 +19,7 @@ import type { User } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import { useLocale } from '@/hooks/use-locale';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
+import { useReminders } from '@/hooks/use-reminders';
 
 
 const handleCommand = async (
@@ -30,7 +31,9 @@ const handleCommand = async (
   firestore: Firestore | null,
   user: User | null,
   toast: (options: any) => void,
-  t: (key: string) => string
+  t: (key: string) => string,
+  addReminder: (reminder: any) => void,
+  selectedVoice: any
 ) => {
   const lowerCaseCommand = command.toLowerCase();
   
@@ -84,13 +87,30 @@ const handleCommand = async (
   for (const keyword of reminderKeywords) {
     const keywordWithSpace = keyword + ' ';
     if (lowerCaseCommand.startsWith(keywordWithSpace)) {
-        const reminderText = command.substring(keywordWithSpace.length);
+        const reminderInput = command.substring(keywordWithSpace.length);
         takeAction(t('voiceAssistant.creatingReminder'), 0, false);
         setIsGeneratingAudio(true);
         try {
-            const result = await textToSpeech({ text: reminderText });
-            setAudioSrc(result.audio);
-            setFeedback(t('voiceAssistant.reminderCreated'));
+            const result = await textToSpeech({ 
+              text: reminderInput,
+              voice: selectedVoice.value,
+              languageCode: selectedVoice.lang,
+              languageName: selectedVoice.languageName,
+            });
+
+            if (result.time) {
+                addReminder({
+                    id: new Date().toISOString(),
+                    time: result.time,
+                    text: result.reminderText,
+                    audioSrc: result.audio,
+                });
+                setFeedback(`${t('voiceAssistant.reminderSetFor')} ${result.time}.`);
+            } else {
+                setFeedback(t('voiceAssistant.reminderCreatedNoTime'));
+                setAudioSrc(result.audio);
+            }
+
         } catch (e) {
             console.error(e);
             setFeedback(t('voiceAssistant.reminderError'));
@@ -105,12 +125,10 @@ const handleCommand = async (
 
   // 3. Navigation
   for (const keyword of goToKeywords) {
-      const keywordWithSpace = keyword + ' ';
-      if (lowerCaseCommand.startsWith(keywordWithSpace)) {
-          const targetPage = lowerCaseCommand.substring(keywordWithSpace.length);
+      if (lowerCaseCommand.includes(keyword)) {
            for (const navItem of navItems) {
                 const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
-                if (targetPage.includes(translatedPageName)) {
+                if (lowerCaseCommand.includes(translatedPageName)) {
                     window.location.href = `/${navItem.route}`;
                     takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem.key)}...`);
                     return;
@@ -121,12 +139,10 @@ const handleCommand = async (
 
   // 4. Calling
   for (const keyword of callKeywords) {
-      const keywordWithSpace = keyword + ' ';
-      if (lowerCaseCommand.startsWith(keywordWithSpace)) {
-            const targetContact = lowerCaseCommand.substring(keywordWithSpace.length);
+      if (lowerCaseCommand.includes(keyword)) {
             for (const contact of contacts) {
                 const translatedContactName = t(contact.name).toLowerCase();
-                if (targetContact.includes(translatedContactName)) {
+                if (lowerCaseCommand.includes(translatedContactName)) {
                     if (contact.phone) {
                         window.location.href = `tel:${contact.phone}`;
                         takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
@@ -157,6 +173,16 @@ const localeToLang: Record<string, string> = {
     it: 'it-IT',
 };
 
+const voiceOptions = [
+    { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US', languageName: 'English' },
+    { value: 'Achernar', label: 'English (UK), Achernar (Male)', lang: 'en-GB', languageName: 'English' },
+    { value: 'Laomedeia', label: 'Spanish (Spain), Laomedeia (Female)', lang: 'es-ES', languageName: 'Spanish' },
+    { value: 'Erinome', label: 'French (France), Erinome (Female)', lang: 'fr-FR', languageName: 'French' },
+    { value: 'Schedar', label: 'German (Germany), Schedar (Female)', lang: 'de-DE', languageName: 'German' },
+    { value: 'Leda', label: 'Hindi (India), Leda (Female)', lang: 'hi-IN', languageName: 'Hindi' },
+    { value: 'Callirrhoe', label: 'Italian (Italy), Callirrhoe (Female)', lang: 'it-IT', languageName: 'Italian' },
+];
+
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -169,7 +195,11 @@ export function VoiceAssistant() {
   const { firestore, user } = useFirebase();
   const { toast } = useToast();
   const { locale, t } = useLocale();
+  const { addReminder } = useReminders();
   
+  // Find the voice option that matches the current app locale
+  const selectedVoice = voiceOptions.find(opt => opt.lang.startsWith(locale)) || voiceOptions[0];
+
   useEffect(() => {
     setIsMounted(true);
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -186,7 +216,7 @@ export function VoiceAssistant() {
         const currentTranscript = event.results[0][0].transcript.trim();
         setTranscript(currentTranscript);
         setFeedback(`${t('voiceAssistant.heard')}: "${currentTranscript}"`)
-        handleCommand(currentTranscript, setFeedback, setAudioSrc, setIsGeneratingAudio, stopListening, firestore, user, toast, t);
+        handleCommand(currentTranscript, setFeedback, setAudioSrc, setIsGeneratingAudio, stopListening, firestore, user, toast, t, addReminder, selectedVoice);
       };
 
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -225,7 +255,7 @@ export function VoiceAssistant() {
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firestore, user, toast, locale, t, isGeneratingAudio]); // Add locale and t to deps
+  }, [firestore, user, toast, locale, t, addReminder, selectedVoice, isGeneratingAudio]);
 
   const startListening = () => {
     if (recognitionRef.current) {
@@ -306,6 +336,13 @@ export function VoiceAssistant() {
                 <Waves className="h-24 w-24 text-primary opacity-50" />
                 <Mic className="h-12 w-12 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
             </div>
+            
+            {isGeneratingAudio && (
+                <div className="flex items-center gap-4 text-muted-foreground">
+                    <Loader2 className="h-6 w-6 animate-spin" />
+                    <span>{t('voiceAssistant.creatingReminder')}</span>
+                </div>
+            )}
 
             {audioSrc && !isGeneratingAudio && (
                 <div className="space-y-4 rounded-lg bg-muted p-4 w-full">
@@ -319,9 +356,9 @@ export function VoiceAssistant() {
                 </div>
             )}
 
-            {!audioSrc && (
+            {!audioSrc && !isGeneratingAudio && (
                 <p className="text-muted-foreground text-center min-h-[2.5rem] text-xl px-4 py-2 rounded-lg bg-muted w-full">
-                {isGeneratingAudio ? t('voiceAssistant.creatingReminder') : feedback || transcript || t('voiceAssistant.placeholder')}
+                 {feedback || transcript || t('voiceAssistant.placeholder')}
                 </p>
             )}
 
