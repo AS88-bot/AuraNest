@@ -11,7 +11,7 @@ import {
   DialogFooter,
 } from '@/components/ui/dialog';
 import { Mic, MicOff } from 'lucide-react';
-import { useFirebase } from '@/firebase';
+import { useFirebase, useUser } from '@/firebase';
 import { sendEmergencyAlert } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
 import { contacts } from '@/lib/data';
@@ -30,10 +30,10 @@ const handleCommand = (
   t: (key: string) => string
 ) => {
   let actionTaken = false;
+  const lowerCaseCommand = command.toLowerCase();
   setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
 
-  const emergencyCommands = ['help', 'emergency', 'sos', 'ayuda', 'emergencia', 'aide', 'urgence', 'hilfe', 'notfall', 'मदद', 'आपातकाल', 'aiuto', 'emergenza'];
-  
+  // --- Command Definitions ---
   const navItems = [
     { key: 'dashboard', route: '' },
     { key: 'contacts', route: 'contacts' },
@@ -44,8 +44,15 @@ const handleCommand = (
     { key: 'settings', route: 'settings' },
   ];
 
+  const commandKeywords = {
+    emergency: ['help', 'emergency', 'sos', 'ayuda', 'emergencia', 'socorro', 'aide', 'urgence', 'hilfe', 'notfall', 'मदद', 'आपातकाल', 'aiuto', 'emergenza'],
+    call: ['call', 'llama a', 'appelle', 'anrufen', 'बुलाओ', 'chiama'],
+    goTo: ['go to', 'navigate to', 'open', 'ir a', 'navegar a', 'abrir', 'aller à', 'naviguer vers', 'ouvrir', 'gehe zu', 'öffne', 'जाओ', 'खोलो', 'vai a', 'apri'],
+    remind: ['remind me', 'set a reminder', 'add reminder', 'recuérdame', 'crear recordatorio', 'créer un rappel', 'ajouter un rappel', 'erinnere mich', 'erinnerung hinzufügen', 'मुझे याद दिलाओ', 'अनुस्मारक जोड़ें', 'ricordami', 'imposta un promemoria']
+  };
+
   // 1. Check for Emergency
-  if (emergencyCommands.some(c => command.includes(c))) {
+  if (commandKeywords.emergency.some(c => lowerCaseCommand.includes(c))) {
     setFeedback(t('voiceAssistant.sendingAlert'));
     if (firestore && user) {
         sendEmergencyAlert(firestore, user);
@@ -66,48 +73,50 @@ const handleCommand = (
 
   // 2. Check for Navigation
   if (!actionTaken) {
-    for (const item of navItems) {
-      const translatedPageName = t(`nav.${item.key}`).toLowerCase();
-      if (command.includes(translatedPageName)) {
-        setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+item.key)}...`);
-        window.location.href = `/${item.route}`;
-        actionTaken = true;
-        break; 
-      }
+    for (const navItem of navItems) {
+        const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
+        if(lowerCaseCommand.includes(translatedPageName)) {
+             setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem.key)}...`);
+             window.location.href = `/${navItem.route}`;
+             actionTaken = true;
+             break;
+        }
     }
   }
 
-  // 3. Check for Calling
+  // 3. Check for Calling Contact
   if (!actionTaken) {
-    for (const contact of contacts) {
-      const translatedContactName = t(contact.name).toLowerCase();
-      if (command.includes(translatedContactName)) {
-        if (contact.phone) {
+    const callKeyword = commandKeywords.call.find(k => lowerCaseCommand.includes(k));
+    if (callKeyword) {
+      for (const contact of contacts) {
+        const translatedContactName = t(contact.name).toLowerCase();
+        if (lowerCaseCommand.includes(translatedContactName)) {
+          if (contact.phone) {
             setFeedback(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
             window.location.href = `tel:${contact.phone}`;
             actionTaken = true;
-        } else {
+          } else {
             setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
+          }
+          break;
         }
-        break;
       }
     }
   }
 
   // 4. Check for Reminders
-  if (!actionTaken && ['remind me', 'set a reminder', 'recuérdame', 'créer un rappel', 'erinnere mich', 'मुझे याद दिलाओ', 'ricordami'].some(c => command.includes(c))) {
+  if (!actionTaken && commandKeywords.remind.some(c => lowerCaseCommand.includes(c))) {
     setFeedback(t('voiceAssistant.openingReminders'));
     window.location.href = '/reminders';
     actionTaken = true;
   }
-
+  
   if (actionTaken) {
     setTimeout(() => stopListening(), 2000);
   } else {
      setFeedback(t('voiceAssistant.didNotUnderstand'));
   }
 };
-
 
 
 export function VoiceAssistant() {
@@ -133,7 +142,7 @@ export function VoiceAssistant() {
       recognitionInstance.lang = locale;
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
-        const currentTranscript = event.results[0][0].transcript.trim().toLowerCase();
+        const currentTranscript = event.results[0][0].transcript.trim();
         setTranscript(currentTranscript);
         handleCommand(currentTranscript, setFeedback, stopListening, firestore, user, toast, t);
       };
