@@ -36,7 +36,6 @@ const handleCommand = (
   const emergencyCommands = ['help', 'emergency', 'sos', 'ayuda', 'emergencia', 'aide', 'urgence', 'hilfe', 'notfall', 'मदद', 'आपातकाल', 'aiuto', 'emergenza'];
   const navigationCommands = ['go to', 'show me', 'open', 'ir a', 'muéstrame', 'abrir', 'aller à', 'montre-moi', 'ouvrir', 'gehe zu', 'zeige mir', 'öffne', 'जाओ', 'मुझे दिखाओ', 'खोलो', 'vai a', 'mostrami', 'apri'];
   const callCommands = ['call', 'llama a', 'appelle', 'anrufen', 'बुलाओ', 'chiama'];
-  const reminderCommands = ['remind me', 'set a reminder', 'recuérdame', 'créer un rappel', 'erinnere mich', 'मुझे याद दिलाओ', 'ricordami'];
   const navigationTargets: {[key: string]: string} = {
     'dashboard': 'dashboard', 'tablero': 'dashboard', 'tableau de bord': 'dashboard', 'instrumententafel': 'dashboard', 'डैशबोर्ड': 'dashboard', 'cruscotto': 'dashboard',
     'contacts': 'contacts', 'contactos': 'contacts',
@@ -66,31 +65,42 @@ const handleCommand = (
     }
     actionTaken = true;
   }
-  // Navigation commands
-  else if (navigationCommands.some(c => command.startsWith(c))) {
-    const targetKey = Object.keys(navigationTargets).find(t => command.includes(t));
-    if (targetKey) {
-      const target = navigationTargets[targetKey];
-      setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+target)}...`);
-      window.location.href = `/${target === 'dashboard' ? '' : target}`;
-      actionTaken = true;
+  
+  if (!actionTaken) {
+    // Navigation commands
+    const navCommand = navigationCommands.find(c => command.startsWith(c));
+    if (navCommand) {
+        const targetSpoken = command.substring(navCommand.length).trim();
+        const targetKey = Object.keys(navigationTargets).find(key => targetSpoken.includes(key.toLowerCase()));
+
+        if (targetKey) {
+            const targetPage = navigationTargets[targetKey];
+            setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+targetPage)}...`);
+            window.location.href = `/${targetPage === 'dashboard' ? '' : targetPage}`;
+            actionTaken = true;
+        }
     }
   }
-  // Calling commands
-  else if (callCommands.some(c => command.startsWith(c))) {
-    const callCommand = callCommands.find(c => command.startsWith(c)) || '';
-    const contactName = command.substring(callCommand.length).trim();
-    const contactToCall = contacts.find(c => t(c.name).toLowerCase() === contactName);
-    if (contactToCall && contactToCall.phone) {
-      setFeedback(`${t('voiceAssistant.calling')} ${t(contactToCall.name)}...`);
-      window.location.href = `tel:${contactToCall.phone}`;
-      actionTaken = true;
-    } else {
-      setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', contactName));
+
+  if (!actionTaken) {
+    // Calling commands
+    const callCommand = callCommands.find(c => command.startsWith(c));
+    if (callCommand) {
+        const contactNameSpoken = command.substring(callCommand.length).trim().toLowerCase();
+        const contactToCall = contacts.find(c => t(c.name).toLowerCase() === contactNameSpoken);
+        
+        if (contactToCall && contactToCall.phone) {
+            setFeedback(`${t('voiceAssistant.calling')} ${t(contactToCall.name)}...`);
+            window.location.href = `tel:${contactToCall.phone}`;
+            actionTaken = true;
+        } else {
+            setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', contactNameSpoken));
+        }
     }
   }
-  // Reminder commands
-  else if (reminderCommands.some(c => command.includes(c))) {
+  
+  // Reminder commands (check if not already handled)
+  if (!actionTaken && ['remind me', 'set a reminder', 'recuérdame', 'créer un rappel', 'erinnere mich', 'मुझे याद दिलाओ', 'ricordami'].some(c => command.includes(c))) {
     setFeedback(t('voiceAssistant.openingReminders'));
     window.location.href = '/reminders';
     actionTaken = true;
@@ -259,5 +269,3 @@ export function VoiceAssistant() {
     </>
   );
 }
-
-    
