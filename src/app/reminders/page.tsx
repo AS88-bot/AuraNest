@@ -32,11 +32,11 @@ interface VoiceOption {
 const voiceOptions: VoiceOption[] = [
     { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US', languageName: 'English' },
     { value: 'Achernar', label: 'English (UK), Achernar (Male)', lang: 'en-GB', languageName: 'English' },
-    { value: 'Proxima-C', label: 'Spanish (Spain), Proxima C (Female)', lang: 'es-ES', languageName: 'Spanish' },
-    { value: 'Spica', label: 'French (France), Spica (Female)', lang: 'fr-FR', languageName: 'French' },
-    { value: 'Shaula', label: 'German (Germany), Shaula (Female)', lang: 'de-DE', languageName: 'German' },
-    { value: 'en-IN-Wavenet-D', label: 'Hindi (India), Wavenet-D (Female)', lang: 'hi-IN', languageName: 'Hindi' },
-    { value: 'it-IT-Wavenet-A', label: 'Italian (Italy), Wavenet-A (Female)', lang: 'it-IT', languageName: 'Italian' },
+    { value: 'Laomedeia', label: 'Spanish (Spain), Laomedeia (Female)', lang: 'es-ES', languageName: 'Spanish' },
+    { value: 'Erinome', label: 'French (France), Erinome (Female)', lang: 'fr-FR', languageName: 'French' },
+    { value: 'Schedar', label: 'German (Germany), Schedar (Female)', lang: 'de-DE', languageName: 'German' },
+    { value: 'Leda', label: 'Hindi (India), Leda (Female)', lang: 'hi-IN', languageName: 'Hindi' },
+    { value: 'Callirrhoe', label: 'Italian (Italy), Callirrhoe (Female)', lang: 'it-IT', languageName: 'Italian' },
 ];
 
 export default function RemindersPage() {
