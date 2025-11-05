@@ -12,13 +12,14 @@ import { SidebarNav } from './sidebar-nav';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { BrainCircuit, LogOut, User, LogIn } from 'lucide-react';
+import { BrainCircuit, LogOut, User } from 'lucide-react';
 import { SOSButton } from '../sos-button';
 import { VoiceAssistant } from '../voice-assistant';
 import { EditProfileDialog } from '../profile/edit-profile-dialog';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { useUser, useFirebase, initiateAnonymousSignIn } from '@/firebase';
+import { useUser, useFirebase } from '@/firebase';
 import { useLocale } from '@/hooks/use-locale';
+import LoginPage from '@/app/login/page';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const defaultUserImage = PlaceHolderImages.find(p => p.id === 'user-avatar');
@@ -33,6 +34,20 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     useEffect(() => {
       setIsClient(true);
     }, []);
+
+    // If user state is still loading, show a loading screen or skeleton
+    if (isUserLoading) {
+      return (
+        <div className="flex h-screen w-screen items-center justify-center">
+          <BrainCircuit className="size-16 animate-pulse text-primary" />
+        </div>
+      );
+    }
+    
+    // If no user is logged in, show the login page
+    if (!user) {
+      return <LoginPage />;
+    }
 
   return (
     <SidebarProvider>
@@ -58,13 +73,6 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             <div className="flex items-center gap-4">
                 {isClient && <VoiceAssistant />}
                 <SOSButton />
-                {!user && !isUserLoading && (
-                  <Button onClick={() => initiateAnonymousSignIn(auth)}>
-                    <LogIn className="mr-2 h-4 w-4" />
-                    Log In
-                  </Button>
-                )}
-                {user && (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                     <Button
@@ -82,28 +90,29 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         <div className="flex flex-col space-y-1">
                         <p className="text-sm font-medium leading-none">{user.displayName || userName}</p>
                         <p className="text-xs leading-none text-muted-foreground">
-                            {user.email || t('userMenu.anonymousUser')}
+                            {user.isAnonymous ? t('userMenu.anonymousUser') : user.email}
                         </p>
                         </div>
                     </DropdownMenuLabel>
                     <DropdownMenuSeparator />
-                    <EditProfileDialog
-                      name={user.displayName || userName}
-                      email={user.email || userEmail}
-                      avatar={user.photoURL || userAvatar}
-                      onSave={(newName, newEmail, newAvatar) => {
-                        setUserName(newName);
-setUserEmail(newEmail);
-                        setUserAvatar(newAvatar);
-                      }}
-                    />
+                    {!user.isAnonymous && (
+                        <EditProfileDialog
+                        name={user.displayName || userName}
+                        email={user.email || userEmail}
+                        avatar={user.photoURL || userAvatar}
+                        onSave={(newName, newEmail, newAvatar) => {
+                            setUserName(newName);
+                            setUserEmail(newEmail);
+                            setUserAvatar(newAvatar);
+                        }}
+                        />
+                    )}
                     <DropdownMenuItem onClick={() => auth.signOut()}>
                         <LogOut className="mr-2 h-4 w-4" />
                         <span>{t('userMenu.logout')}</span>
                     </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
-                )}
             </div>
         </header>
         <main>{children}</main>
