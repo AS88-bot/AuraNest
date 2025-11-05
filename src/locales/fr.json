@@ -29,7 +29,7 @@
         "ariaLabel": "Commande vocale",
         "listeningTitle": "Écoute...",
         "listeningDescription": "Que puis-je faire pour vous ?",
-        "placeholder": "par ex., « Appelle Sarah » ou « Aide-moi »",
+        "placeholder": "par ex., « Appelle Sarah » ou « Aller aux contacts »",
         "cancel": "Annuler",
         "heard": "J'ai entendu",
         "sendingAlert": "Envoi de l'alerte d'urgence...",
@@ -37,7 +37,8 @@
         "calling": "Appel de",
         "contactNotFound": "Désolé, je n'ai pas trouvé de contact nommé {contactName}.",
         "openingReminders": "Ouverture des rappels...",
-        "didNotUnderstand": "Désolé, je n'ai pas compris. Veuillez réessayer."
+        "didNotUnderstand": "Désolé, je n'ai pas compris. Veuillez réessayer.",
+        "notSupported": "Commandes vocales non prises en charge"
     },
     "dashboard": {
         "title": "Plan d'aujourd'hui",
@@ -82,15 +83,19 @@
     },
     "journal": {
         "title": "Journal de mémoire",
-        "description": "Enregistrez vos pensées, photos ou notes vocales de la journée. Ensuite, consultez un résumé de votre journée.",
-        "formTitle": "À quoi pensez-vous ?",
-        "formPlaceholder": "Parlez-moi de votre journée...",
-        "addPhoto": "Ajouter une photo",
-        "recordNote": "Enregistrer une note",
+        "description": "Enregistrez vos pensées avec votre voix. Ensuite, consultez un résumé de votre journée.",
+        "formTitle": "Enregistrez vos pensées",
+        "voiceDescription": "Appuyez sur le bouton ci-dessous pour commencer à enregistrer votre entrée de journal avec votre voix.",
+        "startRecording": "Appuyez pour enregistrer",
+        "stopRecording": "Enregistrement... Appuyez pour arrêter",
+        "entryLabel": "Votre entrée enregistrée",
+        "entryPlaceholder": "Votre texte transcrit apparaîtra ici. Vous pouvez également le modifier manuellement.",
+        "addPhoto": "Ajouter une photo à l'entrée",
         "generateSummary": "Générer un résumé",
         "generating": "Génération en cours...",
         "summaryTitle": "Aujourd'hui dans ma vie",
-        "summaryPlaceholder": "Votre résumé apparaîtra ici."
+        "summaryDescription": "Voici un résumé simple de votre entrée de journal.",
+        "summaryPlaceholder": "Votre résumé apparaîtra ici après avoir enregistré une entrée et l'avoir générée."
     },
     "location": {
         "title": "Localisation & Navigation",
@@ -150,5 +155,3 @@
         "save": "Enregistrer les modifications"
     }
 }
-
-    

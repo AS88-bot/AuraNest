@@ -1,3 +1,4 @@
+
 {
     "nav": {
         "dashboard": "Tablero",
@@ -28,7 +29,7 @@
         "ariaLabel": "Comando de Voz",
         "listeningTitle": "Escuchando...",
         "listeningDescription": "¿En qué puedo ayudarte?",
-        "placeholder": "p. ej., \"Llamar a Sarah\" o \"Ayúdame\"",
+        "placeholder": "p. ej., \"Llama a Sarah\" o \"Ir a contactos\"",
         "cancel": "Cancelar",
         "heard": "He oído",
         "sendingAlert": "Enviando alerta de emergencia...",
@@ -36,7 +37,8 @@
         "calling": "Llamando a",
         "contactNotFound": "Lo siento, no pude encontrar un contacto llamado {contactName}.",
         "openingReminders": "Abriendo recordatorios...",
-        "didNotUnderstand": "Lo siento, no entendí eso. Por favor, inténtalo de nuevo."
+        "didNotUnderstand": "Lo siento, no entendí eso. Por favor, inténtalo de nuevo.",
+        "notSupported": "Comandos de voz no compatibles"
     },
     "dashboard": {
         "title": "Plan de Hoy",
@@ -102,15 +104,19 @@
     },
     "journal": {
         "title": "Diario de Recuerdos",
-        "description": "Anota tus pensamientos, fotos o notas de voz del día. Luego, ve un resumen de tu día.",
-        "formTitle": "¿En qué estás pensando?",
-        "formPlaceholder": "Cuéntame sobre tu día...",
-        "addPhoto": "Añadir Foto",
-        "recordNote": "Grabar Nota",
+        "description": "Graba tus pensamientos usando tu voz. Luego, ve un resumen de tu día.",
+        "formTitle": "Graba Tus Pensamientos",
+        "voiceDescription": "Presiona el botón de abajo para comenzar a grabar la entrada de tu diario con tu voz.",
+        "startRecording": "Toca para Grabar",
+        "stopRecording": "Grabando... Toca para Detener",
+        "entryLabel": "Tu Entrada Grabada",
+        "entryPlaceholder": "El texto transcrito aparecerá aquí. También puedes editarlo manualmente.",
+        "addPhoto": "Añadir Foto a la Entrada",
         "generateSummary": "Generar Resumen",
         "generating": "Generando...",
         "summaryTitle": "Hoy en Mi Vida",
-        "summaryPlaceholder": "Tu resumen aparecerá aquí."
+        "summaryDescription": "Aquí hay un resumen simple de la entrada de tu diario.",
+        "summaryPlaceholder": "Tu resumen aparecerá aquí después de que grabes una entrada y la generes."
     },
     "location": {
         "title": "Ubicación y Navegación",
@@ -170,5 +176,3 @@
         "save": "Guardar cambios"
     }
 }
-
-    

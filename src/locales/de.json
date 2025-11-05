@@ -29,7 +29,7 @@
         "ariaLabel": "Sprachbefehl",
         "listeningTitle": "Hören...",
         "listeningDescription": "Wie kann ich Ihnen helfen?",
-        "placeholder": "z.B. „Sarah anrufen“ oder „Hilf mir“",
+        "placeholder": "z.B. „Sarah anrufen“ oder „Gehe zu Kontakte“",
         "cancel": "Abbrechen",
         "heard": "Ich habe gehört",
         "sendingAlert": "Notfall-Alarm wird gesendet...",
@@ -37,7 +37,8 @@
         "calling": "Rufe an",
         "contactNotFound": "Entschuldigung, ich konnte keinen Kontakt namens {contactName} finden.",
         "openingReminders": "Erinnerungen werden geöffnet...",
-        "didNotUnderstand": "Entschuldigung, das habe ich nicht verstanden. Bitte versuchen Sie es erneut."
+        "didNotUnderstand": "Entschuldigung, das habe ich nicht verstanden. Bitte versuchen Sie es erneut.",
+        "notSupported": "Sprachbefehle nicht unterstützt"
     },
     "dashboard": {
         "title": "Heutiger Plan",
@@ -82,15 +83,19 @@
     },
     "journal": {
         "title": "Gedächtnis-Tagebuch",
-        "description": "Zeichnen Sie Ihre Gedanken, Fotos oder Sprachnotizen des Tages auf. Sehen Sie sich dann eine Zusammenfassung Ihres Tages an.",
-        "formTitle": "Was geht Ihnen durch den Kopf?",
-        "formPlaceholder": "Erzählen Sie mir von Ihrem Tag...",
-        "addPhoto": "Foto hinzufügen",
-        "recordNote": "Notiz aufnehmen",
+        "description": "Zeichnen Sie Ihre Gedanken mit Ihrer Stimme auf. Sehen Sie sich dann eine Zusammenfassung Ihres Tages an.",
+        "formTitle": "Zeichnen Sie Ihre Gedanken auf",
+        "voiceDescription": "Drücken Sie die Taste unten, um die Aufzeichnung Ihres Tagebucheintrags mit Ihrer Stimme zu starten.",
+        "startRecording": "Zum Aufnehmen tippen",
+        "stopRecording": "Aufnahme... Zum Stoppen tippen",
+        "entryLabel": "Ihr aufgezeichneter Eintrag",
+        "entryPlaceholder": "Ihr transkribierter Text wird hier angezeigt. Sie können ihn auch manuell bearbeiten.",
+        "addPhoto": "Foto zum Eintrag hinzufügen",
         "generateSummary": "Zusammenfassung erstellen",
         "generating": "Wird erstellt...",
         "summaryTitle": "Heute in meinem Leben",
-        "summaryPlaceholder": "Ihre Zusammenfassung wird hier angezeigt."
+        "summaryDescription": "Hier ist eine einfache Zusammenfassung Ihres Tagebucheintrags.",
+        "summaryPlaceholder": "Ihre Zusammenfassung wird hier angezeigt, nachdem Sie einen Eintrag aufgenommen und generiert haben."
     },
     "location": {
         "title": "Standort & Navigation",
@@ -150,5 +155,3 @@
         "save": "Änderungen speichern"
     }
 }
-
-    

@@ -29,7 +29,7 @@
         "ariaLabel": "Comando vocale",
         "listeningTitle": "In ascolto...",
         "listeningDescription": "In cosa posso aiutarti?",
-        "placeholder": "ad es., \"Chiama Sarah\" o \"Aiutami\"",
+        "placeholder": "ad es., \"Chiama Sarah\" o \"Vai a contatti\"",
         "cancel": "Annulla",
         "heard": "Ho sentito",
         "sendingAlert": "Invio dell'avviso di emergenza...",
@@ -37,7 +37,8 @@
         "calling": "Chiamando",
         "contactNotFound": "Spiacente, non sono riuscito a trovare un contatto di nome {contactName}.",
         "openingReminders": "Apertura promemoria...",
-        "didNotUnderstand": "Spiacente, non ho capito. Riprova."
+        "didNotUnderstand": "Spiacente, non ho capito. Riprova.",
+        "notSupported": "Comandi vocali non supportati"
     },
     "dashboard": {
         "title": "Piano di oggi",
@@ -82,15 +83,19 @@
     },
     "journal": {
         "title": "Diario della memoria",
-        "description": "Registra i tuoi pensieri, le tue foto o le tue note vocali della giornata. Quindi, visualizza un riepilogo della tua giornata.",
-        "formTitle": "A cosa stai pensando?",
-        "formPlaceholder": "Parlami della tua giornata...",
-        "addPhoto": "Aggiungi foto",
-        "recordNote": "Registra nota",
+        "description": "Registra i tuoi pensieri usando la tua voce. Quindi, visualizza un riepilogo della tua giornata.",
+        "formTitle": "Registra i tuoi pensieri",
+        "voiceDescription": "Premi il pulsante qui sotto per iniziare a registrare la tua voce nel diario.",
+        "startRecording": "Tocca per registrare",
+        "stopRecording": "Registrazione in corso... Tocca per fermare",
+        "entryLabel": "La tua voce registrata",
+        "entryPlaceholder": "Il testo trascritto apparirà qui. Puoi anche modificarlo manualmente.",
+        "addPhoto": "Aggiungi foto alla voce",
         "generateSummary": "Genera riepilogo",
         "generating": "Generazione in corso...",
         "summaryTitle": "Oggi nella mia vita",
-        "summaryPlaceholder": "Il tuo riepilogo apparirà qui."
+        "summaryDescription": "Ecco un semplice riepilogo della tua voce di diario.",
+        "summaryPlaceholder": "Il tuo riepilogo apparirà qui dopo aver registrato una voce e averla generata."
     },
     "location": {
         "title": "Posizione e navigazione",
@@ -150,5 +155,3 @@
         "save": "Salva modifiche"
     }
 }
-
-    

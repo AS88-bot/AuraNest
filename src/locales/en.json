@@ -1,3 +1,4 @@
+
 {
     "nav": {
         "dashboard": "Dashboard",
@@ -28,7 +29,7 @@
         "ariaLabel": "Voice Command",
         "listeningTitle": "Listening...",
         "listeningDescription": "What can I help you with?",
-        "placeholder": "e.g., \"Call Sarah\" or \"Help me\"",
+        "placeholder": "e.g., \"Call Sarah\" or \"Go to contacts\"",
         "cancel": "Cancel",
         "heard": "I heard",
         "sendingAlert": "Sending emergency alert...",
@@ -36,7 +37,8 @@
         "calling": "Calling",
         "contactNotFound": "Sorry, I couldn't find a contact named {contactName}.",
         "openingReminders": "Opening reminders...",
-        "didNotUnderstand": "Sorry, I didn't understand that. Please try again."
+        "didNotUnderstand": "Sorry, I didn't understand that. Please try again.",
+        "notSupported": "Voice commands not supported"
     },
     "dashboard": {
         "title": "Today's Plan",
@@ -102,15 +104,19 @@
     },
     "journal": {
         "title": "Memory Journal",
-        "description": "Record your thoughts, photos, or voice notes from the day. Then, see a summary of your day.",
-        "formTitle": "What's on your mind?",
-        "formPlaceholder": "Tell me about your day...",
-        "addPhoto": "Add Photo",
-        "recordNote": "Record Note",
+        "description": "Record your thoughts using your voice. Then, see a summary of your day.",
+        "formTitle": "Record Your Thoughts",
+        "voiceDescription": "Press the button below to start recording your journal entry with your voice.",
+        "startRecording": "Tap to Record",
+        "stopRecording": "Recording... Tap to Stop",
+        "entryLabel": "Your Recorded Entry",
+        "entryPlaceholder": "Your transcribed text will appear here. You can also edit it manually.",
+        "addPhoto": "Add a Photo to Entry",
         "generateSummary": "Generate Summary",
         "generating": "Generating...",
         "summaryTitle": "Today in My Life",
-        "summaryPlaceholder": "Your summary will appear here."
+        "summaryDescription": "Here is a simple summary of your journal entry.",
+        "summaryPlaceholder": "Your summary will appear here after you record an entry and generate it."
     },
     "location": {
         "title": "Location & Navigation",
@@ -170,5 +176,3 @@
         "save": "Save changes"
     }
 }
-
-    

@@ -10,7 +10,7 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog';
-import { Mic, MicOff } from 'lucide-react';
+import { Mic, MicOff, Waves } from 'lucide-react';
 import { useFirebase, useUser } from '@/firebase';
 import { sendEmergencyAlert } from '@/lib/actions';
 import { useToast } from '@/hooks/use-toast';
@@ -30,8 +30,7 @@ const handleCommand = (
   t: (key: string) => string
 ) => {
   const lowerCaseCommand = command.toLowerCase();
-  setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
-
+  
   const navItems = [
     { key: 'dashboard', route: '' },
     { key: 'contacts', route: 'contacts' },
@@ -42,21 +41,19 @@ const handleCommand = (
     { key: 'settings', route: 'settings' },
   ];
 
-  const commandKeywords = {
-    emergency: ['help', 'emergency', 'sos', 'ayuda', 'emergencia', 'socorro', 'aide', 'urgence', 'hilfe', 'notfall', 'मदद', 'आपातकाल', 'aiuto', 'emergenza'],
-    call: ['call', 'llama a', 'appelle', 'anrufen', 'बुलाओ', 'chiama'],
-  };
+  const emergencyKeywords = ['help', 'emergency', 'sos', 'ayuda', 'emergencia', 'socorro', 'aide', 'urgence', 'hilfe', 'notfall', 'मदद', 'आपातकाल', 'aiuto', 'emergenza'];
+  const callKeywords = ['call', 'llama a', 'llama', 'appelle', 'anrufen', 'बुलाओ', 'chiama'];
 
   let actionTaken = false;
 
-  const takeAction = (feedbackMsg: string) => {
+  const takeAction = (feedbackMsg: string, duration = 2000) => {
     setFeedback(feedbackMsg);
     actionTaken = true;
-    setTimeout(() => stopListening(), 2000);
+    setTimeout(() => stopListening(), duration);
   };
-
-  // 1. Check for Emergency (High Priority)
-  if (commandKeywords.emergency.some(c => lowerCaseCommand.includes(c))) {
+  
+  // 1. Emergency
+  if (emergencyKeywords.some(keyword => lowerCaseCommand.includes(keyword))) {
     if (firestore && user) {
         sendEmergencyAlert(firestore, user);
         toast({
@@ -75,8 +72,8 @@ const handleCommand = (
     }
     return;
   }
-  
-  // 2. Check for Navigation
+
+  // 2. Navigation
   for (const navItem of navItems) {
       const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
       if (lowerCaseCommand.includes(translatedPageName)) {
@@ -86,34 +83,29 @@ const handleCommand = (
       }
   }
 
-  // 3. Check for Calling Contact
-  for (const contact of contacts) {
-      const translatedContactName = t(contact.name).toLowerCase();
-      if (lowerCaseCommand.includes(translatedContactName)) {
-          const callKeyword = commandKeywords.call.find(k => lowerCaseCommand.includes(k));
-          if(callKeyword) {
-            if (contact.phone) {
-                window.location.href = `tel:${contact.phone}`;
-                takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
-            } else {
-                takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
-            }
-            return;
+  // 3. Calling
+  if (callKeywords.some(keyword => lowerCaseCommand.startsWith(keyword))) {
+      for (const contact of contacts) {
+          const translatedContactName = t(contact.name).toLowerCase();
+          if (lowerCaseCommand.includes(translatedContactName)) {
+              if (contact.phone) {
+                  window.location.href = `tel:${contact.phone}`;
+                  takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+              } else {
+                  takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
+              }
+              return;
           }
       }
   }
 
-  // 4. Check for Reminders
-  const translatedReminderPage = t('nav.reminders').toLowerCase();
-  if (lowerCaseCommand.includes(translatedReminderPage)) {
-    window.location.href = '/reminders';
-    takeAction(t('voiceAssistant.openingReminders'));
-    return;
-  }
-  
-  if (!actionTaken) {
-     setFeedback(t('voiceAssistant.didNotUnderstand'));
-  }
+  // If no action was taken after a short delay, provide feedback.
+  setTimeout(() => {
+      if (!actionTaken) {
+        setFeedback(t('voiceAssistant.didNotUnderstand'));
+      }
+  }, 1500);
+
 };
 
 const localeToLang: Record<string, string> = {
@@ -151,6 +143,7 @@ export function VoiceAssistant() {
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim();
         setTranscript(currentTranscript);
+        setFeedback(`${t('voiceAssistant.heard')}: "${currentTranscript}"`)
         handleCommand(currentTranscript, setFeedback, stopListening, firestore, user, toast, t);
       };
 
@@ -175,11 +168,6 @@ export function VoiceAssistant() {
       recognitionRef.current = recognitionInstance;
     } else {
       console.warn('Speech Recognition API not supported in this browser.');
-      toast({
-        variant: 'destructive',
-        title: 'Voice Assistant Not Supported',
-        description: 'Your browser does not support the Web Speech API.',
-      });
     }
 
     return () => {
@@ -238,9 +226,9 @@ export function VoiceAssistant() {
   
   if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
      return (
-      <Button variant="outline" size="lg" className="h-16 w-16 rounded-full shadow-lg" disabled>
+      <Button variant="outline" size="lg" className="h-16 w-16 rounded-full shadow-lg" disabled title={t('voiceAssistant.notSupported')}>
         <MicOff className="h-8 w-8" />
-        <span className="sr-only">Voice Commands Not Supported</span>
+        <span className="sr-only">{t('voiceAssistant.notSupported')}</span>
       </Button>
     );
   }
@@ -255,7 +243,7 @@ export function VoiceAssistant() {
         onClick={toggleListening}
         aria-label={t('voiceAssistant.ariaLabel')}
       >
-        {isListening ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
+        {isListening ? <MicOff className="h-8 w-8 text-red-500" /> : <Mic className="h-8 w-8" />}
       </Button>
 
       <Dialog open={isListening} onOpenChange={setIsListening}>
@@ -267,7 +255,10 @@ export function VoiceAssistant() {
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center p-8 gap-6 min-h-[250px]">
-            <Mic className="h-24 w-24 text-primary animate-pulse" />
+            <div className="relative">
+                <Waves className="h-24 w-24 text-primary opacity-50" />
+                <Mic className="h-12 w-12 text-primary absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+            </div>
             <p className="text-muted-foreground text-center min-h-[2.5rem] text-xl px-4 py-2 rounded-lg bg-muted w-full">
               {feedback || transcript || t('voiceAssistant.placeholder')}
             </p>
