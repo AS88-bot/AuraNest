@@ -23,3 +23,5 @@ export interface Contact {
   avatar: string;
   phone?: string;
 }
+
+    

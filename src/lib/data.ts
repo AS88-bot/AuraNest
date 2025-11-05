@@ -59,7 +59,7 @@ export const dailySchedule: Omit<PlannerItem, 'onUpdate'>[] = [
   },
   {
     id: '7',
-    time: '06:30 PM',
+    time: '07:00 PM',
     titleKey: 'dashboard.schedule.item7.title',
     category: 'meal',
     descriptionKey: 'dashboard.schedule.item7.description',
@@ -71,37 +71,39 @@ export const dailySchedule: Omit<PlannerItem, 'onUpdate'>[] = [
 export const contacts: Contact[] = [
   {
     id: '1',
-    name: 'Sarah',
+    name: 'contacts.name.sarah',
     relationKey: 'contacts.relation.daughter',
     avatar: 'contact-1',
     phone: '555-0101',
   },
   {
     id: '2',
-    name: 'Dr. Evans',
+    name: 'contacts.name.drEvans',
     relationKey: 'contacts.relation.doctor',
     avatar: 'contact-2',
     phone: '555-0102',
   },
     {
     id: '3',
-    name: 'Alex',
+    name: 'contacts.name.alex',
     relationKey: 'contacts.relation.grandchild',
     avatar: 'contact-3',
     phone: '555-0103',
   },
   {
     id: '4',
-    name: 'Maria',
+    name: 'contacts.name.maria',
     relationKey: 'contacts.relation.caregiver',
     avatar: 'contact-4',
     phone: '555-0104',
   },
   {
     id: '5',
-    name: 'Leo',
+    name: 'contacts.name.leo',
     relationKey: 'contacts.relation.neighbor',
     avatar: 'contact-5',
     phone: '555-0105',
   },
 ];
+
+    

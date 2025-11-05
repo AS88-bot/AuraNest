@@ -22,60 +22,76 @@ import { useLocale } from '@/hooks/use-locale';
 
 // This function is moved outside the component to prevent it from capturing a stale `user` state.
 const handleCommand = (
-  command: string, 
+  command: string,
   setFeedback: (feedback: string) => void,
   stopListening: () => void,
-  firestore: Firestore | null, 
+  firestore: Firestore | null,
   user: User | null,
-  toast: (options: any) => void
+  toast: (options: any) => void,
+  t: (key: string) => string
 ) => {
   let actionTaken = false;
-  setFeedback(`I heard: "${command}"`);
+  setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
+
+  const emergencyCommands = ['help', 'emergency', 'sos', 'ayuda', 'emergencia', 'aide', 'urgence', 'hilfe', 'notfall', 'मदद', 'आपातकाल', 'aiuto', 'emergenza'];
+  const navigationCommands = ['go to', 'show me', 'open', 'ir a', 'muéstrame', 'abrir', 'aller à', 'montre-moi', 'ouvrir', 'gehe zu', 'zeige mir', 'öffne', 'जाओ', 'मुझे दिखाओ', 'खोलो', 'vai a', 'mostrami', 'apri'];
+  const callCommands = ['call', 'llama a', 'appelle', 'anrufen', 'बुलाओ', 'chiama'];
+  const reminderCommands = ['remind me', 'set a reminder', 'recuérdame', 'créer un rappel', 'erinnere mich', 'मुझे याद दिलाओ', 'ricordami'];
+  const navigationTargets: {[key: string]: string} = {
+    'dashboard': 'dashboard', 'tablero': 'dashboard', 'tableau de bord': 'dashboard', 'instrumententafel': 'dashboard', 'डैशबोर्ड': 'dashboard', 'cruscotto': 'dashboard',
+    'contacts': 'contacts', 'contactos': 'contacts',
+    'journal': 'journal', 'diario': 'journal',
+    'location': 'location', 'ubicación': 'location', 'localisation': 'location', 'standort': 'location', 'स्थान': 'location', 'posizione': 'location',
+    'reminders': 'reminders', 'recordatorios': 'reminders', 'rappels': 'reminders', 'erinnerungen': 'reminders', 'अनुस्मारक': 'reminders', 'promemoria': 'reminders',
+    'caregiver': 'caregiver', 'cuidador': 'caregiver', 'aidant': 'caregiver', 'betreuer': 'caregiver', 'देखभालकर्ता': 'caregiver', 'assistente': 'caregiver',
+    'settings': 'settings', 'ajustes': 'settings', 'paramètres': 'settings', 'einstellungen': 'settings', 'सेटिंग्स': 'settings', 'impostazioni': 'settings'
+  };
 
   // Emergency commands
-  if (command.includes('help') || command.includes('emergency') || command.includes('sos')) {
-    setFeedback('Sending emergency alert...');
+  if (emergencyCommands.some(c => command.includes(c))) {
+    setFeedback(t('voiceAssistant.sendingAlert'));
     if (firestore && user) {
         sendEmergencyAlert(firestore, user);
         toast({
-            title: 'Emergency Alert Sent',
-            description: 'Your location has been sent to your emergency contacts.',
+            title: t('sosButton.sentTitle'),
+            description: t('sosButton.sentDescription'),
             variant: 'destructive',
         });
     } else {
       toast({
-          title: 'Could Not Send Alert',
-          description: 'Please log in to send an alert.',
+          title: t('sosButton.errorTitle'),
+          description: t('sosButton.errorDescription'),
           variant: 'destructive',
       });
     }
     actionTaken = true;
   }
   // Navigation commands
-  else if (command.includes('go to') || command.includes('show me') || command.includes('open') || command.includes('ir a') || command.includes('muéstrame')) {
-    const targets = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
-    const target = targets.find(t => command.includes(t));
-    if (target) {
-      setFeedback(`Navigating to ${target}...`);
+  else if (navigationCommands.some(c => command.startsWith(c))) {
+    const targetKey = Object.keys(navigationTargets).find(t => command.includes(t));
+    if (targetKey) {
+      const target = navigationTargets[targetKey];
+      setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+target)}...`);
       window.location.href = `/${target === 'dashboard' ? '' : target}`;
       actionTaken = true;
     }
   }
   // Calling commands
-  else if (command.startsWith('call') || command.startsWith('llama a')) {
-    const contactName = command.replace('call ', '').replace('llama a', '').trim();
-    const contactToCall = contacts.find(c => c.name.toLowerCase() === contactName);
+  else if (callCommands.some(c => command.startsWith(c))) {
+    const callCommand = callCommands.find(c => command.startsWith(c)) || '';
+    const contactName = command.substring(callCommand.length).trim();
+    const contactToCall = contacts.find(c => t(c.name).toLowerCase() === contactName);
     if (contactToCall && contactToCall.phone) {
-      setFeedback(`Calling ${contactToCall.name}...`);
+      setFeedback(`${t('voiceAssistant.calling')} ${t(contactToCall.name)}...`);
       window.location.href = `tel:${contactToCall.phone}`;
       actionTaken = true;
     } else {
-      setFeedback(`Sorry, I couldn't find a contact named ${contactName}.`);
+      setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', contactName));
     }
   }
   // Reminder commands
-  else if (command.includes('remind me') || command.includes('set a reminder') || command.includes('recuérdame')) {
-    setFeedback('Opening reminders...');
+  else if (reminderCommands.some(c => command.includes(c))) {
+    setFeedback(t('voiceAssistant.openingReminders'));
     window.location.href = '/reminders';
     actionTaken = true;
   }
@@ -83,7 +99,7 @@ const handleCommand = (
   if (actionTaken) {
     setTimeout(() => stopListening(), 2000);
   } else {
-     setFeedback('Sorry, I didn\'t understand that. Please try again.');
+     setFeedback(t('voiceAssistant.didNotUnderstand'));
   }
 };
 
@@ -97,7 +113,7 @@ export function VoiceAssistant() {
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const { firestore, user } = useFirebase();
   const { toast } = useToast();
-  const { locale } = useLocale();
+  const { locale, t } = useLocale();
   
   useEffect(() => {
     setIsMounted(true);
@@ -108,14 +124,12 @@ export function VoiceAssistant() {
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
       
-      // Set the language based on the current app locale
       recognitionInstance.lang = locale;
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim().toLowerCase();
         setTranscript(currentTranscript);
-        // We pass the current user and firestore instances directly to the handler
-        handleCommand(currentTranscript, setFeedback, stopListening, firestore, user, toast);
+        handleCommand(currentTranscript, setFeedback, stopListening, firestore, user, toast, t);
       };
 
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -131,7 +145,6 @@ export function VoiceAssistant() {
       };
 
       recognitionInstance.onend = () => {
-        // Check ref before setting state to avoid updates on unmounted component
         if (recognitionRef.current) {
           setIsListening(false);
         }
@@ -157,11 +170,10 @@ export function VoiceAssistant() {
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firestore, user, toast, locale]); // Add locale to deps
+  }, [firestore, user, toast, locale, t]); // Add locale and t to deps
 
   const startListening = () => {
     if (recognitionRef.current) {
-      // Update language on the recognition instance right before starting
       recognitionRef.current.lang = locale;
       setTranscript('');
       setFeedback('');
@@ -218,28 +230,28 @@ export function VoiceAssistant() {
         size="lg"
         className="h-16 w-16 rounded-full shadow-lg"
         onClick={toggleListening}
+        aria-label={t('voiceAssistant.ariaLabel')}
       >
         {isListening ? <MicOff className="h-8 w-8" /> : <Mic className="h-8 w-8" />}
-        <span className="sr-only">Voice Command</span>
       </Button>
 
       <Dialog open={isListening} onOpenChange={setIsListening}>
         <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
-            <DialogTitle className="text-center text-2xl">Listening...</DialogTitle>
+            <DialogTitle className="text-center text-2xl">{t('voiceAssistant.listeningTitle')}</DialogTitle>
             <DialogDescription className="text-center text-lg">
-              What can I help you with?
+              {t('voiceAssistant.listeningDescription')}
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center p-8 gap-6 min-h-[250px]">
             <Mic className="h-24 w-24 text-primary animate-pulse" />
             <p className="text-muted-foreground text-center min-h-[2.5rem] text-xl px-4 py-2 rounded-lg bg-muted w-full">
-              {feedback || transcript || 'e.g., "Call Sarah" or "Help me"'}
+              {feedback || transcript || t('voiceAssistant.placeholder')}
             </p>
           </div>
            <DialogFooter>
             <Button variant="destructive" onClick={stopListening}>
-              Cancel
+              {t('voiceAssistant.cancel')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -247,3 +259,5 @@ export function VoiceAssistant() {
     </>
   );
 }
+
+    

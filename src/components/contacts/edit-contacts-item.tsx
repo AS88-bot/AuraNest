@@ -14,12 +14,13 @@ interface EditContactItemProps {
 
 export default function EditContactItem({ contact, onUpdate }: EditContactItemProps) {
   const { t } = useLocale();
-  const [name, setName] = useState(contact.name);
+  const [name, setName] = useState(t(contact.name));
   const [relation, setRelation] = useState(t(contact.relationKey));
   const [avatarId, setAvatarId] = useState(contact.avatar);
   
   const contactImages = PlaceHolderImages.filter(p => p.id.startsWith('contact-'));
   const currentAvatar = PlaceHolderImages.find(p => p.id === avatarId);
+  const contactName = t(contact.name);
 
   const handleBlur = () => {
     // This is complex because we would need to reverse-lookup the translation key
@@ -41,7 +42,7 @@ export default function EditContactItem({ contact, onUpdate }: EditContactItemPr
 
   return (
     <div className="grid gap-6">
-        <h4 className="font-semibold text-lg text-primary">{contact.name}</h4>
+        <h4 className="font-semibold text-lg text-primary">{contactName}</h4>
         <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor={`name-${contact.id}`} className="text-right">
             Name
@@ -89,3 +90,5 @@ export default function EditContactItem({ contact, onUpdate }: EditContactItemPr
     </div>
   );
 }
+
+    

@@ -30,7 +30,14 @@
         "listeningTitle": "Écoute...",
         "listeningDescription": "Que puis-je faire pour vous ?",
         "placeholder": "par ex., « Appelle Sarah » ou « Aide-moi »",
-        "cancel": "Annuler"
+        "cancel": "Annuler",
+        "heard": "J'ai entendu",
+        "sendingAlert": "Envoi de l'alerte d'urgence...",
+        "navigatingTo": "Navigation vers",
+        "calling": "Appel de",
+        "contactNotFound": "Désolé, je n'ai pas trouvé de contact nommé {contactName}.",
+        "openingReminders": "Ouverture des rappels...",
+        "didNotUnderstand": "Désolé, je n'ai pas compris. Veuillez réessayer."
     },
     "dashboard": {
         "title": "Plan d'aujourd'hui",
@@ -58,6 +65,13 @@
         "done": "Terminé",
         "call": "Appeler",
         "videoCall": "Appel vidéo",
+        "name": {
+            "sarah": "Sarah",
+            "drEvans": "Dr Evans",
+            "alex": "Alex",
+            "maria": "Maria",
+            "leo": "Léo"
+        },
         "relation": {
             "daughter": "Fille",
             "doctor": "Docteur",
@@ -136,3 +150,5 @@
         "save": "Enregistrer les modifications"
     }
 }
+
+    

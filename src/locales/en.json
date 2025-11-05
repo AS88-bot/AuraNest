@@ -29,7 +29,14 @@
         "listeningTitle": "Listening...",
         "listeningDescription": "What can I help you with?",
         "placeholder": "e.g., \"Call Sarah\" or \"Help me\"",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "heard": "I heard",
+        "sendingAlert": "Sending emergency alert...",
+        "navigatingTo": "Navigating to",
+        "calling": "Calling",
+        "contactNotFound": "Sorry, I couldn't find a contact named {contactName}.",
+        "openingReminders": "Opening reminders...",
+        "didNotUnderstand": "Sorry, I didn't understand that. Please try again."
     },
     "dashboard": {
         "title": "Today's Plan",
@@ -78,6 +85,13 @@
         "done": "Done",
         "call": "Call",
         "videoCall": "Video call",
+        "name": {
+            "sarah": "Sarah",
+            "drEvans": "Dr. Evans",
+            "alex": "Alex",
+            "maria": "Maria",
+            "leo": "Leo"
+        },
         "relation": {
             "daughter": "Daughter",
             "doctor": "Doctor",
@@ -156,3 +170,5 @@
         "save": "Save changes"
     }
 }
+
+    
