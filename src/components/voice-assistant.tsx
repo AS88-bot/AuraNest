@@ -85,14 +85,12 @@ const handleCommand = async (
 
   // 2. Reminder
   for (const keyword of reminderKeywords) {
-    const keywordWithSpace = keyword + ' ';
-    if (lowerCaseCommand.startsWith(keywordWithSpace)) {
-        const reminderInput = command.substring(keywordWithSpace.length);
+    if (lowerCaseCommand.some(cmd => cmd.startsWith(keyword))) {
         takeAction(t('voiceAssistant.creatingReminder'), 0, false);
         setIsGeneratingAudio(true);
         try {
             const result = await textToSpeech({ 
-              text: reminderInput,
+              text: command, // Pass the original, full command
               voice: selectedVoice.value,
               languageCode: selectedVoice.lang,
               languageName: selectedVoice.languageName,

@@ -56,18 +56,18 @@ async function toWav(
 
 const extractTimePrompt = ai.definePrompt({
   name: 'extractTimePrompt',
-  input: { schema: z.object({ text: z.string() }) },
+  input: { schema: z.object({ text: z.string(), languageName: z.string().optional() }) },
   output: {
     schema: z.object({
       reminderText: z.string().describe("The core text of the reminder, with all time-related phrases (like 'at 8pm' or 'in 10 minutes') removed."),
       time: z.string().optional().describe("The absolute time for the reminder in HH:mm (24-hour) format. If no time is specified, this field should be omitted."),
     })
   },
-  prompt: `From the following text, extract the core reminder message and the specific time. The current time is ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}.
+  prompt: `The user is speaking {{languageName}}. From the following text, extract the core reminder message and the specific time. The current time is ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}.
 
 Text: "{{text}}"
 
-- If the text contains a specific time (e.g., "at 5:30 PM", "for 10am"), convert it to HH:mm 24-hour format.
+- If the text contains a specific time (e.g., "at 5:30 PM", "a las 10am"), convert it to HH:mm 24-hour format.
 - If the text contains a relative time (e.g., "in 10 minutes", "in an hour"), calculate the absolute time in HH:mm format.
 - If no time is mentioned, omit the 'time' field in the output.
 - The 'reminderText' field should contain the original message with the time part removed. For example, for "remind me to call mom at 5pm", the reminderText would be "call mom".
@@ -82,33 +82,23 @@ const translateAndSpeakFlow = ai.defineFlow(
     outputSchema: TextToSpeechOutputSchema,
   },
   async (input) => {
-    // Step 1: Extract time and the core reminder text.
-    const { output: timeExtractionResult } = await extractTimePrompt({ text: input.text });
+    // Step 1: Extract time and the core reminder text, providing the language context.
+    const { output: timeExtractionResult } = await extractTimePrompt({
+      text: input.text,
+      languageName: input.languageName || 'English',
+    });
+
     if (!timeExtractionResult) {
       throw new Error("Failed to extract time from reminder.");
     }
     const { reminderText, time } = timeExtractionResult;
 
-    // Step 2: Translate the core reminder text if a non-English language is selected.
+    // Step 2: The reminder text is already in the user's spoken language.
+    // If the target voice is a different language, we might need to translate.
+    // For now, we assume the voice matches the input language.
     let textToSpeak = reminderText;
-    if (input.languageName && input.languageCode && !input.languageCode.startsWith('en')) {
-      console.log(`Translating to ${input.languageName}`);
-      const translationResponse = await ai.generate({
-        prompt: `Translate the following English text to ${input.languageName}: "${reminderText}"`,
-        model: 'googleai/gemini-2.5-flash',
-        config: { temperature: 0.1 },
-      });
-      const translatedText = translationResponse.text;
 
-      if (translatedText) {
-        textToSpeak = translatedText;
-        console.log(`Translated text: ${textToSpeak}`);
-      } else {
-        console.error('Translation failed, using original text.');
-      }
-    }
-
-    // Step 3: Generate speech from the (potentially translated) text.
+    // Step 3: Generate speech from the text.
     console.log(`Generating speech for: "${textToSpeak}"`);
     const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
