@@ -74,16 +74,13 @@ export default function LoginPage() {
         }
     }
 
-    const handleGoogleSignIn = async () => {
+    const handleGoogleSignIn = () => {
         setIsLoading('google');
         setError(null);
-        try {
-            await initiateGoogleSignIn(auth);
-        } catch (e: any) {
+        initiateGoogleSignIn(auth).catch((e: any) => {
             setError(e.message);
-        } finally {
             setIsLoading(null);
-        }
+        });
     }
 
   return (
