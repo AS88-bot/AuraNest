@@ -29,7 +29,6 @@ const handleCommand = (
   toast: (options: any) => void,
   t: (key: string) => string
 ) => {
-  let actionTaken = false;
   const lowerCaseCommand = command.toLowerCase();
   setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
 
@@ -51,7 +50,15 @@ const handleCommand = (
     remind: ['remind me', 'set a reminder', 'add reminder', 'recuérdame', 'crear recordatorio', 'créer un rappel', 'ajouter un rappel', 'erinnere mich', 'erinnerung hinzufügen', 'मुझे याद दिलाओ', 'अनुस्मारक जोड़ें', 'ricordami', 'imposta un promemoria']
   };
 
-  // 1. Check for Emergency
+  let actionTaken = false;
+
+  const takeAction = () => {
+    actionTaken = true;
+    setTimeout(() => stopListening(), 2000);
+  };
+
+
+  // 1. Check for Emergency (High Priority)
   if (commandKeywords.emergency.some(c => lowerCaseCommand.includes(c))) {
     setFeedback(t('voiceAssistant.sendingAlert'));
     if (firestore && user) {
@@ -68,52 +75,55 @@ const handleCommand = (
           variant: 'destructive',
       });
     }
-    actionTaken = true;
-  }
-
-  // 2. Check for Navigation
-  if (!actionTaken) {
-    for (const navItem of navItems) {
-        const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
-        if(lowerCaseCommand.includes(translatedPageName)) {
-             setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem.key)}...`);
-             window.location.href = `/${navItem.route}`;
-             actionTaken = true;
-             break;
-        }
-    }
-  }
-
-  // 3. Check for Calling Contact
-  if (!actionTaken) {
-    const callKeyword = commandKeywords.call.find(k => lowerCaseCommand.includes(k));
-    if (callKeyword) {
-      for (const contact of contacts) {
-        const translatedContactName = t(contact.name).toLowerCase();
-        if (lowerCaseCommand.includes(translatedContactName)) {
-          if (contact.phone) {
-            setFeedback(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
-            window.location.href = `tel:${contact.phone}`;
-            actionTaken = true;
-          } else {
-            setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
-          }
-          break;
-        }
-      }
-    }
-  }
-
-  // 4. Check for Reminders
-  if (!actionTaken && commandKeywords.remind.some(c => lowerCaseCommand.includes(c))) {
-    setFeedback(t('voiceAssistant.openingReminders'));
-    window.location.href = '/reminders';
-    actionTaken = true;
+    takeAction();
+    return;
   }
   
-  if (actionTaken) {
-    setTimeout(() => stopListening(), 2000);
-  } else {
+  // 2. Check for Navigation
+  const goToKeyword = commandKeywords.goTo.find(k => lowerCaseCommand.startsWith(k + ' '));
+  if (goToKeyword) {
+      const target = lowerCaseCommand.substring(goToKeyword.length).trim();
+      for (const navItem of navItems) {
+          const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
+          if (target.includes(translatedPageName)) {
+               setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem.key)}...`);
+               window.location.href = `/${navItem.route}`;
+               takeAction();
+               return;
+          }
+      }
+  }
+
+
+  // 3. Check for Calling Contact
+  const callKeyword = commandKeywords.call.find(k => lowerCaseCommand.startsWith(k + ' '));
+  if (callKeyword) {
+      const target = lowerCaseCommand.substring(callKeyword.length).trim();
+      for (const contact of contacts) {
+          const translatedContactName = t(contact.name).toLowerCase();
+          if (target.includes(translatedContactName)) {
+            if (contact.phone) {
+              setFeedback(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+              window.location.href = `tel:${contact.phone}`;
+            } else {
+              setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
+            }
+            takeAction();
+            return;
+          }
+      }
+  }
+
+
+  // 4. Check for Reminders
+  if (commandKeywords.remind.some(c => lowerCaseCommand.includes(c))) {
+    setFeedback(t('voiceAssistant.openingReminders'));
+    window.location.href = '/reminders';
+    takeAction();
+    return;
+  }
+  
+  if (!actionTaken) {
      setFeedback(t('voiceAssistant.didNotUnderstand'));
   }
 };
