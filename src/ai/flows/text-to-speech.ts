@@ -88,8 +88,6 @@ const translateAndSpeakFlow = ai.defineFlow(
           speechConfig: {
             voiceConfig: {
               prebuiltVoiceConfig: { 
-                // The voice name determines the language for some voices.
-                // The TTS model will also infer language from the text content.
                 voiceName: input.voice || 'Algenib',
               },
             },
