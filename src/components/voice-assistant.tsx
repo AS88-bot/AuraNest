@@ -33,7 +33,9 @@ const handleCommand = async (
   toast: (options: any) => void,
   t: (key: string) => string,
   addReminder: (reminder: any) => void,
-  selectedVoice: any
+  selectedVoice: any,
+  activeReminder: any,
+  completeActiveReminder: () => void
 ) => {
   const lowerCaseCommand = command.toLowerCase();
   
@@ -51,6 +53,7 @@ const handleCommand = async (
   const callKeywords = t('voiceCommands.call').split(', ');
   const goToKeywords = t('voiceCommands.goTo').split(', ');
   const reminderKeywords = t('voiceCommands.remind').split(', ');
+  const doneKeywords = t('voiceCommands.done').split(', ');
 
   let actionTaken = false;
 
@@ -61,8 +64,15 @@ const handleCommand = async (
         setTimeout(() => stopListening(), duration);
     }
   };
+
+  // 1. Mark as Done (if a reminder is active)
+  if (activeReminder && doneKeywords.some(keyword => lowerCaseCommand.includes(keyword))) {
+    completeActiveReminder();
+    takeAction(t('voiceAssistant.taskCompleted'));
+    return;
+  }
   
-  // 1. Emergency
+  // 2. Emergency
   if (emergencyKeywords.some(keyword => lowerCaseCommand.includes(keyword))) {
     if (firestore && user) {
         sendEmergencyAlert(firestore, user);
@@ -83,9 +93,9 @@ const handleCommand = async (
     return;
   }
 
-  // 2. Reminder
+  // 3. Reminder
   for (const keyword of reminderKeywords) {
-    if (lowerCaseCommand.some(cmd => cmd.startsWith(keyword))) {
+    if (lowerCaseCommand.startsWith(keyword)) {
         takeAction(t('voiceAssistant.creatingReminder'), 0, false);
         setIsGeneratingAudio(true);
         try {
@@ -96,7 +106,7 @@ const handleCommand = async (
               languageName: selectedVoice.languageName,
             });
 
-            if (result.time) {
+            if (result.time && result.reminderText) {
                 addReminder({
                     id: new Date().toISOString(),
                     time: result.time,
@@ -121,7 +131,7 @@ const handleCommand = async (
   }
 
 
-  // 3. Navigation
+  // 4. Navigation
   for (const keyword of goToKeywords) {
       if (lowerCaseCommand.includes(keyword)) {
            for (const navItem of navItems) {
@@ -135,7 +145,7 @@ const handleCommand = async (
       }
   }
 
-  // 4. Calling
+  // 5. Calling
   for (const keyword of callKeywords) {
       if (lowerCaseCommand.includes(keyword)) {
             for (const contact of contacts) {
@@ -193,7 +203,7 @@ export function VoiceAssistant() {
   const { firestore, user } = useFirebase();
   const { toast } = useToast();
   const { locale, t } = useLocale();
-  const { addReminder } = useReminders();
+  const { addReminder, activeReminder, completeActiveReminder } = useReminders();
   
   // Find the voice option that matches the current app locale
   const selectedVoice = voiceOptions.find(opt => opt.lang.startsWith(locale)) || voiceOptions[0];
@@ -214,7 +224,7 @@ export function VoiceAssistant() {
         const currentTranscript = event.results[0][0].transcript.trim();
         setTranscript(currentTranscript);
         setFeedback(`${t('voiceAssistant.heard')}: "${currentTranscript}"`)
-        handleCommand(currentTranscript, setFeedback, setAudioSrc, setIsGeneratingAudio, stopListening, firestore, user, toast, t, addReminder, selectedVoice);
+        handleCommand(currentTranscript, setFeedback, setAudioSrc, setIsGeneratingAudio, stopListening, firestore, user, toast, t, addReminder, selectedVoice, activeReminder, completeActiveReminder);
       };
 
       recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
@@ -253,14 +263,14 @@ export function VoiceAssistant() {
       }
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firestore, user, toast, locale, t, addReminder, selectedVoice, isGeneratingAudio]);
+  }, [firestore, user, toast, locale, t, addReminder, selectedVoice, isGeneratingAudio, activeReminder, completeActiveReminder]);
 
   const startListening = () => {
     if (recognitionRef.current) {
       const lang = localeToLang[locale] || 'en-US';
       recognitionRef.current.lang = lang;
       setTranscript('');
-      setFeedback('');
+      setFeedback(activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : '');
       setAudioSrc(null);
       setIsGeneratingAudio(false);
       setIsListening(true);
@@ -356,7 +366,7 @@ export function VoiceAssistant() {
 
             {!audioSrc && !isGeneratingAudio && (
                 <p className="text-muted-foreground text-center min-h-[2.5rem] text-xl px-4 py-2 rounded-lg bg-muted w-full">
-                 {feedback || transcript || t('voiceAssistant.placeholder')}
+                 {feedback || transcript || (activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : t('voiceAssistant.placeholder'))}
                 </p>
             )}
 

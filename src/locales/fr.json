@@ -30,6 +30,7 @@
         "listeningTitle": "Écoute...",
         "listeningDescription": "Que puis-je faire pour vous ?",
         "placeholder": "par ex., « Appelle Sarah » ou « Rappelle-moi de prendre mes pilules »",
+        "reminderActivePlaceholder": "par ex., « Je l'ai fait » ou « Marquer comme terminé »",
         "cancel": "Annuler",
         "heard": "J'ai entendu",
         "sendingAlert": "Envoi de l'alerte d'urgence...",
@@ -40,13 +41,15 @@
         "reminderCreated": "Voici votre rappel audio.",
         "reminderError": "Désolé, je n'ai pas pu créer le rappel.",
         "didNotUnderstand": "Désolé, je n'ai pas compris. Veuillez réessayer.",
-        "notSupported": "Commandes vocales non prises en charge"
+        "notSupported": "Commandes vocales non prises en charge",
+        "taskCompleted": "Parfait ! Je l'ai marqué comme terminé."
     },
     "voiceCommands": {
         "emergency": "aide, urgence, sos",
         "goTo": "aller à, naviguer vers, ouvrir, montre-moi",
         "call": "appelle, appeler",
-        "remind": "rappelle-moi de, créer un rappel pour, définir un rappel pour"
+        "remind": "rappelle-moi de, créer un rappel pour, définir un rappel pour",
+        "done": "fait, je l'ai fait, terminé, marquer comme fait"
     },
     "dashboard": {
         "title": "Plan d'aujourd'hui",
@@ -128,7 +131,13 @@
         "textPlaceholder": "par ex., « N'oubliez pas de prendre vos médicaments à 20h. »",
         "generate": "Générer un rappel",
         "generating": "Génération de l'audio...",
-        "generatedAudio": "Audio généré"
+        "generatedAudio": "Audio généré",
+        "notificationTitle": "Rappel amical",
+        "playAudio": "Lire l'audio",
+        "dismiss": "Rejeter",
+        "snooze": "Répéter",
+        "markAsDone": "Marquer comme terminé",
+        "inTime": "Dans {time} minutes"
     },
     "caregiver": {
         "title": "Tableau de bord de l'aidant",

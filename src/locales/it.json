@@ -30,6 +30,7 @@
         "listeningTitle": "In ascolto...",
         "listeningDescription": "In cosa posso aiutarti?",
         "placeholder": "ad es., \"Chiama Sarah\" o \"Ricordami di prendere le pillole\"",
+        "reminderActivePlaceholder": "ad es., \"L'ho fatto\" o \"Segna come completato\"",
         "cancel": "Annulla",
         "heard": "Ho sentito",
         "sendingAlert": "Invio dell'avviso di emergenza...",
@@ -40,13 +41,15 @@
         "reminderCreated": "Ecco il tuo promemoria audio.",
         "reminderError": "Spiacente, non sono riuscito a creare il promemoria.",
         "didNotUnderstand": "Spiacente, non ho capito. Riprova.",
-        "notSupported": "Comandi vocali non supportati"
+        "notSupported": "Comandi vocali non supportati",
+        "taskCompleted": "Ottimo! L'ho segnato come completato."
     },
     "voiceCommands": {
         "emergency": "aiuto, emergenza, sos",
         "goTo": "vai a, naviga a, apri, mostrami",
         "call": "chiama, chiamare",
-        "remind": "ricordami di, imposta un promemoria per, crea un promemoria per"
+        "remind": "ricordami di, imposta un promemoria per, crea un promemoria per",
+        "done": "fatto, l'ho fatto, completato, segna come fatto"
     },
     "dashboard": {
         "title": "Piano di oggi",
@@ -128,7 +131,13 @@
         "textPlaceholder": "ad es., 'Ricorda di prendere la medicina alle 20:00.'",
         "generate": "Genera promemoria",
         "generating": "Generazione audio in corso...",
-        "generatedAudio": "Audio generato"
+        "generatedAudio": "Audio generato",
+        "notificationTitle": "Promemoria gentile",
+        "playAudio": "Riproduci audio",
+        "dismiss": "Ignora",
+        "snooze": "Posticipa",
+        "markAsDone": "Segna come completato",
+        "inTime": "Tra {time} minuti"
     },
     "caregiver": {
         "title": "Cruscotto dell'assistente",

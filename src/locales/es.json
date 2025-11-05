@@ -30,6 +30,7 @@
         "listeningTitle": "Escuchando...",
         "listeningDescription": "¿En qué puedo ayudarte?",
         "placeholder": "p. ej., \"Llama a Sarah\" o \"Recuérdame tomar mis pastillas\"",
+        "reminderActivePlaceholder": "p. ej., \"Lo he hecho\" o \"Marcar como completado\"",
         "cancel": "Cancelar",
         "heard": "He oído",
         "sendingAlert": "Enviando alerta de emergencia...",
@@ -40,13 +41,15 @@
         "reminderCreated": "Aquí tienes tu recordatorio de audio.",
         "reminderError": "Lo siento, no pude crear el recordatorio.",
         "didNotUnderstand": "Lo siento, no entendí eso. Por favor, inténtalo de nuevo.",
-        "notSupported": "Comandos de voz no compatibles"
+        "notSupported": "Comandos de voz no compatibles",
+        "taskCompleted": "¡Genial! Lo he marcado como hecho."
     },
     "voiceCommands": {
         "emergency": "ayuda, emergencia, sos, socorro",
         "goTo": "ir a, navegar a, abre, muéstrame",
         "call": "llama a, llamar a",
-        "remind": "recuérdame, crear un recordatorio de, pon un recordatorio para"
+        "remind": "recuérdame, crear un recordatorio de, pon un recordatorio para",
+        "done": "hecho, ya lo hice, lo hice, completado, marcar como hecho"
     },
     "dashboard": {
         "title": "Plan de Hoy",
@@ -149,7 +152,13 @@
         "textPlaceholder": "p. ej., 'Recordar tomar la medicación a las 8 PM.'",
         "generate": "Generar Recordatorio",
         "generating": "Generando Audio...",
-        "generatedAudio": "Audio Generado"
+        "generatedAudio": "Audio Generado",
+        "notificationTitle": "Recordatorio Amable",
+        "playAudio": "Reproducir Audio",
+        "dismiss": "Descartar",
+        "snooze": "Posponer",
+        "markAsDone": "Marcar como Hecho",
+        "inTime": "En {time} minutos"
     },
     "caregiver": {
         "title": "Tablero del Cuidador",

@@ -30,6 +30,7 @@
         "listeningTitle": "Listening...",
         "listeningDescription": "What can I help you with?",
         "placeholder": "e.g., \"Call Sarah\" or \"Remind me to take my pills at 8pm\"",
+        "reminderActivePlaceholder": "e.g., \"I've done it\" or \"Mark as complete\"",
         "cancel": "Cancel",
         "heard": "I heard",
         "sendingAlert": "Sending emergency alert...",
@@ -41,13 +42,15 @@
         "reminderSetFor": "OK. I've set a reminder for",
         "reminderError": "Sorry, I couldn't create the reminder.",
         "didNotUnderstand": "Sorry, I didn't understand that. Please try again.",
-        "notSupported": "Voice commands not supported"
+        "notSupported": "Voice commands not supported",
+        "taskCompleted": "Great! I've marked it as done."
     },
     "voiceCommands": {
         "emergency": "help, emergency, sos",
         "goTo": "go to, navigate to, open, show me",
         "call": "call, ring",
-        "remind": "remind me to, set a reminder to, create a reminder to, reminder to"
+        "remind": "remind me to, set a reminder to, create a reminder to, reminder to",
+        "done": "done, i've done it, i did it, completed, mark as done"
     },
     "dashboard": {
         "title": "Today's Plan",
@@ -154,7 +157,10 @@
         "notificationTitle": "Gentle Reminder",
         "notificationDescription": "It's time for your reminder.",
         "playAudio": "Play Audio",
-        "dismiss": "Dismiss"
+        "dismiss": "Dismiss",
+        "snooze": "Snooze",
+        "markAsDone": "Mark as Done",
+        "inTime": "In {time} minutes"
     },
     "caregiver": {
         "title": "Caregiver Dashboard",
