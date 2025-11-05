@@ -87,16 +87,16 @@ const handleCommand = (
   }
 
   // 3. Check for Calling Contact
-  const callKeyword = commandKeywords.call.find(k => lowerCaseCommand.includes(k));
-  if (callKeyword) {
-      for (const contact of contacts) {
-          const translatedContactName = t(contact.name).toLowerCase();
-          if (lowerCaseCommand.includes(translatedContactName)) {
+  for (const contact of contacts) {
+      const translatedContactName = t(contact.name).toLowerCase();
+      if (lowerCaseCommand.includes(translatedContactName)) {
+          const callKeyword = commandKeywords.call.find(k => lowerCaseCommand.includes(k));
+          if(callKeyword) {
             if (contact.phone) {
-              window.location.href = `tel:${contact.phone}`;
-              takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+                window.location.href = `tel:${contact.phone}`;
+                takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
             } else {
-              takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
+                takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
             }
             return;
           }
@@ -116,6 +116,14 @@ const handleCommand = (
   }
 };
 
+const localeToLang: Record<string, string> = {
+    en: 'en-US',
+    es: 'es-ES',
+    fr: 'fr-FR',
+    de: 'de-DE',
+    hi: 'hi-IN',
+    it: 'it-IT',
+};
 
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
@@ -137,8 +145,8 @@ export function VoiceAssistant() {
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
       
-      // Dynamically set the language based on the current locale
-      recognitionInstance.lang = locale;
+      const lang = localeToLang[locale] || 'en-US';
+      recognitionInstance.lang = lang;
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim();
@@ -188,8 +196,8 @@ export function VoiceAssistant() {
 
   const startListening = () => {
     if (recognitionRef.current) {
-      // Set the language every time before starting
-      recognitionRef.current.lang = locale;
+      const lang = localeToLang[locale] || 'en-US';
+      recognitionRef.current.lang = lang;
       setTranscript('');
       setFeedback('');
       setIsListening(true);
