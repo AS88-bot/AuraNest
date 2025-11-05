@@ -20,7 +20,6 @@ import type { Firestore } from 'firebase/firestore';
 import { useLocale } from '@/hooks/use-locale';
 
 
-// This function is moved outside the component to prevent it from capturing a stale `user` state.
 const handleCommand = (
   command: string,
   setFeedback: (feedback: string) => void,
@@ -34,19 +33,18 @@ const handleCommand = (
   setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
 
   const emergencyCommands = ['help', 'emergency', 'sos', 'ayuda', 'emergencia', 'aide', 'urgence', 'hilfe', 'notfall', 'मदद', 'आपातकाल', 'aiuto', 'emergenza'];
-  const navigationCommands = ['go to', 'show me', 'open', 'ir a', 'muéstrame', 'abrir', 'aller à', 'montre-moi', 'ouvrir', 'gehe zu', 'zeige mir', 'öffne', 'जाओ', 'मुझे दिखाओ', 'खोलो', 'vai a', 'mostrami', 'apri'];
-  const callCommands = ['call', 'llama a', 'appelle', 'anrufen', 'बुलाओ', 'chiama'];
-  const navigationTargets: {[key: string]: string} = {
-    'dashboard': 'dashboard', 'tablero': 'dashboard', 'tableau de bord': 'dashboard', 'instrumententafel': 'dashboard', 'डैशबोर्ड': 'dashboard', 'cruscotto': 'dashboard',
-    'contacts': 'contacts', 'contactos': 'contacts',
-    'journal': 'journal', 'diario': 'journal',
-    'location': 'location', 'ubicación': 'location', 'localisation': 'location', 'standort': 'location', 'स्थान': 'location', 'posizione': 'location',
-    'reminders': 'reminders', 'recordatorios': 'reminders', 'rappels': 'reminders', 'erinnerungen': 'reminders', 'अनुस्मारक': 'reminders', 'promemoria': 'reminders',
-    'caregiver': 'caregiver', 'cuidador': 'caregiver', 'aidant': 'caregiver', 'betreuer': 'caregiver', 'देखभालकर्ता': 'caregiver', 'assistente': 'caregiver',
-    'settings': 'settings', 'ajustes': 'settings', 'paramètres': 'settings', 'einstellungen': 'settings', 'सेटिंग्स': 'settings', 'impostazioni': 'settings'
-  };
+  
+  const navItems = [
+    { key: 'dashboard', route: '' },
+    { key: 'contacts', route: 'contacts' },
+    { key: 'journal', route: 'journal' },
+    { key: 'location', route: 'location' },
+    { key: 'reminders', route: 'reminders' },
+    { key: 'caregiver', route: 'caregiver' },
+    { key: 'settings', route: 'settings' },
+  ];
 
-  // Emergency commands
+  // 1. Check for Emergency
   if (emergencyCommands.some(c => command.includes(c))) {
     setFeedback(t('voiceAssistant.sendingAlert'));
     if (firestore && user) {
@@ -65,41 +63,38 @@ const handleCommand = (
     }
     actionTaken = true;
   }
-  
-  if (!actionTaken) {
-    // Navigation commands
-    const navCommand = navigationCommands.find(c => command.startsWith(c));
-    if (navCommand) {
-        const targetSpoken = command.substring(navCommand.length).trim();
-        const targetKey = Object.keys(navigationTargets).find(key => targetSpoken.includes(key.toLowerCase()));
 
-        if (targetKey) {
-            const targetPage = navigationTargets[targetKey];
-            setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+targetPage)}...`);
-            window.location.href = `/${targetPage === 'dashboard' ? '' : targetPage}`;
-            actionTaken = true;
-        }
+  // 2. Check for Navigation
+  if (!actionTaken) {
+    for (const item of navItems) {
+      const translatedPageName = t(`nav.${item.key}`).toLowerCase();
+      if (command.includes(translatedPageName)) {
+        setFeedback(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+item.key)}...`);
+        window.location.href = `/${item.route}`;
+        actionTaken = true;
+        break; 
+      }
     }
   }
 
+  // 3. Check for Calling
   if (!actionTaken) {
-    // Calling commands
-    const callCommand = callCommands.find(c => command.startsWith(c));
-    if (callCommand) {
-        const contactNameSpoken = command.substring(callCommand.length).trim().toLowerCase();
-        const contactToCall = contacts.find(c => t(c.name).toLowerCase() === contactNameSpoken);
-        
-        if (contactToCall && contactToCall.phone) {
-            setFeedback(`${t('voiceAssistant.calling')} ${t(contactToCall.name)}...`);
-            window.location.href = `tel:${contactToCall.phone}`;
+    for (const contact of contacts) {
+      const translatedContactName = t(contact.name).toLowerCase();
+      if (command.includes(translatedContactName)) {
+        if (contact.phone) {
+            setFeedback(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+            window.location.href = `tel:${contact.phone}`;
             actionTaken = true;
         } else {
-            setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', contactNameSpoken));
+            setFeedback(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
         }
+        break;
+      }
     }
   }
-  
-  // Reminder commands (check if not already handled)
+
+  // 4. Check for Reminders
   if (!actionTaken && ['remind me', 'set a reminder', 'recuérdame', 'créer un rappel', 'erinnere mich', 'मुझे याद दिलाओ', 'ricordami'].some(c => command.includes(c))) {
     setFeedback(t('voiceAssistant.openingReminders'));
     window.location.href = '/reminders';
@@ -112,6 +107,7 @@ const handleCommand = (
      setFeedback(t('voiceAssistant.didNotUnderstand'));
   }
 };
+
 
 
 export function VoiceAssistant() {
