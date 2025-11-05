@@ -137,6 +137,7 @@ export function VoiceAssistant() {
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
       
+      // Dynamically set the language based on the current locale
       recognitionInstance.lang = locale;
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
@@ -187,6 +188,7 @@ export function VoiceAssistant() {
 
   const startListening = () => {
     if (recognitionRef.current) {
+      // Set the language every time before starting
       recognitionRef.current.lang = locale;
       setTranscript('');
       setFeedback('');
