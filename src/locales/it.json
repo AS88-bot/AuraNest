@@ -29,16 +29,24 @@
         "ariaLabel": "Comando vocale",
         "listeningTitle": "In ascolto...",
         "listeningDescription": "In cosa posso aiutarti?",
-        "placeholder": "ad es., \"Chiama Sarah\" o \"Vai a contatti\"",
+        "placeholder": "ad es., \"Chiama Sarah\" o \"Ricordami di prendere le pillole\"",
         "cancel": "Annulla",
         "heard": "Ho sentito",
         "sendingAlert": "Invio dell'avviso di emergenza...",
         "navigatingTo": "Navigazione verso",
         "calling": "Chiamando",
         "contactNotFound": "Spiacente, non sono riuscito a trovare un contatto di nome {contactName}.",
-        "openingReminders": "Apertura promemoria...",
+        "creatingReminder": "Creazione del promemoria in corso...",
+        "reminderCreated": "Ecco il tuo promemoria audio.",
+        "reminderError": "Spiacente, non sono riuscito a creare il promemoria.",
         "didNotUnderstand": "Spiacente, non ho capito. Riprova.",
         "notSupported": "Comandi vocali non supportati"
+    },
+    "voiceCommands": {
+        "emergency": "aiuto, emergenza, sos",
+        "goTo": "vai a, naviga a, apri, mostrami",
+        "call": "chiama, chiamare",
+        "remind": "ricordami di, imposta un promemoria per, crea un promemoria per"
     },
     "dashboard": {
         "title": "Piano di oggi",

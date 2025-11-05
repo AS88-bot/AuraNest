@@ -29,16 +29,24 @@
         "ariaLabel": "Commande vocale",
         "listeningTitle": "Écoute...",
         "listeningDescription": "Que puis-je faire pour vous ?",
-        "placeholder": "par ex., « Appelle Sarah » ou « Aller aux contacts »",
+        "placeholder": "par ex., « Appelle Sarah » ou « Rappelle-moi de prendre mes pilules »",
         "cancel": "Annuler",
         "heard": "J'ai entendu",
         "sendingAlert": "Envoi de l'alerte d'urgence...",
         "navigatingTo": "Navigation vers",
         "calling": "Appel de",
         "contactNotFound": "Désolé, je n'ai pas trouvé de contact nommé {contactName}.",
-        "openingReminders": "Ouverture des rappels...",
+        "creatingReminder": "Création de votre rappel...",
+        "reminderCreated": "Voici votre rappel audio.",
+        "reminderError": "Désolé, je n'ai pas pu créer le rappel.",
         "didNotUnderstand": "Désolé, je n'ai pas compris. Veuillez réessayer.",
         "notSupported": "Commandes vocales non prises en charge"
+    },
+    "voiceCommands": {
+        "emergency": "aide, urgence, sos",
+        "goTo": "aller à, naviguer vers, ouvrir, montre-moi",
+        "call": "appelle, appeler",
+        "remind": "rappelle-moi de, créer un rappel pour, définir un rappel pour"
     },
     "dashboard": {
         "title": "Plan d'aujourd'hui",

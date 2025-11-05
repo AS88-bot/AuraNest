@@ -29,16 +29,24 @@
         "ariaLabel": "Comando de Voz",
         "listeningTitle": "Escuchando...",
         "listeningDescription": "¿En qué puedo ayudarte?",
-        "placeholder": "p. ej., \"Llama a Sarah\" o \"Ir a contactos\"",
+        "placeholder": "p. ej., \"Llama a Sarah\" o \"Recuérdame tomar mis pastillas\"",
         "cancel": "Cancelar",
         "heard": "He oído",
         "sendingAlert": "Enviando alerta de emergencia...",
         "navigatingTo": "Navegando a",
         "calling": "Llamando a",
         "contactNotFound": "Lo siento, no pude encontrar un contacto llamado {contactName}.",
-        "openingReminders": "Abriendo recordatorios...",
+        "creatingReminder": "Creando tu recordatorio...",
+        "reminderCreated": "Aquí tienes tu recordatorio de audio.",
+        "reminderError": "Lo siento, no pude crear el recordatorio.",
         "didNotUnderstand": "Lo siento, no entendí eso. Por favor, inténtalo de nuevo.",
         "notSupported": "Comandos de voz no compatibles"
+    },
+    "voiceCommands": {
+        "emergency": "ayuda, emergencia, sos, socorro",
+        "goTo": "ir a, navegar a, abre, muéstrame",
+        "call": "llama a, llamar a",
+        "remind": "recuérdame, crear un recordatorio de, pon un recordatorio para"
     },
     "dashboard": {
         "title": "Plan de Hoy",

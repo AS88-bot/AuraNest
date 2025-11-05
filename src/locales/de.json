@@ -29,16 +29,24 @@
         "ariaLabel": "Sprachbefehl",
         "listeningTitle": "Hören...",
         "listeningDescription": "Wie kann ich Ihnen helfen?",
-        "placeholder": "z.B. „Sarah anrufen“ oder „Gehe zu Kontakte“",
+        "placeholder": "z.B. „Sarah anrufen“ oder „Erinnere mich daran, meine Pillen zu nehmen“",
         "cancel": "Abbrechen",
         "heard": "Ich habe gehört",
         "sendingAlert": "Notfall-Alarm wird gesendet...",
         "navigatingTo": "Navigiere zu",
         "calling": "Rufe an",
         "contactNotFound": "Entschuldigung, ich konnte keinen Kontakt namens {contactName} finden.",
-        "openingReminders": "Erinnerungen werden geöffnet...",
+        "creatingReminder": "Ihre Erinnerung wird erstellt...",
+        "reminderCreated": "Hier ist Ihre Audio-Erinnerung.",
+        "reminderError": "Entschuldigung, ich konnte die Erinnerung nicht erstellen.",
         "didNotUnderstand": "Entschuldigung, das habe ich nicht verstanden. Bitte versuchen Sie es erneut.",
         "notSupported": "Sprachbefehle nicht unterstützt"
+    },
+    "voiceCommands": {
+        "emergency": "hilfe, notfall, sos",
+        "goTo": "gehe zu, navigiere zu, öffne, zeige mir",
+        "call": "anrufen, rufe an",
+        "remind": "erinnere mich an, erinnere mich daran, erstelle eine erinnerung an"
     },
     "dashboard": {
         "title": "Heutiger Plan",

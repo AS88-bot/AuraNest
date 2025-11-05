@@ -29,16 +29,24 @@
         "ariaLabel": "Voice Command",
         "listeningTitle": "Listening...",
         "listeningDescription": "What can I help you with?",
-        "placeholder": "e.g., \"Call Sarah\" or \"Go to contacts\"",
+        "placeholder": "e.g., \"Call Sarah\" or \"Remind me to take my pills\"",
         "cancel": "Cancel",
         "heard": "I heard",
         "sendingAlert": "Sending emergency alert...",
         "navigatingTo": "Navigating to",
         "calling": "Calling",
         "contactNotFound": "Sorry, I couldn't find a contact named {contactName}.",
-        "openingReminders": "Opening reminders...",
+        "creatingReminder": "Creating your reminder...",
+        "reminderCreated": "Here is your audio reminder.",
+        "reminderError": "Sorry, I couldn't create the reminder.",
         "didNotUnderstand": "Sorry, I didn't understand that. Please try again.",
         "notSupported": "Voice commands not supported"
+    },
+    "voiceCommands": {
+        "emergency": "help, emergency, sos",
+        "goTo": "go to, navigate to, open, show me",
+        "call": "call, ring",
+        "remind": "remind me to, set a reminder to, create a reminder to, reminder to"
     },
     "dashboard": {
         "title": "Today's Plan",
