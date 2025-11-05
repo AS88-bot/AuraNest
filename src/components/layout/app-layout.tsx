@@ -20,6 +20,7 @@ import { PlaceHolderImages } from '@/lib/placeholder-images';
 import { useUser, useFirebase } from '@/firebase';
 import { useLocale } from '@/hooks/use-locale';
 import LoginPage from '@/app/login/page';
+import { updateProfile } from 'firebase/auth';
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const defaultUserImage = PlaceHolderImages.find(p => p.id === 'user-avatar');
@@ -34,6 +35,18 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     useEffect(() => {
       setIsClient(true);
     }, []);
+
+    const handleProfileSave = async (newName: string, newEmail: string, newAvatar: string) => {
+      if (user) {
+        await updateProfile(user, {
+          displayName: newName,
+          photoURL: newAvatar,
+        });
+        // Note: updating email is a separate, more complex flow.
+        setUserName(newName);
+        setUserAvatar(newAvatar);
+      }
+    };
 
     // If user state is still loading, show a loading screen or skeleton
     if (isUserLoading) {
@@ -100,11 +113,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
                         name={user.displayName || userName}
                         email={user.email || userEmail}
                         avatar={user.photoURL || userAvatar}
-                        onSave={(newName, newEmail, newAvatar) => {
-                            setUserName(newName);
-                            setUserEmail(newEmail);
-                            setUserAvatar(newAvatar);
-                        }}
+                        onSave={handleProfileSave}
                         />
                     )}
                     <DropdownMenuItem onClick={() => auth.signOut()}>
