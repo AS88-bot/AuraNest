@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef }from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
@@ -22,158 +22,19 @@ import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useReminders } from '@/hooks/use-reminders';
 import { getVoiceCommands, CommandType } from '@/lib/voice-commands';
 
-const localeToLang: Record<string, string> = {
-    en: 'en-US',
-    es: 'es-ES',
-    fr: 'fr-FR',
-    de: 'de-DE',
-    hi: 'hi-IN',
-    it: 'it-IT',
-};
+interface LanguageConfig {
+  code: string;
+  name: string;
+}
 
-const handleCommand = async (
-  command: string,
-  setFeedback: (feedback: string) => void,
-  setAudioSrc: (src: string | null) => void,
-  setIsGeneratingAudio: (isGenerating: boolean) => void,
-  stopListening: () => void,
-  firestore: Firestore | null,
-  user: User | null,
-  toast: (options: any) => void,
-  t: (key: string) => string,
-  addReminder: (reminder: any) => void,
-  selectedVoice: any,
-  activeReminder: any,
-  completeActiveReminder: () => void
-) => {
-  const lowerCaseCommand = command.toLowerCase();
-  
-  const navItems = [
-    { key: 'dashboard', route: '' },
-    { key: 'contacts', route: 'contacts' },
-    { key: 'journal', route: 'journal' },
-    { key: 'location', route: 'location' },
-    { key: 'reminders', route: 'reminders' },
-    { key: 'caregiver', route: 'caregiver' },
-    { key: 'settings', route: 'settings' },
-  ];
-  
-  const allCommands = getVoiceCommands(t);
-
-  let actionTaken = false;
-
-  const takeAction = (feedbackMsg: string, duration = 2000, shouldStop = true) => {
-    setFeedback(feedbackMsg);
-    actionTaken = true;
-    if (shouldStop) {
-        setTimeout(() => stopListening(), duration);
-    }
-  };
-  
-  const checkCommand = (type: CommandType): boolean => {
-    return allCommands[type].some(keyword => lowerCaseCommand.includes(keyword));
-  }
-
-  // 1. Mark as Done (if a reminder is active)
-  if (activeReminder && checkCommand('done')) {
-    completeActiveReminder();
-    takeAction(t('voiceAssistant.taskCompleted'));
-    return;
-  }
-  
-  // 2. Emergency
-  if (checkCommand('emergency')) {
-    if (firestore && user) {
-        sendEmergencyAlert(firestore, user);
-        toast({
-            title: t('sosButton.sentTitle'),
-            description: t('sosButton.sentDescription'),
-            variant: 'destructive',
-        });
-        takeAction(t('voiceAssistant.sendingAlert'));
-    } else {
-      toast({
-          title: t('sosButton.errorTitle'),
-          description: t('sosButton.errorDescription'),
-          variant: 'destructive',
-      });
-      takeAction(t('voiceAssistant.didNotUnderstand'));
-    }
-    return;
-  }
-
-  // 3. Reminder
-  if (checkCommand('remind')) {
-      takeAction(t('voiceAssistant.creatingReminder'), 0, false);
-      setIsGeneratingAudio(true);
-      try {
-          const result = await textToSpeech({ 
-            text: command, // Pass the original, full command
-            voice: selectedVoice.value,
-            languageCode: selectedVoice.lang,
-            languageName: selectedVoice.languageName, // Pass language name for translation logic
-          });
-
-          if (result.time && result.reminderText) {
-              addReminder({
-                  id: `reminder-${new Date().toISOString()}`,
-                  time: result.time,
-                  text: result.reminderText,
-                  audioSrc: result.audio,
-              });
-              setFeedback(`${t('voiceAssistant.reminderSetFor')} ${result.time}.`);
-          } else {
-              setFeedback(t('voiceAssistant.reminderCreatedNoTime'));
-              setAudioSrc(result.audio);
-          }
-
-      } catch (e) {
-          console.error(e);
-          setFeedback(t('voiceAssistant.reminderError'));
-      } finally {
-          setIsGeneratingAudio(false);
-           setTimeout(() => stopListening(), 4000);
-      }
-      return;
-  }
-
-
-  // 4. Navigation
-  if (checkCommand('goTo')) {
-       for (const navItem of navItems) {
-            const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
-            if (lowerCaseCommand.includes(translatedPageName)) {
-                window.location.href = `/${navItem.route}`;
-                takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem.key)}...`);
-                return;
-            }
-       }
-  }
-
-  // 5. Calling
-  if (checkCommand('call')) {
-        for (const contact of contacts) {
-            const translatedContactName = t(contact.name).toLowerCase();
-            if (lowerCaseCommand.includes(translatedContactName)) {
-                if (contact.phone) {
-                    window.location.href = `tel:${contact.phone}`;
-                    takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
-                } else {
-                    takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
-                }
-                return;
-            }
-        }
-  }
-
-  // If no action was taken after a short delay, provide feedback.
-  setTimeout(() => {
-      if (!actionTaken) {
-        setFeedback(t('voiceAssistant.didNotUnderstand'));
-      }
-  }, 1500);
-
-};
+const supportedLanguages: LanguageConfig[] = [
+  { code: 'en-US', name: 'English' },
+  { code: 'es-ES', name: 'Spanish' },
+  { code: 'fr-FR', name: 'French' },
+  { code: 'de-DE', name: 'German' },
+  { code: 'hi-IN', name: 'Hindi' },
+  { code: 'it-IT', name: 'Italian' },
+];
 
 const voiceOptions = [
     { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US', languageName: 'English' },
@@ -185,6 +46,140 @@ const voiceOptions = [
     { value: 'Callirrhoe', label: 'Italian (Italy), Callirrhoe (Female)', lang: 'it-IT', languageName: 'Italian' },
 ];
 
+
+const handleCommand = async (
+  command: string,
+  detectedLanguage: LanguageConfig,
+  setFeedback: (feedback: string) => void,
+  setAudioSrc: (src: string | null) => void,
+  setIsGeneratingAudio: (isGenerating: boolean) => void,
+  stopAllListeners: () => void,
+  firestore: Firestore | null,
+  user: User | null,
+  toast: (options: any) => void,
+  t: (key: string) => string,
+  addReminder: (reminder: any) => void,
+  activeReminder: any,
+  completeActiveReminder: () => void
+) => {
+  const lowerCaseCommand = command.toLowerCase();
+  const allCommands = getVoiceCommands(t);
+  let actionTaken = false;
+
+  const takeAction = (feedbackMsg: string, duration = 3000, shouldStop = true) => {
+    setFeedback(feedbackMsg);
+    actionTaken = true;
+    if (shouldStop) {
+      setTimeout(() => stopAllListeners(), duration);
+    }
+  };
+
+  const checkCommand = (type: CommandType): boolean => {
+    return allCommands[type].some(keyword => lowerCaseCommand.includes(keyword));
+  };
+
+  // 1. Mark as Done
+  if (activeReminder && checkCommand('done')) {
+    completeActiveReminder();
+    takeAction(t('voiceAssistant.taskCompleted'));
+    return;
+  }
+
+  // 2. Emergency
+  if (checkCommand('emergency')) {
+    if (firestore && user) {
+      sendEmergencyAlert(firestore, user);
+      toast({
+        title: t('sosButton.sentTitle'),
+        description: t('sosButton.sentDescription'),
+        variant: 'destructive',
+      });
+      takeAction(t('voiceAssistant.sendingAlert'));
+    } else {
+      toast({
+        title: t('sosButton.errorTitle'),
+        description: t('sosButton.errorDescription'),
+        variant: 'destructive',
+      });
+      takeAction(t('voiceAssistant.didNotUnderstand'));
+    }
+    return;
+  }
+
+  // 3. Reminder
+  if (checkCommand('remind')) {
+    takeAction(t('voiceAssistant.creatingReminder'), 0, false);
+    setIsGeneratingAudio(true);
+    const voiceForReminder = voiceOptions.find(opt => opt.lang === detectedLanguage.code) || voiceOptions[0];
+
+    try {
+      const result = await textToSpeech({
+        text: command,
+        voice: voiceForReminder.value,
+        languageCode: voiceForReminder.lang,
+        languageName: voiceForReminder.languageName,
+      });
+
+      if (result.time && result.reminderText) {
+        addReminder({
+          id: `reminder-${new Date().toISOString()}`,
+          time: result.time,
+          text: result.reminderText,
+          audioSrc: result.audio,
+        });
+        setFeedback(`${t('voiceAssistant.reminderSetFor')} ${result.time}.`);
+      } else {
+        setFeedback(t('voiceAssistant.reminderCreatedNoTime'));
+        setAudioSrc(result.audio);
+      }
+    } catch (e) {
+      console.error(e);
+      setFeedback(t('voiceAssistant.reminderError'));
+    } finally {
+      setIsGeneratingAudio(false);
+      setTimeout(() => stopAllListeners(), 4000);
+    }
+    return;
+  }
+
+  // 4. Navigation
+  if (checkCommand('goTo')) {
+    const navItems = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
+    for (const navItem of navItems) {
+        // We need to check the spoken command against the nav item name in all languages
+        const allNames = supportedLanguages.map(l => t(`nav.${navItem}`, l.code.split('-')[0])).map(n => n.toLowerCase());
+        if (allNames.some(name => lowerCaseCommand.includes(name))) {
+            const route = navItem === 'dashboard' ? '' : navItem;
+            window.location.href = `/${route}`;
+            takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem)}...`);
+            return;
+        }
+    }
+  }
+
+  // 5. Calling
+  if (checkCommand('call')) {
+    for (const contact of contacts) {
+        const allNames = supportedLanguages.map(l => t(contact.name, l.code.split('-')[0])).map(n => n.toLowerCase());
+        if (allNames.some(name => lowerCaseCommand.includes(name))) {
+            if (contact.phone) {
+                window.location.href = `tel:${contact.phone}`;
+                takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+            } else {
+                takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', t(contact.name)));
+            }
+            return;
+        }
+    }
+  }
+
+  setTimeout(() => {
+    if (!actionTaken) {
+      setFeedback(t('voiceAssistant.didNotUnderstand'));
+    }
+  }, 2500);
+};
+
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
@@ -193,116 +188,111 @@ export function VoiceAssistant() {
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   
-  const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const recognitionInstances = useRef<SpeechRecognition[]>([]);
+  const hasHandledCommand = useRef(false);
+
   const { firestore, user } = useFirebase();
   const { toast } = useToast();
-  const { locale, t } = useLocale();
+  const { t } = useLocale();
   const { addReminder, activeReminder, completeActiveReminder } = useReminders();
   
-  // Find the voice option that matches the current app locale for generating speech
-  const selectedVoice = voiceOptions.find(opt => opt.lang.startsWith(locale)) || voiceOptions[0];
+  const stopAllListeners = useCallback(() => {
+    recognitionInstances.current.forEach(instance => instance.stop());
+    recognitionInstances.current = [];
+    setIsListening(false);
+  }, []);
 
-  useEffect(() => {
-    setIsMounted(true);
-    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+  const commandHandler = useCallback((command: string, detectedLanguage: LanguageConfig) => {
+    if (hasHandledCommand.current) return;
+    hasHandledCommand.current = true;
 
-    if (SpeechRecognitionAPI) {
-      const recognitionInstance = new SpeechRecognitionAPI();
-      recognitionInstance.continuous = false;
-      recognitionInstance.interimResults = false;
-      
-      recognitionInstance.lang = localeToLang[locale] || 'en-US';
-
-      recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
-        const currentTranscript = event.results[0][0].transcript.trim();
-        setTranscript(currentTranscript);
-        setFeedback(`${t('voiceAssistant.heard')}: "${currentTranscript}"`)
-        handleCommand(currentTranscript, setFeedback, setAudioSrc, setIsGeneratingAudio, stopListening, firestore, user, toast, t, addReminder, selectedVoice, activeReminder, completeActiveReminder);
-      };
-
-      recognitionInstance.onerror = (event: SpeechRecognitionErrorEvent) => {
-        console.error('Speech recognition error', event.error);
-        if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
-          toast({
-            variant: 'destructive',
-            title: 'Microphone Access Denied',
-            description: 'Please enable microphone permissions in your browser settings.',
-          });
-        }
-        stopListening();
-      };
-
-      recognitionInstance.onend = () => {
-        if (recognitionRef.current) {
-          // Check if we are not in the middle of generating audio
-          if (!isGeneratingAudio) {
-            setIsListening(false);
-          }
-        }
-      };
-      
-      recognitionRef.current = recognitionInstance;
-    } else {
-      console.warn('Speech Recognition API not supported in this browser.');
-    }
-
-    return () => {
-      if (recognitionRef.current) {
-        recognitionRef.current.onresult = null;
-        recognitionRef.current.onerror = null;
-        recognitionRef.current.onend = null;
-        recognitionRef.current.stop();
-        recognitionRef.current = null;
-      }
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [firestore, user, toast, locale, t, addReminder, selectedVoice, isGeneratingAudio, activeReminder, completeActiveReminder]);
+    setTranscript(command);
+    setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
+    handleCommand(
+      command,
+      detectedLanguage,
+      setFeedback,
+      setAudioSrc,
+      setIsGeneratingAudio,
+      stopAllListeners,
+      firestore,
+      user,
+      toast,
+      t,
+      addReminder,
+      activeReminder,
+      completeActiveReminder
+    );
+  }, [t, stopAllListeners, firestore, user, toast, addReminder, activeReminder, completeActiveReminder]);
 
   const startListening = () => {
-    if (recognitionRef.current) {
-      setTranscript('');
-      setFeedback(activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : '');
-      setAudioSrc(null);
-      setIsGeneratingAudio(false);
-      
-      // Update language just before starting
-      recognitionRef.current.lang = localeToLang[locale] || 'en-US';
+    const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognitionAPI) {
+      toast({ variant: 'destructive', title: t('voiceAssistant.notSupported') });
+      return;
+    }
+    
+    setTranscript('');
+    setFeedback(activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : t('voiceAssistant.placeholder'));
+    setAudioSrc(null);
+    setIsGeneratingAudio(false);
+    hasHandledCommand.current = false;
+    
+    recognitionInstances.current = supportedLanguages.map(lang => {
+      const recognition = new SpeechRecognitionAPI();
+      recognition.lang = lang.code;
+      recognition.continuous = false;
+      recognition.interimResults = false;
 
-      setIsListening(true);
-      try {
-        recognitionRef.current.start();
-      } catch(e) {
-        console.error("Error starting speech recognition: ", e);
-        if((e as DOMException).name === 'NotAllowedError') {
-             toast({
-                variant: 'destructive',
-                title: 'Microphone Access Denied',
-                description: 'Please enable microphone permissions in your browser settings.',
-            });
+      recognition.onresult = (event) => {
+        const result = event.results[0][0].transcript.trim();
+        console.log(`Recognized in ${lang.name}: ${result}`);
+        commandHandler(result, lang);
+      };
+      
+      recognition.onerror = (event) => {
+        // We can ignore 'no-speech' errors as other listeners might be active
+        if (event.error !== 'no-speech') {
+            console.error(`Speech recognition error for ${lang.name}:`, event.error);
         }
-        setIsListening(false);
+      };
+
+      return recognition;
+    });
+
+    try {
+      recognitionInstances.current.forEach(instance => instance.start());
+      setIsListening(true);
+    } catch (e) {
+      console.error("Error starting speech recognition:", e);
+      if((e as DOMException).name === 'NotAllowedError') {
+           toast({
+              variant: 'destructive',
+              title: 'Microphone Access Denied',
+              description: 'Please enable microphone permissions in your browser settings.',
+          });
       }
+      setIsListening(false);
     }
-  }
-  
-  const stopListening = () => {
-     if (recognitionRef.current && isListening) {
-      recognitionRef.current.stop();
-    }
-    setIsListening(false);
-  }
+  };
 
   const toggleListening = () => {
     if (isListening) {
-      stopListening();
+      stopAllListeners();
     } else {
       startListening();
     }
   };
+
+  useEffect(() => {
+    setIsMounted(true);
+    // Cleanup on unmount
+    return () => {
+        stopAllListeners();
+    };
+  }, [stopAllListeners]);
   
-  if (!isMounted) {
-    return null; 
-  }
+  if (!isMounted) return null;
   
   if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
      return (
@@ -312,7 +302,6 @@ export function VoiceAssistant() {
       </Button>
     );
   }
-
 
   return (
     <>
@@ -326,7 +315,7 @@ export function VoiceAssistant() {
         {isListening ? <MicOff className="h-8 w-8 text-red-500" /> : <Mic className="h-8 w-8" />}
       </Button>
 
-      <Dialog open={isListening} onOpenChange={setIsListening}>
+      <Dialog open={isListening} onOpenChange={(open) => !open && stopAllListeners()}>
         <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle className="text-center text-2xl">{t('voiceAssistant.listeningTitle')}</DialogTitle>
@@ -361,13 +350,13 @@ export function VoiceAssistant() {
 
             {!audioSrc && !isGeneratingAudio && (
                 <p className="text-muted-foreground text-center min-h-[2.5rem] text-xl px-4 py-2 rounded-lg bg-muted w-full">
-                 {feedback || transcript || (activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : t('voiceAssistant.placeholder'))}
+                 {feedback || (activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : t('voiceAssistant.placeholder'))}
                 </p>
             )}
 
           </div>
            <DialogFooter>
-            <Button variant="destructive" onClick={stopListening}>
+            <Button variant="destructive" onClick={stopAllListeners}>
               {t('voiceAssistant.cancel')}
             </Button>
           </DialogFooter>

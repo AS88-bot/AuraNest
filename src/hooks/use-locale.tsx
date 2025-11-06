@@ -23,7 +23,7 @@ const translations: Record<Locale, any> = {
 interface LocaleContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
+  t: (key: string, specificLocale?: Locale) => string;
 }
 
 const LocaleContext = createContext<LocaleContextType | undefined>(undefined);
@@ -47,9 +47,10 @@ export const LocaleProvider = ({ children }: { children: ReactNode }) => {
     setLocale(newLocale);
   };
 
-  const t = useCallback((key: string): string => {
+  const t = useCallback((key: string, specificLocale?: Locale): string => {
+    const targetLocale = specificLocale || locale;
     const keys = key.split('.');
-    let result = translations[locale];
+    let result = translations[targetLocale];
     for (const k of keys) {
       result = result?.[k];
       if (result === undefined) {
