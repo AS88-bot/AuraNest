@@ -118,8 +118,16 @@ const translateAndSpeakFlow = ai.defineFlow(
       }
     }
 
+    // Step 3: Generate speech, but only if there's something to say.
+    if (!textToSpeak || textToSpeak.trim() === '') {
+        console.warn('No text to speak after processing. Returning empty audio.');
+        return {
+          audio: '',
+          reminderText: reminderText,
+          time: time,
+        };
+    }
 
-    // Step 3: Generate speech from the text.
     console.log(`Generating speech for: "${textToSpeak}" with voice ${input.voice}`);
     const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
