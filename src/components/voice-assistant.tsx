@@ -20,6 +20,7 @@ import type { Firestore } from 'firebase/firestore';
 import { useLocale } from '@/hooks/use-locale';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useReminders } from '@/hooks/use-reminders';
+import { getVoiceCommands, CommandType } from '@/lib/voice-commands';
 
 
 const handleCommand = async (
@@ -48,12 +49,8 @@ const handleCommand = async (
     { key: 'caregiver', route: 'caregiver' },
     { key: 'settings', route: 'settings' },
   ];
-
-  const emergencyKeywords = t('voiceCommands.emergency').split(', ');
-  const callKeywords = t('voiceCommands.call').split(', ');
-  const goToKeywords = t('voiceCommands.goTo').split(', ');
-  const reminderKeywords = t('voiceCommands.remind').split(', ');
-  const doneKeywords = t('voiceCommands.done').split(', ');
+  
+  const allCommands = getVoiceCommands(t);
 
   let actionTaken = false;
 
@@ -64,16 +61,20 @@ const handleCommand = async (
         setTimeout(() => stopListening(), duration);
     }
   };
+  
+  const checkCommand = (type: CommandType): boolean => {
+    return allCommands[type].some(keyword => lowerCaseCommand.includes(keyword));
+  }
 
   // 1. Mark as Done (if a reminder is active)
-  if (activeReminder && doneKeywords.some(keyword => lowerCaseCommand.includes(keyword))) {
+  if (activeReminder && checkCommand('done')) {
     completeActiveReminder();
     takeAction(t('voiceAssistant.taskCompleted'));
     return;
   }
   
   // 2. Emergency
-  if (emergencyKeywords.some(keyword => lowerCaseCommand.includes(keyword))) {
+  if (checkCommand('emergency')) {
     if (firestore && user) {
         sendEmergencyAlert(firestore, user);
         toast({
@@ -94,73 +95,66 @@ const handleCommand = async (
   }
 
   // 3. Reminder
-  for (const keyword of reminderKeywords) {
-    if (lowerCaseCommand.startsWith(keyword)) {
-        takeAction(t('voiceAssistant.creatingReminder'), 0, false);
-        setIsGeneratingAudio(true);
-        try {
-            const result = await textToSpeech({ 
-              text: command, // Pass the original, full command
-              voice: selectedVoice.value,
-              languageCode: selectedVoice.lang,
-              languageName: selectedVoice.languageName,
-            });
+  if (checkCommand('remind')) {
+      takeAction(t('voiceAssistant.creatingReminder'), 0, false);
+      setIsGeneratingAudio(true);
+      try {
+          const result = await textToSpeech({ 
+            text: command, // Pass the original, full command
+            voice: selectedVoice.value,
+            languageName: selectedVoice.languageName, // Pass language name for translation logic
+          });
 
-            if (result.time && result.reminderText) {
-                addReminder({
-                    id: new Date().toISOString(),
-                    time: result.time,
-                    text: result.reminderText,
-                    audioSrc: result.audio,
-                });
-                setFeedback(`${t('voiceAssistant.reminderSetFor')} ${result.time}.`);
-            } else {
-                setFeedback(t('voiceAssistant.reminderCreatedNoTime'));
-                setAudioSrc(result.audio);
-            }
+          if (result.time && result.reminderText) {
+              addReminder({
+                  id: `reminder-${new Date().toISOString()}`,
+                  time: result.time,
+                  text: result.reminderText,
+                  audioSrc: result.audio,
+              });
+              setFeedback(`${t('voiceAssistant.reminderSetFor')} ${result.time}.`);
+          } else {
+              setFeedback(t('voiceAssistant.reminderCreatedNoTime'));
+              setAudioSrc(result.audio);
+          }
 
-        } catch (e) {
-            console.error(e);
-            setFeedback(t('voiceAssistant.reminderError'));
-        } finally {
-            setIsGeneratingAudio(false);
-             setTimeout(() => stopListening(), 4000);
-        }
-        return;
-    }
+      } catch (e) {
+          console.error(e);
+          setFeedback(t('voiceAssistant.reminderError'));
+      } finally {
+          setIsGeneratingAudio(false);
+           setTimeout(() => stopListening(), 4000);
+      }
+      return;
   }
 
 
   // 4. Navigation
-  for (const keyword of goToKeywords) {
-      if (lowerCaseCommand.includes(keyword)) {
-           for (const navItem of navItems) {
-                const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
-                if (lowerCaseCommand.includes(translatedPageName)) {
-                    window.location.href = `/${navItem.route}`;
-                    takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem.key)}...`);
-                    return;
-                }
-           }
-      }
+  if (checkCommand('goTo')) {
+       for (const navItem of navItems) {
+            const translatedPageName = t(`nav.${navItem.key}`).toLowerCase();
+            if (lowerCaseCommand.includes(translatedPageName)) {
+                window.location.href = `/${navItem.route}`;
+                takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem.key)}...`);
+                return;
+            }
+       }
   }
 
   // 5. Calling
-  for (const keyword of callKeywords) {
-      if (lowerCaseCommand.includes(keyword)) {
-            for (const contact of contacts) {
-                const translatedContactName = t(contact.name).toLowerCase();
-                if (lowerCaseCommand.includes(translatedContactName)) {
-                    if (contact.phone) {
-                        window.location.href = `tel:${contact.phone}`;
-                        takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
-                    } else {
-                        takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
-                    }
-                    return;
+  if (checkCommand('call')) {
+        for (const contact of contacts) {
+            const translatedContactName = t(contact.name).toLowerCase();
+            if (lowerCaseCommand.includes(translatedContactName)) {
+                if (contact.phone) {
+                    window.location.href = `tel:${contact.phone}`;
+                    takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+                } else {
+                    takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', translatedContactName));
                 }
+                return;
             }
-      }
+        }
   }
 
   // If no action was taken after a short delay, provide feedback.
@@ -170,15 +164,6 @@ const handleCommand = async (
       }
   }, 1500);
 
-};
-
-const localeToLang: Record<string, string> = {
-    en: 'en-US',
-    es: 'es-ES',
-    fr: 'fr-FR',
-    de: 'de-DE',
-    hi: 'hi-IN',
-    it: 'it-IT',
 };
 
 const voiceOptions = [
@@ -205,7 +190,7 @@ export function VoiceAssistant() {
   const { locale, t } = useLocale();
   const { addReminder, activeReminder, completeActiveReminder } = useReminders();
   
-  // Find the voice option that matches the current app locale
+  // Find the voice option that matches the current app locale for generating speech
   const selectedVoice = voiceOptions.find(opt => opt.lang.startsWith(locale)) || voiceOptions[0];
 
   useEffect(() => {
@@ -217,8 +202,9 @@ export function VoiceAssistant() {
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
       
-      // By not setting recognitionInstance.lang, we allow the browser to use its default
-      // or perform automatic language detection if supported.
+      // We don't set `recognitionInstance.lang`. This lets the browser use its default,
+      // which often provides better automatic language detection capabilities than locking it
+      // to the app's UI language. The command handler will check against all languages.
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim();
