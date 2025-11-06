@@ -217,8 +217,8 @@ export function VoiceAssistant() {
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
       
-      const lang = localeToLang[locale] || 'en-US';
-      recognitionInstance.lang = lang;
+      // By not setting recognitionInstance.lang, we allow the browser to use its default
+      // or perform automatic language detection if supported.
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim();
@@ -267,8 +267,6 @@ export function VoiceAssistant() {
 
   const startListening = () => {
     if (recognitionRef.current) {
-      const lang = localeToLang[locale] || 'en-US';
-      recognitionRef.current.lang = lang;
       setTranscript('');
       setFeedback(activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : '');
       setAudioSrc(null);
