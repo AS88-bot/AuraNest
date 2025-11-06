@@ -7,6 +7,7 @@ import { type PlannerItem as PlannerItemType, type IconName } from '@/lib/types'
 import { EditPlannerSheet } from './edit-planner-sheet';
 import { useLocale } from '@/hooks/use-locale';
 import { useReminders } from '@/hooks/use-reminders';
+import React from 'react';
 
 export default function DailyPlanner() {
   const [schedule, setSchedule] = useState<Omit<PlannerItemType, 'onUpdate'>[]>(initialSchedule);
@@ -48,7 +49,7 @@ export default function DailyPlanner() {
 
     setCombinedSchedule(allItems);
 
-  }, [schedule, reminders, t]);
+  }, [schedule, reminders, t, reminders.length]);
 
   const handleUpdate = (updatedItem: PlannerItemType) => {
     setSchedule((prevSchedule) =>
