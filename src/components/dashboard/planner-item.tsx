@@ -3,10 +3,10 @@ import { Card, CardContent } from '@/components/ui/card';
 import type { PlannerItem as PlannerItemType } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { Checkbox } from '../ui/checkbox';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Calendar, Pill, Smile, Utensils } from 'lucide-react';
+import { Calendar, Pill, Smile, Utensils, Bell } from 'lucide-react';
 import { useLocale } from '@/hooks/use-locale';
 
 interface PlannerItemProps {
@@ -25,6 +25,7 @@ const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
     Utensils: Utensils,
     Calendar: Calendar,
     Smile: Smile,
+    Bell: Bell,
 };
 
 
@@ -32,10 +33,17 @@ export default function PlannerItem({ item }: PlannerItemProps) {
     const [isChecked, setIsChecked] = useState(item.isCompleted);
     const { t } = useLocale();
 
+    useEffect(() => {
+        setIsChecked(item.isCompleted);
+    }, [item.isCompleted]);
+
     const medicationImage = item.image ? PlaceHolderImages.find(p => p.id === item.image) : null;
     
     const Icon = icons[item.icon];
-    const title = t(item.titleKey);
+    
+    // Check if the titleKey looks like a translation key or is direct text
+    const isTranslationKey = item.titleKey.startsWith('dashboard.schedule.') || item.titleKey.startsWith('reminders.');
+    const title = isTranslationKey ? t(item.titleKey) : item.titleKey;
     const description = t(item.descriptionKey);
 
     return (
@@ -49,7 +57,7 @@ export default function PlannerItem({ item }: PlannerItemProps) {
                          {Icon && <Icon className="h-8 w-8 text-foreground" />}
                         <h3 className="text-xl font-bold text-foreground">{title}</h3>
                     </div>
-                    <p className="text-lg text-muted-foreground">{description}</p>
+                    {isTranslationKey && <p className="text-lg text-muted-foreground">{description}</p>}
                     {medicationImage && (
                         <div className="mt-2">
                             <Image 
@@ -69,6 +77,7 @@ export default function PlannerItem({ item }: PlannerItemProps) {
                         onCheckedChange={() => setIsChecked(!isChecked)}
                         className="h-10 w-10 border-4"
                         aria-label={`Mark ${title} as completed`}
+                        // In a real app, this would also call a function to update the state in the provider
                     />
                 </div>
             </CardContent>

@@ -2,7 +2,7 @@ import type { LucideIcon } from "lucide-react";
 
 export type PlannerCategory = "appointment" | "medication" | "meal" | "activity";
 
-export type IconName = "Pill" | "Utensils" | "Calendar" | "Smile";
+export type IconName = "Pill" | "Utensils" | "Calendar" | "Smile" | "Bell";
 
 export interface PlannerItem {
   id: string;
