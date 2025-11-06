@@ -22,19 +22,23 @@ import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useReminders } from '@/hooks/use-reminders';
 import { getVoiceCommands, CommandType } from '@/lib/voice-commands';
 
-interface LanguageConfig {
-  code: string;
-  name: string;
-}
+const localeToLangCode: Record<string, string> = {
+    en: 'en-US',
+    es: 'es-ES',
+    fr: 'fr-FR',
+    de: 'de-DE',
+    hi: 'hi-IN',
+    it: 'it-IT',
+};
 
-const supportedLanguages: LanguageConfig[] = [
-  { code: 'en-US', name: 'English' },
-  { code: 'es-ES', name: 'Spanish' },
-  { code: 'fr-FR', name: 'French' },
-  { code: 'de-DE', name: 'German' },
-  { code: 'hi-IN', name: 'Hindi' },
-  { code: 'it-IT', name: 'Italian' },
-];
+const localeToLangName: Record<string, string> = {
+    en: 'English',
+    es: 'Spanish',
+    fr: 'French',
+    de: 'German',
+    hi: 'Hindi',
+    it: 'Italian',
+};
 
 const voiceOptions = [
     { value: 'Algenib', label: 'English (US), Algenib (Female)', lang: 'en-US', languageName: 'English' },
@@ -49,43 +53,39 @@ const voiceOptions = [
 
 const handleCommand = async (
   command: string,
-  detectedLanguage: LanguageConfig,
   setFeedback: (feedback: string) => void,
   setAudioSrc: (src: string | null) => void,
   setIsGeneratingAudio: (isGenerating: boolean) => void,
-  stopAllListeners: () => void,
+  stopListener: () => void,
   firestore: Firestore | null,
   user: User | null,
   toast: (options: any) => void,
   t: (key: string) => string,
   addReminder: (reminder: any) => void,
   activeReminder: any,
-  completeActiveReminder: () => void
+  completeActiveReminder: () => void,
+  locale: string
 ) => {
   const lowerCaseCommand = command.toLowerCase();
   const allCommands = getVoiceCommands(t);
   let actionTaken = false;
 
-  const takeAction = (feedbackMsg: string, duration = 3000, shouldStop = true) => {
+  const takeAction = (feedbackMsg: string, duration = 3000) => {
     setFeedback(feedbackMsg);
     actionTaken = true;
-    if (shouldStop) {
-      setTimeout(() => stopAllListeners(), duration);
-    }
+    setTimeout(() => stopListener(), duration);
   };
 
   const checkCommand = (type: CommandType): boolean => {
     return allCommands[type].some(keyword => lowerCaseCommand.includes(keyword));
   };
 
-  // 1. Mark as Done
   if (activeReminder && checkCommand('done')) {
     completeActiveReminder();
     takeAction(t('voiceAssistant.taskCompleted'));
     return;
   }
 
-  // 2. Emergency
   if (checkCommand('emergency')) {
     if (firestore && user) {
       sendEmergencyAlert(firestore, user);
@@ -106,11 +106,13 @@ const handleCommand = async (
     return;
   }
 
-  // 3. Reminder
   if (checkCommand('remind')) {
-    takeAction(t('voiceAssistant.creatingReminder'), 0, false);
+    setFeedback(t('voiceAssistant.creatingReminder'));
     setIsGeneratingAudio(true);
-    const voiceForReminder = voiceOptions.find(opt => opt.lang === detectedLanguage.code) || voiceOptions[0];
+    actionTaken = true; // Mark action as taken to prevent "did not understand" message
+
+    const currentLangCode = localeToLangCode[locale] || 'en-US';
+    const voiceForReminder = voiceOptions.find(opt => opt.lang === currentLangCode) || voiceOptions[0];
 
     try {
       const result = await textToSpeech({
@@ -137,18 +139,16 @@ const handleCommand = async (
       setFeedback(t('voiceAssistant.reminderError'));
     } finally {
       setIsGeneratingAudio(false);
-      setTimeout(() => stopAllListeners(), 4000);
+      setTimeout(() => stopListener(), 4000);
     }
     return;
   }
-
-  // 4. Navigation
+  
   if (checkCommand('goTo')) {
     const navItems = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
     for (const navItem of navItems) {
-        // We need to check the spoken command against the nav item name in all languages
-        const allNames = supportedLanguages.map(l => t(`nav.${navItem}`, l.code.split('-')[0])).map(n => n.toLowerCase());
-        if (allNames.some(name => lowerCaseCommand.includes(name))) {
+        const navItemName = t(`nav.${navItem}`).toLowerCase();
+        if (lowerCaseCommand.includes(navItemName)) {
             const route = navItem === 'dashboard' ? '' : navItem;
             window.location.href = `/${route}`;
             takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem)}...`);
@@ -157,11 +157,10 @@ const handleCommand = async (
     }
   }
 
-  // 5. Calling
   if (checkCommand('call')) {
     for (const contact of contacts) {
-        const allNames = supportedLanguages.map(l => t(contact.name, l.code.split('-')[0])).map(n => n.toLowerCase());
-        if (allNames.some(name => lowerCaseCommand.includes(name))) {
+        const contactName = t(contact.name).toLowerCase();
+        if (lowerCaseCommand.includes(contactName)) {
             if (contact.phone) {
                 window.location.href = `tel:${contact.phone}`;
                 takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
@@ -173,95 +172,96 @@ const handleCommand = async (
     }
   }
 
+  // If no action was taken after a delay, show feedback.
   setTimeout(() => {
     if (!actionTaken) {
-      setFeedback(t('voiceAssistant.didNotUnderstand'));
+      takeAction(t('voiceAssistant.didNotUnderstand'));
     }
   }, 2500);
 };
 
 export function VoiceAssistant() {
   const [isListening, setIsListening] = useState(false);
-  const [transcript, setTranscript] = useState('');
   const [feedback, setFeedback] = useState('');
   const [isMounted, setIsMounted] = useState(false);
   const [audioSrc, setAudioSrc] = useState<string | null>(null);
   const [isGeneratingAudio, setIsGeneratingAudio] = useState(false);
   
-  const recognitionInstances = useRef<SpeechRecognition[]>([]);
-  const hasHandledCommand = useRef(false);
+  const recognitionRef = useRef<SpeechRecognition | null>(null);
 
   const { firestore, user } = useFirebase();
   const { toast } = useToast();
-  const { t } = useLocale();
+  const { t, locale } = useLocale();
   const { addReminder, activeReminder, completeActiveReminder } = useReminders();
   
-  const stopAllListeners = useCallback(() => {
-    recognitionInstances.current.forEach(instance => instance.stop());
-    recognitionInstances.current = [];
+  const stopListener = useCallback(() => {
+    recognitionRef.current?.stop();
     setIsListening(false);
   }, []);
 
-  const commandHandler = useCallback((command: string, detectedLanguage: LanguageConfig) => {
-    if (hasHandledCommand.current) return;
-    hasHandledCommand.current = true;
-
-    setTranscript(command);
-    setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
-    handleCommand(
-      command,
-      detectedLanguage,
-      setFeedback,
-      setAudioSrc,
-      setIsGeneratingAudio,
-      stopAllListeners,
-      firestore,
-      user,
-      toast,
-      t,
-      addReminder,
-      activeReminder,
-      completeActiveReminder
-    );
-  }, [t, stopAllListeners, firestore, user, toast, addReminder, activeReminder, completeActiveReminder]);
-
-  const startListening = () => {
+  const startListener = () => {
     const SpeechRecognitionAPI = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (!SpeechRecognitionAPI) {
       toast({ variant: 'destructive', title: t('voiceAssistant.notSupported') });
       return;
     }
     
-    setTranscript('');
     setFeedback(activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : t('voiceAssistant.placeholder'));
     setAudioSrc(null);
     setIsGeneratingAudio(false);
-    hasHandledCommand.current = false;
+
+    if (recognitionRef.current) {
+        recognitionRef.current.onresult = null;
+        recognitionRef.current.onerror = null;
+        recognitionRef.current.onend = null;
+        recognitionRef.current.stop();
+    }
     
-    recognitionInstances.current = supportedLanguages.map(lang => {
-      const recognition = new SpeechRecognitionAPI();
-      recognition.lang = lang.code;
-      recognition.continuous = false;
-      recognition.interimResults = false;
+    const recognition = new SpeechRecognitionAPI();
+    recognition.lang = localeToLangCode[locale] || 'en-US';
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognitionRef.current = recognition;
 
-      recognition.onresult = (event) => {
-        const result = event.results[0][0].transcript.trim();
-        console.log(`Recognized in ${lang.name}: ${result}`);
-        commandHandler(result, lang);
-      };
-      
-      recognition.onerror = (event) => {
-        // We can ignore 'no-speech' errors as other listeners might be active
-        if (event.error !== 'no-speech') {
-            console.error(`Speech recognition error for ${lang.name}:`, event.error);
+    recognition.onresult = (event) => {
+      const command = event.results[0][0].transcript.trim();
+      setFeedback(`${t('voiceAssistant.heard')}: "${command}"`);
+      handleCommand(
+        command,
+        setFeedback,
+        setAudioSrc,
+        setIsGeneratingAudio,
+        stopListener,
+        firestore,
+        user,
+        toast,
+        t,
+        addReminder,
+        activeReminder,
+        completeActiveReminder,
+        locale
+      );
+    };
+    
+    recognition.onerror = (event) => {
+      console.error(`Speech recognition error:`, event.error);
+      if (event.error !== 'no-speech') {
+        setFeedback(t('voiceAssistant.didNotUnderstand'));
+      }
+      setTimeout(() => {
+          setIsListening(false);
+      }, 2000);
+    };
+
+    recognition.onend = () => {
+        // Only set listening to false if it hasn't been handled by an error or explicit stop
+        if(isListening) {
+           // setIsListening(false);
         }
-      };
-
-      return recognition;
-    });
-
+    };
+    
     try {
-      recognitionInstances.current.forEach(instance => instance.start());
+      recognition.start();
       setIsListening(true);
     } catch (e) {
       console.error("Error starting speech recognition:", e);
@@ -278,19 +278,18 @@ export function VoiceAssistant() {
 
   const toggleListening = () => {
     if (isListening) {
-      stopAllListeners();
+      stopListener();
     } else {
-      startListening();
+      startListener();
     }
   };
 
   useEffect(() => {
     setIsMounted(true);
-    // Cleanup on unmount
     return () => {
-        stopAllListeners();
+        stopListener();
     };
-  }, [stopAllListeners]);
+  }, [stopListener]);
   
   if (!isMounted) return null;
   
@@ -315,7 +314,7 @@ export function VoiceAssistant() {
         {isListening ? <MicOff className="h-8 w-8 text-red-500" /> : <Mic className="h-8 w-8" />}
       </Button>
 
-      <Dialog open={isListening} onOpenChange={(open) => !open && stopAllListeners()}>
+      <Dialog open={isListening} onOpenChange={(open) => !open && stopListener()}>
         <DialogContent className="sm:max-w-[425px]" onInteractOutside={(e) => e.preventDefault()}>
           <DialogHeader>
             <DialogTitle className="text-center text-2xl">{t('voiceAssistant.listeningTitle')}</DialogTitle>
@@ -356,7 +355,7 @@ export function VoiceAssistant() {
 
           </div>
            <DialogFooter>
-            <Button variant="destructive" onClick={stopAllListeners}>
+            <Button variant="destructive" onClick={stopListener}>
               {t('voiceAssistant.cancel')}
             </Button>
           </DialogFooter>
