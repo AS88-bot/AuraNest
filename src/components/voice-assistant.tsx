@@ -22,6 +22,14 @@ import { textToSpeech } from '@/ai/flows/text-to-speech';
 import { useReminders } from '@/hooks/use-reminders';
 import { getVoiceCommands, CommandType } from '@/lib/voice-commands';
 
+const localeToLang: Record<string, string> = {
+    en: 'en-US',
+    es: 'es-ES',
+    fr: 'fr-FR',
+    de: 'de-DE',
+    hi: 'hi-IN',
+    it: 'it-IT',
+};
 
 const handleCommand = async (
   command: string,
@@ -102,6 +110,7 @@ const handleCommand = async (
           const result = await textToSpeech({ 
             text: command, // Pass the original, full command
             voice: selectedVoice.value,
+            languageCode: selectedVoice.lang,
             languageName: selectedVoice.languageName, // Pass language name for translation logic
           });
 
@@ -202,9 +211,7 @@ export function VoiceAssistant() {
       recognitionInstance.continuous = false;
       recognitionInstance.interimResults = false;
       
-      // We don't set `recognitionInstance.lang`. This lets the browser use its default,
-      // which often provides better automatic language detection capabilities than locking it
-      // to the app's UI language. The command handler will check against all languages.
+      recognitionInstance.lang = localeToLang[locale] || 'en-US';
 
       recognitionInstance.onresult = (event: SpeechRecognitionEvent) => {
         const currentTranscript = event.results[0][0].transcript.trim();
@@ -257,6 +264,10 @@ export function VoiceAssistant() {
       setFeedback(activeReminder ? t('voiceAssistant.reminderActivePlaceholder') : '');
       setAudioSrc(null);
       setIsGeneratingAudio(false);
+      
+      // Update language just before starting
+      recognitionRef.current.lang = localeToLang[locale] || 'en-US';
+
       setIsListening(true);
       try {
         recognitionRef.current.start();

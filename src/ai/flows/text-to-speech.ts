@@ -56,18 +56,17 @@ async function toWav(
 
 const extractTimePrompt = ai.definePrompt({
   name: 'extractTimePrompt',
-  input: { schema: z.object({ text: z.string() }) },
+  input: { schema: z.object({ text: z.string(), languageName: z.string().optional() }) },
   output: {
     schema: z.object({
       reminderText: z.string().describe("The core text of the reminder, with all time-related phrases (like 'at 8pm' or 'in 10 minutes') removed."),
       time: z.string().optional().describe("The absolute time for the reminder in HH:mm (24-hour) format. If no time is specified, this field should be omitted."),
     })
   },
-  prompt: `From the following text, which could be in any language, extract the core reminder message and the specific time. The current time is ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}.
+  prompt: `From the following text, which is in {{languageName}}, extract the core reminder message and the specific time. The current time is ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}.
 
 Text: "{{text}}"
 
-- First, detect the language of the text.
 - If the text contains a specific time (e.g., "at 5:30 PM", "a las 10am"), convert it to HH:mm 24-hour format.
 - If the text contains a relative time (e.g., "in 10 minutes", "in an hour"), calculate the absolute time in HH:mm format based on the current time.
 - If no time is mentioned, omit the 'time' field in the output.
@@ -97,6 +96,7 @@ const translateAndSpeakFlow = ai.defineFlow(
     // Step 1: Extract time and the core reminder text.
     const { output: timeExtractionResult } = await extractTimePrompt({
       text: input.text,
+      languageName: input.languageName,
     });
 
     if (!timeExtractionResult) {
