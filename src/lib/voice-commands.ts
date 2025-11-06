@@ -11,12 +11,6 @@ type CommandDictionary = Record<CommandType, string[]>;
  * @returns A dictionary where keys are command types and values are arrays of keyword strings.
  */
 export const getVoiceCommands = (t: (key: string) => string): CommandDictionary => {
-  // We construct the object inside the function to ensure the `t` function is the one
-  // from the current render context, although in practice it doesn't change.
-  // The main reason is to have access to `t` without needing to pass it everywhere.
-  
-  const allLanguages = ['en', 'es', 'fr', 'de', 'hi', 'it'];
-  
   const commands: CommandDictionary = {
     emergency: [],
     goTo: [],
@@ -24,11 +18,6 @@ export const getVoiceCommands = (t: (key: string) => string): CommandDictionary 
     remind: [],
     done: [],
   };
-
-  // This is a bit of a trick. We need to get the translations for each language.
-  // The `t` function is bound to the current locale, so we can't use it directly to get
-  // other languages' translations. Instead, we manually define the keywords here.
-  // This is more robust than trying to dynamically load JSON files.
 
   // English
   commands.emergency.push(...'help, emergency, sos'.split(', '));
@@ -61,7 +50,7 @@ export const getVoiceCommands = (t: (key: string) => string): CommandDictionary 
   // Hindi (Corrected with more natural phrases)
   commands.emergency.push(...'मदद, इमरजेंसी, आपातकाल, एसओएस'.split(', '));
   commands.goTo.push(...'पर जाओ, खोलो, मुझे दिखाओ, चलो'.split(', '));
-  commands.call.push(...'को कॉल करो, को फोन करो, बुलाओ'.split(', '));
+  commands.call.push(...'को कॉल करो, को फोन करो'.split(', '));
   commands.remind.push(...'मुझे याद दिलाओ, रिमाइंडर लगाओ, रिमाइंडर सेट करो'.split(', '));
   commands.done.push(...'हो गया, मैंने कर लिया, पूरा हो गया'.split(', '));
 
