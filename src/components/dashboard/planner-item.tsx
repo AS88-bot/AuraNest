@@ -6,8 +6,10 @@ import { Checkbox } from '../ui/checkbox';
 import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
-import { Calendar, Pill, Smile, Utensils, Bell } from 'lucide-react';
+import { Calendar, Pill, Smile, Utensils, Bell, Trash2 } from 'lucide-react';
 import { useLocale } from '@/hooks/use-locale';
+import { useReminders } from '@/hooks/use-reminders';
+import { Button } from '../ui/button';
 
 interface PlannerItemProps {
   item: PlannerItemType;
@@ -32,6 +34,7 @@ const icons: { [key: string]: React.ComponentType<{ className?: string }> } = {
 export default function PlannerItem({ item }: PlannerItemProps) {
     const [isChecked, setIsChecked] = useState(item.isCompleted);
     const { t } = useLocale();
+    const { removeReminder } = useReminders();
 
     useEffect(() => {
         setIsChecked(item.isCompleted);
@@ -42,9 +45,16 @@ export default function PlannerItem({ item }: PlannerItemProps) {
     const Icon = icons[item.icon];
     
     // Check if the titleKey looks like a translation key or is direct text
-    const isTranslationKey = item.titleKey.startsWith('dashboard.schedule.') || item.titleKey.startsWith('reminders.');
+    const isTranslationKey = item.titleKey.startsWith('dashboard.schedule.');
     const title = isTranslationKey ? t(item.titleKey) : item.titleKey;
-    const description = t(item.descriptionKey);
+    const description = isTranslationKey ? t(item.descriptionKey) : item.descriptionKey;
+    const isReminder = item.id.startsWith('reminder-');
+
+    const handleDelete = () => {
+        if (isReminder) {
+            removeReminder(item.id);
+        }
+    };
 
     return (
         <Card className={cn("overflow-hidden transition-all hover:shadow-md", categoryColors[item.category], 'border-l-8')}>
@@ -57,7 +67,7 @@ export default function PlannerItem({ item }: PlannerItemProps) {
                          {Icon && <Icon className="h-8 w-8 text-foreground" />}
                         <h3 className="text-xl font-bold text-foreground">{title}</h3>
                     </div>
-                    {isTranslationKey && <p className="text-lg text-muted-foreground">{description}</p>}
+                    {<p className="text-lg text-muted-foreground">{description}</p>}
                     {medicationImage && (
                         <div className="mt-2">
                             <Image 
@@ -71,7 +81,12 @@ export default function PlannerItem({ item }: PlannerItemProps) {
                         </div>
                     )}
                 </div>
-                <div className="flex items-center h-full pl-4">
+                <div className="flex items-center h-full pl-4 gap-4">
+                    {isReminder && (
+                        <Button variant="ghost" size="icon" onClick={handleDelete} aria-label="Delete reminder">
+                            <Trash2 className="h-6 w-6 text-muted-foreground hover:text-destructive" />
+                        </Button>
+                    )}
                     <Checkbox
                         checked={isChecked}
                         onCheckedChange={() => setIsChecked(!isChecked)}

@@ -22,7 +22,7 @@ export default function DailyPlanner() {
     }));
 
     const reminderItems: PlannerItemType[] = reminders.map(reminder => ({
-      id: `reminder-${reminder.id}`,
+      id: reminder.id, // Use the reminder's own id
       time: reminder.time,
       titleKey: reminder.text, // Use text directly as titleKey for custom reminders
       descriptionKey: t('reminders.notificationTitle'), // Generic description
@@ -35,10 +35,14 @@ export default function DailyPlanner() {
 
     // Sort by time
     allItems.sort((a, b) => {
-      const timeA = new Date(`1970-01-01 ${a.time.replace(' AM', '').replace(' PM', '')}`);
-      const timeB = new Date(`1970-01-01 ${b.time.replace(' AM', '').replace(' PM', '')}`);
-      if (a.time.includes('PM') && !a.time.includes('12:')) timeA.setHours(timeA.getHours() + 12);
-      if (b.time.includes('PM') && !b.time.includes('12:')) timeB.setHours(timeB.getHours() + 12);
+      const timeA = new Date(`1970-01-01T${a.time.replace(/ AM| PM/i, '')}:00`);
+      const timeB = new Date(`1970-01-01T${b.time.replace(/ AM| PM/i, '')}:00`);
+
+      if (a.time.match(/pm/i) && !a.time.match(/12:/i)) timeA.setHours(timeA.getHours() + 12);
+      if (b.time.match(/pm/i) && !b.time.match(/12:/i)) timeB.setHours(timeB.getHours() + 12);
+      if (a.time.match(/am/i) && a.time.match(/12:/i)) timeA.setHours(timeA.getHours() - 12);
+      if (b.time.match(/am/i) && b.time.match(/12:/i)) timeB.setHours(timeB.getHours() - 12);
+      
       return timeA.getTime() - timeB.getTime();
     });
 
