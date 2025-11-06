@@ -74,6 +74,17 @@ Text: "{{text}}"
 `,
 });
 
+const translatePrompt = ai.definePrompt({
+  name: 'translatePrompt',
+  input: { schema: z.object({ text: z.string(), targetLanguage: z.string() }) },
+  output: { schema: z.object({ translatedText: z.string() }) },
+  prompt: `Translate the following text to {{targetLanguage}}:
+
+"{{text}}"
+
+Return only the translated text.`,
+});
+
 
 const translateAndSpeakFlow = ai.defineFlow(
   {
@@ -93,13 +104,23 @@ const translateAndSpeakFlow = ai.defineFlow(
     }
     const { reminderText, time } = timeExtractionResult;
 
-    // Step 2: The reminder text is already in the user's spoken language.
-    // If the target voice is a different language, we might need to translate.
-    // For now, we assume the voice matches the input language.
     let textToSpeak = reminderText;
 
+    // Step 2: Translate if a target language is specified and it's not English.
+    if (input.languageName && input.languageName !== 'English') {
+      console.log(`Translating "${reminderText}" to ${input.languageName}`);
+      const { output: translationResult } = await translatePrompt({
+        text: reminderText,
+        targetLanguage: input.languageName,
+      });
+      if (translationResult?.translatedText) {
+        textToSpeak = translationResult.translatedText;
+      }
+    }
+
+
     // Step 3: Generate speech from the text.
-    console.log(`Generating speech for: "${textToSpeak}"`);
+    console.log(`Generating speech for: "${textToSpeak}" with voice ${input.voice}`);
     const { media } = await ai.generate({
         model: googleAI.model('gemini-2.5-flash-preview-tts'),
         config: {
