@@ -16,6 +16,7 @@ import { PlannerItem as PlannerItemType } from '@/lib/types';
 import EditPlannerItem from './edit-planner-item';
 import { Separator } from '../ui/separator';
 import { useLocale } from '@/hooks/use-locale';
+import React from 'react';
 
 interface EditPlannerSheetProps {
   schedule: Omit<PlannerItemType, 'onUpdate'>[];
@@ -47,10 +48,10 @@ export function EditPlannerSheet({
         </SheetHeader>
         <div className="space-y-6 py-6">
           {schedule.map((item, index) => (
-            <>
-              <EditPlannerItem key={item.id} item={item as PlannerItemType} onUpdate={onUpdate} />
+            <React.Fragment key={item.id}>
+              <EditPlannerItem item={item as PlannerItemType} onUpdate={onUpdate} />
               {index < schedule.length - 1 && <Separator />}
-            </>
+            </React.Fragment>
           ))}
         </div>
         <SheetFooter>
