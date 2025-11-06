@@ -106,11 +106,11 @@ const translateAndSpeakFlow = ai.defineFlow(
 
     let textToSpeak = reminderText;
 
-    // Step 2: Translate if a target language is specified and it's not English.
-    if (input.languageName && input.languageName !== 'English') {
-      console.log(`Translating "${reminderText}" to ${input.languageName}`);
+    // Step 2: Translate if a target language is specified and different from English.
+    if (input.languageName && input.languageName !== 'English' && textToSpeak.trim()) {
+      console.log(`Translating "${textToSpeak}" to ${input.languageName}`);
       const { output: translationResult } = await translatePrompt({
-        text: reminderText,
+        text: textToSpeak,
         targetLanguage: input.languageName,
       });
       if (translationResult?.translatedText) {
