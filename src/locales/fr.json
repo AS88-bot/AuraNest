@@ -33,23 +33,18 @@
         "reminderActivePlaceholder": "par ex., « Je l'ai fait » ou « Marquer comme terminé »",
         "cancel": "Annuler",
         "heard": "J'ai entendu",
+        "thinking": "Réflexion...",
         "sendingAlert": "Envoi de l'alerte d'urgence...",
         "navigatingTo": "Navigation vers",
         "calling": "Appel de",
         "contactNotFound": "Désolé, je n'ai pas trouvé de contact nommé {contactName}.",
         "creatingReminder": "Création de votre rappel...",
-        "reminderCreated": "Voici votre rappel audio.",
+        "reminderCreatedNoTime": "Voici votre rappel audio.",
+        "reminderSetFor": "OK. J'ai programmé un rappel pour",
         "reminderError": "Désolé, je n'ai pas pu créer le rappel.",
         "didNotUnderstand": "Désolé, je n'ai pas compris. Veuillez réessayer.",
         "notSupported": "Commandes vocales non prises en charge",
         "taskCompleted": "Parfait ! Je l'ai marqué comme terminé."
-    },
-    "voiceCommands": {
-        "emergency": "aide, urgence, sos",
-        "goTo": "aller à, naviguer vers, ouvrir, montre-moi",
-        "call": "appelle, appeler",
-        "remind": "rappelle-moi de, créer un rappel pour, définir un rappel pour",
-        "done": "fait, je l'ai fait, terminé, marquer comme fait"
     },
     "dashboard": {
         "title": "Plan d'aujourd'hui",

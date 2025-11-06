@@ -33,23 +33,18 @@
         "reminderActivePlaceholder": "z.B. „Ich habe es getan“ oder „Als erledigt markieren“",
         "cancel": "Abbrechen",
         "heard": "Ich habe gehört",
+        "thinking": "Denken...",
         "sendingAlert": "Notfall-Alarm wird gesendet...",
         "navigatingTo": "Navigiere zu",
         "calling": "Rufe an",
         "contactNotFound": "Entschuldigung, ich konnte keinen Kontakt namens {contactName} finden.",
         "creatingReminder": "Ihre Erinnerung wird erstellt...",
-        "reminderCreated": "Hier ist Ihre Audio-Erinnerung.",
+        "reminderCreatedNoTime": "Hier ist Ihre Audio-Erinnerung.",
+        "reminderSetFor": "OK. Ich habe eine Erinnerung für",
         "reminderError": "Entschuldigung, ich konnte die Erinnerung nicht erstellen.",
         "didNotUnderstand": "Entschuldigung, das habe ich nicht verstanden. Bitte versuchen Sie es erneut.",
         "notSupported": "Sprachbefehle nicht unterstützt",
         "taskCompleted": "Großartig! Ich habe es als erledigt markiert."
-    },
-    "voiceCommands": {
-        "emergency": "hilfe, notfall, sos",
-        "goTo": "gehe zu, navigiere zu, öffne, zeige mir",
-        "call": "anrufen, rufe an",
-        "remind": "erinnere mich an, erinnere mich daran, erstelle eine erinnerung an",
-        "done": "erledigt, ich habe es getan, ich tat es, abgeschlossen, als erledigt markieren"
     },
     "dashboard": {
         "title": "Heutiger Plan",

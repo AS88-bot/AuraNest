@@ -33,23 +33,18 @@
         "reminderActivePlaceholder": "ad es., \"L'ho fatto\" o \"Segna come completato\"",
         "cancel": "Annulla",
         "heard": "Ho sentito",
+        "thinking": "Sto pensando...",
         "sendingAlert": "Invio dell'avviso di emergenza...",
         "navigatingTo": "Navigazione verso",
         "calling": "Chiamando",
         "contactNotFound": "Spiacente, non sono riuscito a trovare un contatto di nome {contactName}.",
         "creatingReminder": "Creazione del promemoria in corso...",
-        "reminderCreated": "Ecco il tuo promemoria audio.",
+        "reminderCreatedNoTime": "Ecco il tuo promemoria audio.",
+        "reminderSetFor": "OK. Ho impostato un promemoria per le",
         "reminderError": "Spiacente, non sono riuscito a creare il promemoria.",
         "didNotUnderstand": "Spiacente, non ho capito. Riprova.",
         "notSupported": "Comandi vocali non supportati",
         "taskCompleted": "Ottimo! L'ho segnato come completato."
-    },
-    "voiceCommands": {
-        "emergency": "aiuto, emergenza, sos",
-        "goTo": "vai a, naviga a, apri, mostrami",
-        "call": "chiama, chiamare",
-        "remind": "ricordami di, imposta un promemoria per, crea un promemoria per",
-        "done": "fatto, l'ho fatto, completato, segna come fatto"
     },
     "dashboard": {
         "title": "Piano di oggi",

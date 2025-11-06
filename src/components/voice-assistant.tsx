@@ -19,16 +19,16 @@ import type { User } from 'firebase/auth';
 import type { Firestore } from 'firebase/firestore';
 import { useLocale } from '@/hooks/use-locale';
 import { textToSpeech } from '@/ai/flows/text-to-speech';
+import { interpretCommand } from '@/ai/flows/interpret-command';
 import { useReminders } from '@/hooks/use-reminders';
-import { getVoiceCommands, CommandType } from '@/lib/voice-commands';
 
 const localeToLangCode: Record<string, string> = {
-    en: 'en-US',
-    es: 'es-ES',
-    fr: 'fr-FR',
-    de: 'de-DE',
-    hi: 'hi-IN',
-    it: 'it-IT',
+  en: 'en-US',
+  es: 'es-ES',
+  fr: 'fr-FR',
+  de: 'de-DE',
+  hi: 'hi-IN',
+  it: 'it-IT',
 };
 
 const localeToLangName: Record<string, string> = {
@@ -60,124 +60,130 @@ const handleCommand = async (
   firestore: Firestore | null,
   user: User | null,
   toast: (options: any) => void,
-  t: (key: string) => string,
+  t: (key: string, specificLocale?: string) => string,
   addReminder: (reminder: any) => void,
   activeReminder: any,
   completeActiveReminder: () => void,
   locale: string
 ) => {
-  const lowerCaseCommand = command.toLowerCase();
-  const allCommands = getVoiceCommands(t);
-  let actionTaken = false;
-
-  const takeAction = (feedbackMsg: string, duration = 3000) => {
-    setFeedback(feedbackMsg);
-    actionTaken = true;
-    setTimeout(() => stopListener(), duration);
-  };
-
-  const checkCommand = (type: CommandType): boolean => {
-    return allCommands[type].some(keyword => lowerCaseCommand.includes(keyword));
-  };
-
-  if (activeReminder && checkCommand('done')) {
-    completeActiveReminder();
-    takeAction(t('voiceAssistant.taskCompleted'));
-    return;
-  }
-
-  if (checkCommand('emergency')) {
-    if (firestore && user) {
-      sendEmergencyAlert(firestore, user);
-      toast({
-        title: t('sosButton.sentTitle'),
-        description: t('sosButton.sentDescription'),
-        variant: 'destructive',
-      });
-      takeAction(t('voiceAssistant.sendingAlert'));
-    } else {
-      toast({
-        title: t('sosButton.errorTitle'),
-        description: t('sosButton.errorDescription'),
-        variant: 'destructive',
-      });
-      takeAction(t('voiceAssistant.didNotUnderstand'));
-    }
-    return;
-  }
-
-  if (checkCommand('remind')) {
-    setFeedback(t('voiceAssistant.creatingReminder'));
-    setIsGeneratingAudio(true);
-    actionTaken = true; // Mark action as taken to prevent "did not understand" message
-
-    const currentLangCode = localeToLangCode[locale] || 'en-US';
-    const voiceForReminder = voiceOptions.find(opt => opt.lang === currentLangCode) || voiceOptions[0];
-
-    try {
-      const result = await textToSpeech({
-        text: command,
-        voice: voiceForReminder.value,
-        languageCode: voiceForReminder.lang,
-        languageName: voiceForReminder.languageName,
-      });
-
-      if (result.time && result.reminderText) {
-        addReminder({
-          id: `reminder-${new Date().toISOString()}`,
-          time: result.time,
-          text: result.reminderText,
-          audioSrc: result.audio,
-        });
-        setFeedback(`${t('voiceAssistant.reminderSetFor')} ${result.time}.`);
-      } else {
-        setFeedback(t('voiceAssistant.reminderCreatedNoTime'));
-        setAudioSrc(result.audio);
-      }
-    } catch (e) {
-      console.error(e);
-      setFeedback(t('voiceAssistant.reminderError'));
-    } finally {
-      setIsGeneratingAudio(false);
-      setTimeout(() => stopListener(), 4000);
-    }
-    return;
-  }
+  setFeedback(t('voiceAssistant.thinking'));
   
-  if (checkCommand('goTo')) {
-    const navItems = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
-    for (const navItem of navItems) {
-        const navItemName = t(`nav.${navItem}`).toLowerCase();
-        if (lowerCaseCommand.includes(navItemName)) {
-            const route = navItem === 'dashboard' ? '' : navItem;
-            window.location.href = `/${route}`;
-            takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem)}...`);
-            return;
-        }
-    }
-  }
+  const navItems = ['dashboard', 'contacts', 'journal', 'location', 'reminders', 'caregiver', 'settings'];
+  const availablePages = navItems.map(item => t(`nav.${item}`, 'en').toLowerCase());
+  const availableContacts = contacts.map(c => t(c.name, 'en').toLowerCase());
 
-  if (checkCommand('call')) {
-    for (const contact of contacts) {
-        const contactName = t(contact.name).toLowerCase();
-        if (lowerCaseCommand.includes(contactName)) {
-            if (contact.phone) {
-                window.location.href = `tel:${contact.phone}`;
-                takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+  try {
+    const interpretation = await interpretCommand({
+      command: command,
+      language: localeToLangName[locale] || 'English',
+      contacts: availableContacts,
+      pages: availablePages
+    });
+
+    let actionTaken = false;
+    const takeAction = (feedbackMsg: string, duration = 3000) => {
+      setFeedback(feedbackMsg);
+      actionTaken = true;
+      setTimeout(() => stopListener(), duration);
+    };
+
+    switch (interpretation.action) {
+      case 'emergency':
+        if (firestore && user) {
+          sendEmergencyAlert(firestore, user);
+          toast({
+            title: t('sosButton.sentTitle'),
+            description: t('sosButton.sentDescription'),
+            variant: 'destructive',
+          });
+          takeAction(t('voiceAssistant.sendingAlert'));
+        }
+        break;
+
+      case 'done':
+         if (activeReminder) {
+            completeActiveReminder();
+            takeAction(t('voiceAssistant.taskCompleted'));
+         }
+        break;
+
+      case 'navigate':
+        const pageTarget = interpretation.target?.toLowerCase();
+        const navItem = navItems.find(item => t(`nav.${item}`, 'en').toLowerCase() === pageTarget);
+        if (navItem) {
+          const route = navItem === 'dashboard' ? '' : navItem;
+          window.location.href = `/${route}`;
+          takeAction(`${t('voiceAssistant.navigatingTo')} ${t('nav.'+navItem)}...`);
+        }
+        break;
+
+      case 'call':
+        const contactTarget = interpretation.target?.toLowerCase();
+        const contact = contacts.find(c => t(c.name, 'en').toLowerCase() === contactTarget);
+        if (contact && contact.phone) {
+          window.location.href = `tel:${contact.phone}`;
+          takeAction(`${t('voiceAssistant.calling')} ${t(contact.name)}...`);
+        } else if (contact) {
+            takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', t(contact.name)));
+        }
+        break;
+
+      case 'remind':
+        if (interpretation.full_reminder_text) {
+          setFeedback(t('voiceAssistant.creatingReminder'));
+          setIsGeneratingAudio(true);
+          actionTaken = true;
+
+          const currentLangCode = localeToLangCode[locale] || 'en-US';
+          const voiceForReminder = voiceOptions.find(opt => opt.lang === currentLangCode) || voiceOptions[0];
+
+          try {
+            const result = await textToSpeech({
+              text: interpretation.full_reminder_text,
+              voice: voiceForReminder.value,
+              languageCode: voiceForReminder.lang,
+              languageName: voiceForReminder.languageName,
+            });
+
+            if (result.time && result.reminderText) {
+              addReminder({
+                id: `reminder-${new Date().toISOString()}`,
+                time: result.time,
+                text: result.reminderText,
+                audioSrc: result.audio,
+              });
+              setFeedback(`${t('voiceAssistant.reminderSetFor')} ${result.time}.`);
             } else {
-                takeAction(t('voiceAssistant.contactNotFound').replace('{contactName}', t(contact.name)));
+              setFeedback(t('voiceAssistant.reminderCreatedNoTime'));
+              setAudioSrc(result.audio);
             }
-            return;
+          } catch (e) {
+            console.error(e);
+            setFeedback(t('voiceAssistant.reminderError'));
+          } finally {
+            setIsGeneratingAudio(false);
+            setTimeout(() => stopListener(), 4000);
+          }
         }
-    }
-  }
+        break;
 
-  // If no action was taken after a delay, show feedback.
-  setTimeout(() => {
-    if (!actionTaken) {
-      takeAction(t('voiceAssistant.didNotUnderstand'));
+      default: // 'unknown'
+        // Let the timeout handle the 'did not understand' message
+        break;
     }
-  }, 2500);
+
+    setTimeout(() => {
+        if (!actionTaken) {
+            takeAction(t('voiceAssistant.didNotUnderstand'));
+        }
+    }, 1000);
+
+
+  } catch (error) {
+    console.error("Error interpreting command:", error);
+    setFeedback(t('voiceAssistant.didNotUnderstand'));
+    setTimeout(() => stopListener(), 2000);
+  }
 };
 
 export function VoiceAssistant() {
@@ -195,7 +201,9 @@ export function VoiceAssistant() {
   const { addReminder, activeReminder, completeActiveReminder } = useReminders();
   
   const stopListener = useCallback(() => {
-    recognitionRef.current?.stop();
+    if (recognitionRef.current) {
+        recognitionRef.current.stop();
+    }
     setIsListening(false);
   }, []);
 
@@ -245,19 +253,22 @@ export function VoiceAssistant() {
     
     recognition.onerror = (event) => {
       console.error(`Speech recognition error:`, event.error);
-      if (event.error !== 'no-speech') {
+      if (event.error !== 'no-speech' && event.error !== 'aborted') {
         setFeedback(t('voiceAssistant.didNotUnderstand'));
       }
-      setTimeout(() => {
-          setIsListening(false);
-      }, 2000);
+      // Ensure listening state is turned off.
+       setTimeout(() => {
+          if (isListening) {
+            setIsListening(false);
+          }
+      }, 1000);
     };
 
     recognition.onend = () => {
-        // Only set listening to false if it hasn't been handled by an error or explicit stop
-        if(isListening) {
-           // setIsListening(false);
-        }
+       // Check if it should stop listening
+       if (isListening) {
+        //  setIsListening(false);
+       }
     };
     
     try {

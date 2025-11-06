@@ -33,23 +33,18 @@
         "reminderActivePlaceholder": "p. ej., \"Lo he hecho\" o \"Marcar como completado\"",
         "cancel": "Cancelar",
         "heard": "He oído",
+        "thinking": "Pensando...",
         "sendingAlert": "Enviando alerta de emergencia...",
         "navigatingTo": "Navegando a",
         "calling": "Llamando a",
         "contactNotFound": "Lo siento, no pude encontrar un contacto llamado {contactName}.",
         "creatingReminder": "Creando tu recordatorio...",
-        "reminderCreated": "Aquí tienes tu recordatorio de audio.",
+        "reminderCreatedNoTime": "Aquí tienes tu recordatorio de audio.",
+        "reminderSetFor": "OK. He programado un recordatorio para las",
         "reminderError": "Lo siento, no pude crear el recordatorio.",
         "didNotUnderstand": "Lo siento, no entendí eso. Por favor, inténtalo de nuevo.",
         "notSupported": "Comandos de voz no compatibles",
         "taskCompleted": "¡Genial! Lo he marcado como hecho."
-    },
-    "voiceCommands": {
-        "emergency": "ayuda, emergencia, sos, socorro",
-        "goTo": "ir a, navegar a, abre, muéstrame",
-        "call": "llama a, llamar a",
-        "remind": "recuérdame, crear un recordatorio de, pon un recordatorio para",
-        "done": "hecho, ya lo hice, lo hice, completado, marcar como hecho"
     },
     "dashboard": {
         "title": "Plan de Hoy",

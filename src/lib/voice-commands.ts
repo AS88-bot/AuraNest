@@ -1,3 +1,6 @@
+// This file is no longer used for primary command matching,
+// as the logic has been moved to the `interpret-command` AI flow.
+// It is kept for reference or potential fallback logic if needed in the future.
 
 export type CommandType = 'emergency' | 'goTo' | 'call' | 'remind' | 'done';
 
@@ -47,7 +50,7 @@ export const getVoiceCommands = (t: (key: string) => string): CommandDictionary 
   commands.remind.push(...'erinnere mich an, erinnere mich daran, erstelle eine erinnerung'.split(', '));
   commands.done.push(...'erledigt, ich habe es getan, ich tat es, abgeschlossen, als erledigt markieren'.split(', '));
 
-  // Hindi (Corrected with more natural phrases)
+  // Hindi
   commands.emergency.push(...'मदद, इमरजेंसी, आपातकाल, एसओएस'.split(', '));
   commands.goTo.push(...'पर जाओ, खोलो, मुझे दिखाओ, चलो'.split(', '));
   commands.call.push(...'को कॉल करो, को फोन करो'.split(', '));
