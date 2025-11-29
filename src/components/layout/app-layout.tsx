@@ -22,6 +22,7 @@ import { useLocale } from '@/hooks/use-locale';
 import LoginPage from '@/app/login/page';
 import { updateProfile } from 'firebase/auth';
 import { usePathname, useRouter } from 'next/navigation';
+import { AiChatbot } from '../chatbot/ai-chatbot';
 
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
@@ -46,8 +47,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       }
       if (!user && pathname !== '/login') {
         router.push('/login');
-      }
-      if (user && pathname === '/login') {
+      } else if (user && pathname === '/login') {
         router.push('/');
       }
     }, [isUserLoading, user, pathname, router]);
@@ -65,7 +65,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     };
 
     // If user state is still loading, show a loading screen or skeleton
-    if (isUserLoading) {
+    if (isUserLoading || (!user && pathname !== '/login')) {
       return (
         <div className="flex h-screen w-screen items-center justify-center">
           <BrainCircuit className="size-16 animate-pulse text-primary" />
@@ -76,7 +76,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     // If no user is logged in, only render the children if we are on the login page.
     // This prevents a flash of the main layout before the redirect happens.
     if (!user) {
-      return pathname === '/login' ? <LoginPage /> : null;
+      return <LoginPage />;
     }
 
   return (
@@ -142,6 +142,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
             </div>
         </header>
         <main>{children}</main>
+        <AiChatbot />
       </SidebarInset>
     </SidebarProvider>
   );
