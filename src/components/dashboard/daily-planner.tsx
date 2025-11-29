@@ -49,7 +49,7 @@ export default function DailyPlanner() {
 
     setCombinedSchedule(allItems);
 
-  }, [schedule, reminders, t, reminders.length]);
+  }, [schedule, reminders, t]);
 
   const handleUpdate = (updatedItem: PlannerItemType) => {
     setSchedule((prevSchedule) =>

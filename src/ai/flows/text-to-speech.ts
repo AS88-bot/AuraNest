@@ -22,7 +22,7 @@ export type TextToSpeechInput = z.infer<typeof TextToSpeechInputSchema>;
 
 const TextToSpeechOutputSchema = z.object({
   audio: z.string().describe("The base64 encoded WAV audio data URI."),
-  reminderText: z.string().describe("The core text of the reminder, with any time information removed."),
+  reminderText: z.string().describe("The full original text of the reminder."),
   time: z.string().optional().describe("The extracted time for the reminder in HH:mm (24-hour) format, if present."),
 });
 export type TextToSpeechOutput = z.infer<typeof TextToSpeechOutputSchema>;
@@ -59,18 +59,16 @@ const extractTimePrompt = ai.definePrompt({
   input: { schema: z.object({ text: z.string(), languageName: z.string().optional() }) },
   output: {
     schema: z.object({
-      reminderText: z.string().describe("The core text of the reminder, with all time-related phrases (like 'at 8pm' or 'in 10 minutes') removed."),
       time: z.string().optional().describe("The absolute time for the reminder in HH:mm (24-hour) format. If no time is specified, this field should be omitted."),
     })
   },
-  prompt: `From the following text, which is in {{languageName}}, extract the core reminder message and the specific time. The current time is ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}.
+  prompt: `From the following text, which is in {{languageName}}, extract the specific time. The current time is ${new Date().toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false })}.
 
 Text: "{{text}}"
 
 - If the text contains a specific time (e.g., "at 5:30 PM", "a las 10am"), convert it to HH:mm 24-hour format.
 - If the text contains a relative time (e.g., "in 10 minutes", "in an hour"), calculate the absolute time in HH:mm format based on the current time.
 - If no time is mentioned, omit the 'time' field in the output.
-- The 'reminderText' field should contain the original message with the time part removed. For example, for "remind me to call mom at 5pm", the reminderText would be "call mom".
 `,
 });
 
@@ -93,7 +91,7 @@ const translateAndSpeakFlow = ai.defineFlow(
     outputSchema: TextToSpeechOutputSchema,
   },
   async (input) => {
-    // Step 1: Extract time and the core reminder text.
+    // Step 1: Extract time from the original text.
     const { output: timeExtractionResult } = await extractTimePrompt({
       text: input.text,
       languageName: input.languageName,
@@ -102,8 +100,12 @@ const translateAndSpeakFlow = ai.defineFlow(
     if (!timeExtractionResult) {
       throw new Error("Failed to extract time from reminder.");
     }
-    const { reminderText, time } = timeExtractionResult;
+    const { time } = timeExtractionResult;
 
+    // Use the original, full text for the reminder.
+    const reminderText = input.text;
+
+    // The text to be spoken might be translated.
     let textToSpeak = reminderText;
 
     // Step 2: Translate if a target language is specified and different from English.
@@ -145,9 +147,7 @@ const translateAndSpeakFlow = ai.defineFlow(
       });
 
       if (!media) {
-        // This case can happen if the AI model returns no audio, even with valid text.
-        // Instead of throwing an error, we return an empty response to prevent a crash.
-        console.warn(`Audio generation failed for text: "${textToSpeak}"`);
+        console.warn(`Audio generation failed for text: "${textToSpeak}". This can happen with empty or invalid input.`);
         return {
           audio: '',
           reminderText: reminderText,
@@ -164,7 +164,7 @@ const translateAndSpeakFlow = ai.defineFlow(
       
       return {
         audio: 'data:audio/wav;base64,' + wavBase64,
-        reminderText: reminderText,
+        reminderText: reminderText, // Return the full original text
         time: time,
       };
   }
