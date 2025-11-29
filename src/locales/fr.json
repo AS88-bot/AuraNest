@@ -7,7 +7,8 @@
         "location": "Localisation",
         "reminders": "Rappels",
         "caregiver": "Aidant",
-        "settings": "Paramètres"
+        "settings": "Paramètres",
+        "mood": "Humeur"
     },
     "userMenu": {
         "editProfile": "Modifier le profil",
@@ -102,6 +103,24 @@
         "summaryTitle": "Aujourd'hui dans ma vie",
         "summaryDescription": "Voici un résumé simple de votre entrée de journal.",
         "summaryPlaceholder": "Votre résumé apparaîtra ici après avoir enregistré une entrée et l'avoir générée."
+    },
+    "mood": {
+        "title": "Suivi de l'humeur",
+        "description": "Voyons comment vous vous sentez. Appuyez sur un emoji pour sélectionner votre humeur actuelle.",
+        "selectionTitle": "Comment vous sentez-vous en ce moment ?",
+        "selectionDescription": "Votre sélection nous aidera à vous fournir un message de soutien.",
+        "responseTitle": "Un message pour vous",
+        "responseDescription": "Une petite note parce que vous vous sentez {mood}.",
+        "responsePlaceholder": "Sélectionnez une humeur pour recevoir un message de soutien.",
+        "error": "Désolé, je n'ai pas pu générer de réponse pour le moment.",
+        "moods": {
+            "happy": "Heureux",
+            "calm": "Calme",
+            "sad": "Triste",
+            "anxious": "Anxieux",
+            "angry": "En colère",
+            "content": "Content"
+        }
     },
     "location": {
         "title": "Localisation & Navigation",

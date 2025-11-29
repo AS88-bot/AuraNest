@@ -7,7 +7,8 @@
         "location": "Ubicación",
         "reminders": "Recordatorios",
         "caregiver": "Cuidador",
-        "settings": "Ajustes"
+        "settings": "Ajustes",
+        "mood": "Estado de Ánimo"
     },
     "userMenu": {
         "editProfile": "Editar Perfil",
@@ -123,6 +124,24 @@
         "summaryTitle": "Hoy en Mi Vida",
         "summaryDescription": "Aquí hay un resumen simple de la entrada de tu diario.",
         "summaryPlaceholder": "Tu resumen aparecerá aquí después de que grabes una entrada y la generes."
+    },
+    "mood": {
+        "title": "Rastreador de Estado de Ánimo",
+        "description": "Vamos a ver cómo te sientes. Toca un emoji para seleccionar tu estado de ánimo actual.",
+        "selectionTitle": "¿Cómo te sientes ahora mismo?",
+        "selectionDescription": "Tu selección nos ayudará a proporcionarte un mensaje de apoyo.",
+        "responseTitle": "Un Mensaje Para Ti",
+        "responseDescription": "Una pequeña nota porque te sientes {mood}.",
+        "responsePlaceholder": "Selecciona un estado de ánimo para recibir un mensaje de apoyo.",
+        "error": "Lo siento, no pude generar una respuesta en este momento.",
+        "moods": {
+            "happy": "Feliz",
+            "calm": "Tranquilo",
+            "sad": "Triste",
+            "anxious": "Ansioso",
+            "angry": "Enojado",
+            "content": "Contento"
+        }
     },
     "location": {
         "title": "Ubicación y Navegación",

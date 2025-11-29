@@ -7,7 +7,8 @@
         "location": "Posizione",
         "reminders": "Promemoria",
         "caregiver": "Assistente",
-        "settings": "Impostazioni"
+        "settings": "Impostazioni",
+        "mood": "Umore"
     },
     "userMenu": {
         "editProfile": "Modifica profilo",
@@ -102,6 +103,24 @@
         "summaryTitle": "Oggi nella mia vita",
         "summaryDescription": "Ecco un semplice riepilogo della tua voce di diario.",
         "summaryPlaceholder": "Il tuo riepilogo apparirà qui dopo aver registrato una voce e averla generata."
+    },
+    "mood": {
+        "title": "Tracciatore di umore",
+        "description": "Controlliamo come ti senti. Tocca un'emoji per selezionare il tuo umore attuale.",
+        "selectionTitle": "Come ti senti in questo momento?",
+        "selectionDescription": "La tua selezione ci aiuterà a fornirti un messaggio di supporto.",
+        "responseTitle": "Un messaggio per te",
+        "responseDescription": "Una piccola nota perché ti senti {mood}.",
+        "responsePlaceholder": "Seleziona un umore per ricevere un messaggio di supporto.",
+        "error": "Spiacente, non sono riuscito a generare una risposta al momento.",
+        "moods": {
+            "happy": "Felice",
+            "calm": "Calmo",
+            "sad": "Triste",
+            "anxious": "Ansioso",
+            "angry": "Arrabbiato",
+            "content": "Contento"
+        }
     },
     "location": {
         "title": "Posizione e navigazione",

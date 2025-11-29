@@ -12,6 +12,7 @@ import {
   Settings,
   Bell,
   HeartHandshake,
+  Smile,
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
@@ -26,6 +27,7 @@ export function SidebarNav() {
     { href: '/', label: t('nav.dashboard'), icon: LayoutDashboard },
     { href: '/contacts', label: t('nav.contacts'), icon: Users },
     { href: '/journal', label: t('nav.journal'), icon: BookHeart },
+    { href: '/mood', label: t('nav.mood'), icon: Smile },
     { href: '/location', label: t('nav.location'), icon: Map },
     { href: '/reminders', label: t('nav.reminders'), icon: Bell },
     { href: '/caregiver', label: t('nav.caregiver'), icon: HeartHandshake },

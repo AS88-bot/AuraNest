@@ -7,7 +7,8 @@
         "location": "Location",
         "reminders": "Reminders",
         "caregiver": "Caregiver",
-        "settings": "Settings"
+        "settings": "Settings",
+        "mood": "Mood"
     },
     "userMenu": {
         "editProfile": "Edit Profile",
@@ -123,6 +124,24 @@
         "summaryTitle": "Today in My Life",
         "summaryDescription": "Here is a simple summary of your journal entry.",
         "summaryPlaceholder": "Your summary will appear here after you record an entry and generate it."
+    },
+    "mood": {
+        "title": "Mood Tracker",
+        "description": "Let's check in with how you're feeling. Tap an emoji to select your current mood.",
+        "selectionTitle": "How are you feeling right now?",
+        "selectionDescription": "Your selection will help us provide a supportive message for you.",
+        "responseTitle": "A Message For You",
+        "responseDescription": "A little note because you're feeling {mood}.",
+        "responsePlaceholder": "Select a mood to get a supportive message.",
+        "error": "Sorry, I couldn't generate a response at the moment.",
+        "moods": {
+            "happy": "Happy",
+            "calm": "Calm",
+            "sad": "Sad",
+            "anxious": "Anxious",
+            "angry": "Angry",
+            "content": "Content"
+        }
     },
     "location": {
         "title": "Location & Navigation",

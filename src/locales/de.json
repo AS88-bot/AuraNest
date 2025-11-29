@@ -7,7 +7,8 @@
         "location": "Standort",
         "reminders": "Erinnerungen",
         "caregiver": "Betreuer",
-        "settings": "Einstellungen"
+        "settings": "Einstellungen",
+        "mood": "Stimmung"
     },
     "userMenu": {
         "editProfile": "Profil bearbeiten",
@@ -102,6 +103,24 @@
         "summaryTitle": "Heute in meinem Leben",
         "summaryDescription": "Hier ist eine einfache Zusammenfassung Ihres Tagebucheintrags.",
         "summaryPlaceholder": "Ihre Zusammenfassung wird hier angezeigt, nachdem Sie einen Eintrag aufgenommen und generiert haben."
+    },
+    "mood": {
+        "title": "Stimmungs-Tracker",
+        "description": "Lass uns wissen, wie du dich fühlst. Tippe auf ein Emoji, um deine aktuelle Stimmung auszuwählen.",
+        "selectionTitle": "Wie fühlst du dich gerade?",
+        "selectionDescription": "Deine Auswahl wird uns helfen, dir eine unterstützende Nachricht zu geben.",
+        "responseTitle": "Eine Nachricht für dich",
+        "responseDescription": "Eine kleine Notiz, weil du dich {mood} fühlst.",
+        "responsePlaceholder": "Wähle eine Stimmung aus, um eine unterstützende Nachricht zu erhalten.",
+        "error": "Entschuldigung, ich konnte im Moment keine Antwort generieren.",
+        "moods": {
+            "happy": "Glücklich",
+            "calm": "Ruhig",
+            "sad": "Traurig",
+            "anxious": "Ängstlich",
+            "angry": "Wütend",
+            "content": "Zufrieden"
+        }
     },
     "location": {
         "title": "Standort & Navigation",
