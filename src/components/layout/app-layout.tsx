@@ -21,6 +21,8 @@ import { useUser, useFirebase } from '@/firebase';
 import { useLocale } from '@/hooks/use-locale';
 import LoginPage from '@/app/login/page';
 import { updateProfile } from 'firebase/auth';
+import { usePathname, useRouter } from 'next/navigation';
+
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
     const defaultUserImage = PlaceHolderImages.find(p => p.id === 'user-avatar');
@@ -31,10 +33,21 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     const { user, isUserLoading } = useUser();
     const { auth } = useFirebase();
     const { t } = useLocale();
+    const router = useRouter();
+    const pathname = usePathname();
 
     useEffect(() => {
       setIsClient(true);
     }, []);
+
+    useEffect(() => {
+      if (!isUserLoading && !user && pathname !== '/login') {
+        router.push('/login');
+      }
+      if (!isUserLoading && user && pathname === '/login') {
+        router.push('/');
+      }
+    }, [isUserLoading, user, pathname, router]);
 
     const handleProfileSave = async (newName: string, newEmail: string, newAvatar: string) => {
       if (user) {
@@ -57,7 +70,8 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       );
     }
     
-    // If no user is logged in, show the login page
+    // If no user is logged in and not on the login page, the effect will redirect.
+    // If on the login page, show it.
     if (!user) {
       return <LoginPage />;
     }

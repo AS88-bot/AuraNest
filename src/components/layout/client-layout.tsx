@@ -9,6 +9,7 @@ export default function ClientLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // The AppLayout component now handles routing logic based on auth state.
   return (
     <ReminderProvider>
       <AppLayout>
