@@ -41,10 +41,13 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     }, []);
 
     useEffect(() => {
-      if (!isUserLoading && !user && pathname !== '/login') {
+      if (isUserLoading) {
+        return; // Don't do anything while loading
+      }
+      if (!user && pathname !== '/login') {
         router.push('/login');
       }
-      if (!isUserLoading && user && pathname === '/login') {
+      if (user && pathname === '/login') {
         router.push('/');
       }
     }, [isUserLoading, user, pathname, router]);
@@ -70,10 +73,10 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
       );
     }
     
-    // If no user is logged in and not on the login page, the effect will redirect.
-    // If on the login page, show it.
+    // If no user is logged in, only render the children if we are on the login page.
+    // This prevents a flash of the main layout before the redirect happens.
     if (!user) {
-      return <LoginPage />;
+      return pathname === '/login' ? <LoginPage /> : null;
     }
 
   return (
