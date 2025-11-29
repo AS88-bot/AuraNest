@@ -11,6 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Loader2, Wand2, Mic, Image as ImageIcon, MicOff, Waves } from 'lucide-react';
 import { useLocale } from '@/hooks/use-locale';
 import { useToast } from '@/hooks/use-toast';
+import Image from 'next/image';
+import { Input } from '../ui/input';
 
 const formSchema = z.object({
   journalEntry: z.string().min(1, {
@@ -31,7 +33,9 @@ export default function JournalForm() {
   const [summary, setSummary] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [photo, setPhoto] = useState<string | null>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
   const { t, locale } = useLocale();
   const { toast } = useToast();
 
@@ -110,6 +114,20 @@ export default function JournalForm() {
       }
   }
 
+  const handlePhotoSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhoto(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const triggerPhotoSelect = () => photoInputRef.current?.click();
+
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsGenerating(true);
     setSummary('');
@@ -167,8 +185,17 @@ export default function JournalForm() {
                   </FormItem>
                 )}
               />
+
+              {photo && (
+                <div className="relative w-48 h-48 rounded-lg overflow-hidden border-2 border-primary/20">
+                  <Image src={photo} alt="Journal entry photo" fill style={{ objectFit: 'cover' }} />
+                </div>
+              )}
+
+              <Input type="file" accept="image/*" ref={photoInputRef} onChange={handlePhotoSelect} className="hidden" />
+
               <div className="flex flex-col sm:flex-row gap-4">
-                 <Button type="button" size="lg" variant="outline" className="flex-1"><ImageIcon className="mr-2" /> {t('journal.addPhoto')}</Button>
+                 <Button type="button" size="lg" variant="outline" className="flex-1" onClick={triggerPhotoSelect}><ImageIcon className="mr-2" /> {t('journal.addPhoto')}</Button>
                  <Button type="submit" size="lg" disabled={isGenerating || !form.formState.isValid} className="flex-1">
                   {isGenerating ? (
                     <>
