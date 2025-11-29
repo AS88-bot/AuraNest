@@ -15,9 +15,7 @@ import Image from 'next/image';
 import { Input } from '../ui/input';
 
 const formSchema = z.object({
-  journalEntry: z.string().min(1, {
-    message: 'Please record an entry or type a few words.',
-  }),
+  journalEntry: z.string(),
 });
 
 const localeToLang: Record<string, string> = {
@@ -119,7 +117,11 @@ export default function JournalForm() {
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setPhoto(reader.result as string);
+        const result = reader.result as string;
+        setPhoto(result);
+        const currentEntry = form.getValues('journalEntry');
+        const photoDescription = `[Photo of a ${file.name}]`;
+        form.setValue('journalEntry', (currentEntry ? currentEntry + ' ' : '') + photoDescription);
       };
       reader.readAsDataURL(file);
     }
@@ -132,8 +134,19 @@ export default function JournalForm() {
     setIsGenerating(true);
     setSummary('');
     try {
+        const input = values.journalEntry;
+
+        if (!input && !photo) {
+            toast({
+                variant: 'destructive',
+                title: 'Empty Entry',
+                description: 'Please record or type an entry, or add a photo.',
+            });
+            return;
+        }
+
       const result = await generateMemoryJournalSummary({
-        journalEntries: values.journalEntry,
+        journalEntries: input,
       });
       setSummary(result.summary);
     } catch (error) {
@@ -147,6 +160,9 @@ export default function JournalForm() {
       setIsGenerating(false);
     }
   }
+
+  const journalEntryValue = form.watch('journalEntry');
+  const isSubmitDisabled = isGenerating || (!journalEntryValue && !photo);
 
   return (
     <div className="grid lg:grid-cols-2 gap-8 items-start">
@@ -196,7 +212,7 @@ export default function JournalForm() {
 
               <div className="flex flex-col sm:flex-row gap-4">
                  <Button type="button" size="lg" variant="outline" className="flex-1" onClick={triggerPhotoSelect}><ImageIcon className="mr-2" /> {t('journal.addPhoto')}</Button>
-                 <Button type="submit" size="lg" disabled={isGenerating || !form.formState.isValid} className="flex-1">
+                 <Button type="submit" size="lg" disabled={isSubmitDisabled} className="flex-1">
                   {isGenerating ? (
                     <>
                       <Loader2 className="mr-2 h-6 w-6 animate-spin" />
