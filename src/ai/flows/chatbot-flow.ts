@@ -29,23 +29,15 @@ Your responses should be simple, clear, and reassuring. Avoid complex sentences 
 
 Here is the conversation history:
 {{#each history}}
-  {{#if (eq role 'user')}}User: {{content}}{{/if}}
-  {{#if (eq role 'model')}}Aura: {{content}}{{/if}}
+  {{role}}: {{content}}
 {{/each}}
 
 The user's latest message is:
-User: {{{message}}}
+user: {{{message}}}
 
 Provide a helpful and kind response.
 Aura:
 `,
-    // Register Handlebars helper for equality check
-    // This is needed for the prompt template to work
-    template: {
-      helpers: {
-        eq: (a: any, b: any) => a === b,
-      },
-    }
   },
 );
 
