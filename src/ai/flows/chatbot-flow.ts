@@ -39,14 +39,14 @@ User: {{{message}}}
 Provide a helpful and kind response.
 Aura:
 `,
-  },
-  {
     // Register Handlebars helper for equality check
     // This is needed for the prompt template to work
-    helpers: {
-      eq: (a: any, b: any) => a === b,
-    },
-  }
+    template: {
+      helpers: {
+        eq: (a: any, b: any) => a === b,
+      },
+    }
+  },
 );
 
 
