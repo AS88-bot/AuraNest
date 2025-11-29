@@ -10,6 +10,8 @@ import { chatbotFlow } from '@/ai/flows/chatbot-flow';
 import type { Message } from '@/ai/flows/chatbot-types';
 import { useUser } from '@/firebase';
 
+const CHAT_HISTORY_KEY = 'aura-chat-history';
+
 export function AiChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
@@ -18,17 +20,29 @@ export function AiChatbot() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   const { user } = useUser();
 
+  // Load history from localStorage when component mounts
   useEffect(() => {
-    if (isOpen) {
-      setMessages([
-        {
-          role: 'model',
-          content: "Hello! I'm your friendly AuraNest assistant. How can I help you today?",
-        },
-      ]);
+    const savedHistory = localStorage.getItem(CHAT_HISTORY_KEY);
+    if (savedHistory) {
+      setMessages(JSON.parse(savedHistory));
+    } else {
+        setMessages([
+            {
+              role: 'model',
+              content: "Hello! I'm your friendly AuraNest assistant. How can I help you today?",
+            },
+          ]);
     }
-  }, [isOpen]);
+  }, []);
 
+  // Save history to localStorage whenever it changes
+  useEffect(() => {
+    if (messages.length > 0) {
+        localStorage.setItem(CHAT_HISTORY_KEY, JSON.stringify(messages));
+    }
+  }, [messages]);
+
+  // Scroll to bottom when messages change
   useEffect(() => {
     if (scrollAreaRef.current) {
       scrollAreaRef.current.scrollTo({
@@ -36,7 +50,7 @@ export function AiChatbot() {
         behavior: 'smooth',
       });
     }
-  }, [messages]);
+  }, [messages, isOpen]);
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,7 +63,7 @@ export function AiChatbot() {
 
     try {
       const response = await chatbotFlow({
-        history: messages,
+        history: [...messages, userMessage], // Send the latest message in the history
         message: input,
       });
 
