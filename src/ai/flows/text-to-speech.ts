@@ -145,7 +145,14 @@ const translateAndSpeakFlow = ai.defineFlow(
       });
 
       if (!media) {
-        throw new Error('No audio media was generated.');
+        // This case can happen if the AI model returns no audio, even with valid text.
+        // Instead of throwing an error, we return an empty response to prevent a crash.
+        console.warn(`Audio generation failed for text: "${textToSpeak}"`);
+        return {
+          audio: '',
+          reminderText: reminderText,
+          time: time,
+        };
       }
       
       const audioBuffer = Buffer.from(
