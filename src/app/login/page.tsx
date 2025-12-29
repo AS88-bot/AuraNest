@@ -17,7 +17,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { BrainCircuit, Loader2 } from 'lucide-react';
+import { Brain, Loader2 } from 'lucide-react';
 import { useFirebase } from '@/firebase';
 import {
     createUserWithEmailAndPassword,
@@ -60,7 +60,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
         <div className="flex items-center gap-4 mb-8 text-primary">
-            <BrainCircuit className="h-12 w-12" />
+            <Brain className="h-12 w-12" />
             <h1 className="text-5xl font-bold">AuraNest</h1>
         </div>
       <Tabs defaultValue="sign-in" className="w-full max-w-md">

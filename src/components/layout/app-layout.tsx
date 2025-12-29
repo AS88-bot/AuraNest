@@ -12,7 +12,7 @@ import { SidebarNav } from './sidebar-nav';
 import { Button } from '../ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '../ui/dropdown-menu';
-import { BrainCircuit, LogOut, User } from 'lucide-react';
+import { Brain, LogOut, User } from 'lucide-react';
 import { SOSButton } from '../sos-button';
 import { VoiceAssistant } from '../voice-assistant';
 import { EditProfileDialog } from '../profile/edit-profile-dialog';
@@ -68,7 +68,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     if (isUserLoading || (!user && pathname !== '/login')) {
       return (
         <div className="flex h-screen w-screen items-center justify-center">
-          <BrainCircuit className="size-16 animate-pulse text-primary" />
+          <Brain className="size-16 animate-pulse text-primary" />
         </div>
       );
     }
@@ -83,7 +83,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <Sidebar variant="inset" collapsible="icon">
         <SidebarHeader className="items-center justify-center text-center">
-            <BrainCircuit className="size-8 text-primary group-data-[state=collapsed]:hidden" />
+            <Brain className="size-8 text-primary group-data-[state=collapsed]:hidden" />
             <h2 className="text-xl font-bold text-foreground group-data-[state=collapsed]:hidden">
                 AuraNest
             </h2>
