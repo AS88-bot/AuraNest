@@ -1,14 +1,12 @@
 # AuraNest: Your Compassionate AI Companion ✨
 
-**A submission for the Build with AI: App Roadshows in Hyderabad.**
-
 [![AuraNest Banner](https://placehold.co/1200x400/9370DB/FFFFFF/AuraNest?text=AuraNest&font=sans-serif&bold)](https://github.com/)
 
 AuraNest is a web application thoughtfully designed to provide a reassuring and organized digital environment for individuals with dementia or memory challenges, and to offer peace of mind to their caregivers. By leveraging the power of generative AI, AuraNest aims to enhance daily living, foster connection, and ensure safety.
 
-## 🌟 Vision for the "Build with AI" Roadshow
+## 🌟 Our Vision
 
-Our vision is to demonstrate how compassionate AI can create deeply personal and supportive experiences. AuraNest is more than just a set of tools; it's a companion that understands, remembers, and assists. We believe that technology, particularly AI, can empower individuals with cognitive decline to live with greater independence and dignity, while bridging the communication gap with their loved ones. For the Hyderabad roadshow, we want to showcase a future where AI is not just intelligent, but also empathetic.
+Our vision is to demonstrate how compassionate AI can create deeply personal and supportive experiences. AuraNest is more than just a set of tools; it's a companion that understands, remembers, and assists. We believe that technology, particularly AI, can empower individuals with cognitive decline to live with greater independence and dignity, while bridging the communication gap with their loved ones. We aim to showcase a future where AI is not just intelligent, but also empathetic.
 
 ## ✅ Features
 
@@ -44,7 +42,7 @@ AuraNest is built on a modern, robust, and scalable technology stack, designed t
 
 **Status: Functional Prototype**
 
-This version of AuraNest was developed for the "Build with AI" App Roadshow. The core features are implemented and functional, demonstrating the primary vision of the application. The focus has been on showcasing the powerful and seamless integration of Genkit and Firebase to create a user-centric, AI-driven experience.
+This version of AuraNest is a functional prototype. The core features are implemented and functional, demonstrating the primary vision of the application. The focus has been on showcasing the powerful and seamless integration of Genkit and Firebase to create a user-centric, AI-driven experience.
 
 ## 🚀 Getting Started
 
