@@ -55,7 +55,7 @@ This version of AuraNest is a functional prototype. The core features are implem
     ```bash
     npm run dev
     ```
-4.  Open [http://localhost:9002](http://localhost:9002) to see the app in action.
+4.  Open https://studio--studio-3099384996-201bd.us-central1.hosted.app/ to see the app in action.
 
 ---
 
