@@ -4,9 +4,9 @@
 
 AuraNest is a web application thoughtfully designed to provide a reassuring and organized digital environment for individuals with dementia or memory challenges, and to offer peace of mind to their caregivers. By leveraging the power of generative AI, AuraNest aims to enhance daily living, foster connection, and ensure safety.
 
-## 🌟 Our Vision
+## 🌟 Vision
 
-Our vision is to demonstrate how compassionate AI can create deeply personal and supportive experiences. AuraNest is more than just a set of tools; it's a companion that understands, remembers, and assists. We believe that technology, particularly AI, can empower individuals with cognitive decline to live with greater independence and dignity, while bridging the communication gap with their loved ones. We aim to showcase a future where AI is not just intelligent, but also empathetic.
+The vision for AuraNest is to demonstrate how compassionate AI can create deeply personal and supportive experiences. AuraNest is more than just a set of tools; it's a companion that understands, remembers, and assists. It is built on the belief that technology, particularly AI, can empower individuals with cognitive decline to live with greater independence and dignity, while bridging the communication gap with their loved ones. The aim is to showcase a future where AI is not just intelligent, but also empathetic.
 
 ## ✅ Features
 
