@@ -97,4 +97,4 @@ This version of AuraNest is a functional prototype demonstrating the primary vis
 
 ---
 
-Built with ❤️ by a solo developer.
+Built with ❤️ by Aisha Sultana.
