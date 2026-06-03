@@ -24,7 +24,7 @@ AuraNest is built with a suite of features designed for simplicity and accessibi
 
 ## 🛠️ Tech Stack
 
-AuraNest is built on a modern, robust, and scalable technology stack, designed to showcase the best of Google's tools:
+AuraNest is built on a modern, robust, and scalable technology stack:
 
 -   **Framework**: [Next.js](https://nextjs.org/) 15 (React with App Router)
 -   **Backend & Database**: [Firebase](https://firebase.google.com/)
@@ -37,6 +37,59 @@ AuraNest is built on a modern, robust, and scalable technology stack, designed t
 -   **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
 -   **Icons**: [Lucide React](https://lucide.dev/)
 -   **Hosting**: Deployed on [Firebase App Hosting](https://firebase.google.com/docs/app-hosting).
+
+## 🏗️ Architecture Documentation
+
+### System Architecture
+AuraNest follows a serverless, event-driven architecture that prioritizes real-time responsiveness and scalability.
+
+```mermaid
+graph TD
+    User((User)) --> Client[Next.js Frontend / React]
+    Client --> Auth[Firebase Authentication]
+    Client --> Firestore[(Cloud Firestore)]
+    Client --> ServerActions[Next.js Server Actions]
+    ServerActions --> Genkit[Genkit AI Flows]
+    Genkit --> Gemini[Google Gemini AI]
+```
+
+### Data Flow
+1.  **User Interaction**: Users interact with the React frontend (e.g., voice commands, mood selection).
+2.  **Authentication**: Security is handled by Firebase Auth, ensuring users only access their own data.
+3.  **Real-time Updates**: Changes to Firestore (like location updates) are pushed to listeners on the client immediately.
+4.  **AI Processing**: Natural language is sent via Next.js Server Actions to Genkit flows.
+5.  **AI Response**: Gemini processes the request and returns structured data or audio, which is then handled by the UI.
+
+### Cloud Service Architecture
+-   **Frontend/Edge**: Hosted on Firebase App Hosting, leveraging a global CDN.
+-   **Compute**: Next.js Server Actions execute in a secure, serverless environment.
+-   **Storage**: Cloud Firestore provides a distributed, NoSQL database for state and profile management.
+-   **AI**: Genkit acts as the bridge to Google's most capable generative models.
+
+### Scalability Considerations
+-   **Auto-scaling**: All cloud components (App Hosting, Firestore, Gemini API) are fully managed and scale automatically based on traffic.
+-   **State Management**: By keeping the frontend stateless and offloading data to Firestore, the application can handle thousands of concurrent users without manual intervention.
+
+## 🛠️ Engineering Documentation
+
+### Design Decisions
+-   **Client-Side SDKs**: Used for Firestore to enable real-time features (like live location tracking) with minimal latency.
+-   **Server-Side AI**: AI flows are kept on the server via Genkit to protect API keys and reduce the bundle size on the client.
+-   **Component-Driven UI**: Built using `shadcn/ui` to ensure accessibility (a11y) and a consistent, professional aesthetic.
+
+### Security Measures
+-   **Firestore Security Rules**: Granular rules enforce that users can only read/write their own profiles and designated sub-collections.
+-   **Encrypted Transmissions**: All data is sent over HTTPS, and sensitive AI interactions are handled server-side.
+-   **Anonymous Auth**: Allows users to explore features safely before committing to a full account.
+
+### Trade-offs
+-   **Local Storage for History**: Chat history is currently stored in `localStorage` for speed and simplicity. While this means it doesn't sync across devices yet, it provides a much faster and private user experience for a prototype.
+-   **Voice Recognition**: Uses the browser's Web Speech API for low-latency transcription, though it requires modern browser support.
+
+### Future Improvements
+-   **Offline Support (PWA)**: Making the app fully functional without an internet connection is a top priority for reliability.
+-   **Wearable Integration**: Connecting to smartwatches to monitor vitals and detect falls automatically.
+-   **Enhanced Memory**: Using a vector database to allow the Aura chatbot to remember things from months ago, not just the recent session.
 
 ## 🚦 Project Status
 
@@ -55,8 +108,8 @@ This version of AuraNest is a functional prototype. The core features are implem
     ```bash
     npm run dev
     ```
-4.  Open https://studio--studio-3099384996-201bd.us-central1.hosted.app/ to see the app in action.
+4.  Open [http://localhost:3000](http://localhost:3000) to see the app in action.
 
 ---
 
-Built with ❤️ for the AI community.
+Built with ❤️ by a solo developer.
