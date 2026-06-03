@@ -1,6 +1,7 @@
 {
-  "name": "nextn",
+  "name": "auranest",
   "version": "0.1.0",
+  "description": "A compassionate AI companion designed to support individuals with dementia and their caregivers through daily planning, mood tracking, and safety features.",
   "private": true,
   "scripts": {
     "dev": "next dev --turbopack -p 9002",

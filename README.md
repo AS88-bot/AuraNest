@@ -15,28 +15,12 @@ AuraNest is built with a suite of features designed for simplicity and accessibi
 -   **🗓️ AI-Powered Daily Planner**: A clear, time-based schedule of the day's events, from medication reminders to appointments. Integrated with AI to add reminders via voice.
 -   **🗣️ Voice-First Interface**: An intuitive **Voice Assistant** allows users to navigate the app, call contacts, and set reminders using natural language.
 -   **💬 Aura Chatbot**: A friendly AI chatbot, "Aura," is always available for companionship, answering questions, or simply having a conversation. It remembers your chat history for a continuous experience.
--   **🔊 Verbal Reminders & Text-to-Speech**: Create verbal reminders in multiple languages and voices. The AI can extract times from natural language (e.g., "remind me in 10 minutes") and generate audio cues.
--   **📝 Memory Journal**: Users can record thoughts and memories using voice-to-text. The AI then generates a simple, easy-to-read "Today in My Life" summary to help reinforce memories.
--   **😊 Mood Tracker**: A simple, emoji-based mood logger. After selecting a mood, an empathetic AI provides a short, supportive, and comforting message.
--   **🆘 Emergency SOS & Location**: A prominent SOS button immediately sends the user's current location to designated emergency contacts.
--   **👨‍👩‍👧‍👦 Contacts & Caregiver Dashboard**: Easy-to-use contact cards with large photos and a dedicated dashboard for caregivers to view a user's location and status, especially during an SOS alert.
--   **🌐 Multi-Language Support**: The UI and AI interactions are available in English, Spanish, French, German, Hindi, and Italian.
-
-## 🛠️ Tech Stack
-
-AuraNest is built on a modern, robust, and scalable technology stack:
-
--   **Framework**: [Next.js](https://nextjs.org/) 15 (React with App Router)
--   **Backend & Database**: [Firebase](https://firebase.google.com/)
-    -   **Authentication**: Secure email/password and anonymous sign-in.
-    -   **Firestore**: A real-time, NoSQL database for all application data.
--   **Generative AI**: [Genkit](https://firebase.google.com/docs/genkit) (with Google's Gemini models)
-    -   `gemini-2.5-flash` for language interpretation, summarization, and chat.
-    -   `gemini-2.5-flash-preview-tts` for advanced text-to-speech generation.
--   **Styling**: [Tailwind CSS](https://tailwindcss.com/)
--   **UI Components**: [shadcn/ui](https://ui.shadcn.com/)
--   **Icons**: [Lucide React](https://lucide.dev/)
--   **Hosting**: Deployed on [Firebase App Hosting](https://firebase.google.com/docs/app-hosting).
+-   **🔊 Verbal Reminders & Text-to-Speech**: Create verbal reminders in multiple languages and voices. The AI can extract times from natural language and generate audio cues.
+-   **📝 Memory Journal**: Users can record thoughts using voice-to-text. The AI then generates a simple, easy-to-read "Today in My Life" summary.
+-   **😊 Mood Tracker**: A simple mood logger. After selecting a mood, an empathetic AI provides a short, supportive, and comforting message.
+-   **🆘 Emergency SOS**: A prominent SOS button immediately sends the user's current location to designated emergency contacts.
+-   **👨‍👩‍👧‍👦 Caregiver Dashboard**: Easy-to-use dashboard for caregivers to view a user's location and status.
+-   **🌐 Multi-Language Support**: Available in English, Spanish, French, German, Hindi, and Italian.
 
 ## 🏗️ Architecture Documentation
 
@@ -91,23 +75,24 @@ graph TD
 -   **Wearable Integration**: Connecting to smartwatches to monitor vitals and detect falls automatically.
 -   **Enhanced Memory**: Using a vector database to allow the Aura chatbot to remember things from months ago, not just the recent session.
 
+## 🛠️ Tech Stack
+
+-   **Framework**: [Next.js](https://nextjs.org/) 15 (React with App Router)
+-   **Backend**: [Firebase](https://firebase.google.com/) (Auth, Firestore)
+-   **AI**: [Genkit](https://firebase.google.com/docs/genkit) (Gemini models)
+-   **Styling**: [Tailwind CSS](https://tailwindcss.com/) & [shadcn/ui](https://ui.shadcn.com/)
+
 ## 🚦 Project Status
 
 **Status: Functional Prototype**
 
-This version of AuraNest is a functional prototype. The core features are implemented and functional, demonstrating the primary vision of the application. The focus has been on showcasing the powerful and seamless integration of Genkit and Firebase to create a user-centric, AI-driven experience.
+This version of AuraNest is a functional prototype demonstrating the primary vision of the application. The focus has been on showcasing the powerful and seamless integration of Genkit and Firebase to create a user-centric, AI-driven experience.
 
 ## 🚀 Getting Started
 
 1.  **Clone the repository.**
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-3.  **Run the development server:**
-    ```bash
-    npm run dev
-    ```
+2.  **Install dependencies:** `npm install`
+3.  **Run the development server:** `npm run dev`
 4.  Open [http://localhost:3000](http://localhost:3000) to see the app in action.
 
 ---
